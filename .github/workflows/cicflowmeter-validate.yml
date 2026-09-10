@@ -79,9 +79,10 @@ jobs:
 
       # ---- official CICFlowMeter (pinned) via the kit's Dockerfile ----
       - name: Build pinned CICFlowMeter image
+        timeout-minutes: 30
         run: |
           set -eux
-          docker build --platform linux/amd64 \
+          DOCKER_BUILDKIT=1 docker build --progress=plain --platform linux/amd64 \
             -t cfm-pinned models/pcap_analysis_v4/parity/cicflowmeter/ 2>&1 | tee cfm_build.log
 
       - name: Verify CICFlowMeter starts (JNI + libpcap load)

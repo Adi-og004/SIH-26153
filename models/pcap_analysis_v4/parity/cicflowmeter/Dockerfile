@@ -11,9 +11,12 @@
 FROM --platform=linux/amd64 eclipse-temurin:8-jdk-jammy
 
 # --- native dependency: libpcap (jnetpcap 1.4 needs the 0.8 ABI) ---
+# DEBIAN_FRONTEND=noninteractive: without it, some pcap-adjacent packages open a
+# debconf prompt and the build hangs forever in CI.
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        git ca-certificates libpcap0.8 libpcap-dev tcpdump wireshark-common && \
+        git ca-certificates libpcap0.8 libpcap0.8-dev libpcap-dev tcpdump maven && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt
@@ -31,16 +34,16 @@ RUN git clone https://github.com/ahlashkari/CICFlowMeter.git && \
 
 WORKDIR /opt/CICFlowMeter
 
-# --- install the bundled jnetpcap jar into the local gradle/maven cache ---
-# (build.gradle: org.jnetpcap:jnetpcap:1.4.1 ; native = jnetpcap/linux/jnetpcap-1.4.r1425/*.so)
-RUN mkdir -p /root/.m2 && \
-    (command -v mvn >/dev/null 2>&1 || (apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*)) && \
-    mvn -q install:install-file \
-        -Dfile=jnetpcap/linux/jnetpcap-1.4.r1425/jnetpcap.jar \
-        -DgroupId=org.jnetpcap -DartifactId=jnetpcap -Dversion=1.4.1 -Dpackaging=jar
+# --- ensure a libpcap.so.0.8 SONAME exists for jnetpcap 1.4 (jammy ships .so.1) ---
+RUN bash -eux -c 'real="$(ldconfig -p | awk -F"=> " "/libpcap\\.so\\.1 /{print \$2; exit}")"; if [ -n "$real" ] && [ ! -e "$(dirname "$real")/libpcap.so.0.8" ]; then ln -s "$(basename "$real")" "$(dirname "$real")/libpcap.so.0.8"; ldconfig; fi; ldconfig -p | grep -i libpcap || true'
 
-# --- build (Gradle wrapper is vendored) ---
-RUN ./gradlew --no-daemon clean build -x test || ./gradlew --no-daemon clean assemble -x test
+# --- install the bundled jnetpcap jar into the local maven repo (build.gradle uses mavenLocal()) ---
+RUN bash -eux -c 'mkdir -p /root/.m2; JAR="$(ls jnetpcap/linux/jnetpcap-1.4.r1425/jnetpcap*.jar 2>/dev/null | head -1)"; test -n "$JAR"; mvn -q install:install-file -Dfile="$JAR" -DgroupId=org.jnetpcap -DartifactId=jnetpcap -Dversion=1.4.1 -Dpackaging=jar'
+
+# --- build (vendored Gradle wrapper == gradle 4.2, runs on JDK 8) ---
+RUN ./gradlew --no-daemon --console=plain clean build -x test \
+ || ./gradlew --no-daemon --console=plain clean assemble -x test \
+ || ./gradlew --no-daemon --console=plain clean classes
 
 # --- make the native lib discoverable at runtime ---
 ENV LD_LIBRARY_PATH=/opt/CICFlowMeter/jnetpcap/linux/jnetpcap-1.4.r1425
