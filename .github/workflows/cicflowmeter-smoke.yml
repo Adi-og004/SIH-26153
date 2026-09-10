@@ -36,7 +36,10 @@ jobs:
       - name: Startup check (JNI + libpcap load)
         run: |
           set -euxo pipefail
-          out=$(docker run --rm cfm-pinned java \
+          # bypass the entrypoint wrapper; invoke Cmd with no args -> it must reach
+          # arg parsing ("select pcap"), which only happens after the jnetpcap JNI
+          # + libpcap native libs load successfully.
+          out=$(docker run --rm --entrypoint java cfm-pinned \
                   -Djava.library.path=/opt/CICFlowMeter/jnetpcap/linux/jnetpcap-1.4.r1425 \
                   -cp /opt/CICFlowMeter/build/classes/java/main \
                   cic.cs.unb.ca.ifm.Cmd 2>&1 || true)
@@ -44,6 +47,15 @@ jobs:
           echo "$out" | grep -qi "select pcap" \
             && echo "STARTUP OK -- JNI + jnetpcap + libpcap loaded, Cmd reached arg parsing" \
             || { echo "STARTUP FAILED -- see output above"; exit 1; }
+
+      - name: Startup check 2 (entrypoint wrapper + empty dir enumeration)
+        run: |
+          set -euxo pipefail
+          mkdir -p smoke_in smoke_out
+          docker run --rm -v "$PWD/smoke_in":/pcap -v "$PWD/smoke_out":/flow \
+            cfm-pinned /pcap /flow 2>&1 | tee cfm_smoke_run.log
+          grep -qi "pcap files" cfm_smoke_run.log \
+            && echo "LOADER OK -- CICFlowMeter enumerated the (empty) pcap dir; no UnsatisfiedLinkError"
 
       - name: Upload build log
         if: always()
