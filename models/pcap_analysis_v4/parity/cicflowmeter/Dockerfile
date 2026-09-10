@@ -41,9 +41,13 @@ RUN bash -eux -c 'real="$(ldconfig -p | awk -F"=> " "/libpcap\\.so\\.1 /{print \
 RUN bash -eux -c 'mkdir -p /root/.m2; JAR="$(ls jnetpcap/linux/jnetpcap-1.4.r1425/jnetpcap*.jar 2>/dev/null | head -1)"; test -n "$JAR"; mvn -q install:install-file -Dfile="$JAR" -DgroupId=org.jnetpcap -DartifactId=jnetpcap -Dversion=1.4.1 -Dpackaging=jar'
 
 # --- build (vendored Gradle wrapper == gradle 4.2, runs on JDK 8) ---
-RUN ./gradlew --no-daemon --console=plain clean build -x test \
- || ./gradlew --no-daemon --console=plain clean assemble -x test \
- || ./gradlew --no-daemon --console=plain clean classes
+# git checkout does not restore the +x bit on gradlew -> invoke via sh, and
+# make it executable for the runtime image too.
+RUN chmod +x gradlew || true; \
+    sh ./gradlew --no-daemon --console=plain clean build -x test \
+ || sh ./gradlew --no-daemon --console=plain clean assemble -x test \
+ || sh ./gradlew --no-daemon --console=plain clean classes
+RUN test -d build/classes/java/main && ls build/classes/java/main/cic/cs/unb/ca/ifm/
 
 # --- make the native lib discoverable at runtime ---
 ENV LD_LIBRARY_PATH=/opt/CICFlowMeter/jnetpcap/linux/jnetpcap-1.4.r1425

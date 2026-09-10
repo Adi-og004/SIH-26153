@@ -25,7 +25,7 @@ jobs:
           python-version: '3.11'
 
       - name: Python deps
-        run: pip install --quiet remotezip scapy numpy pandas scikit-learn
+        run: pip install --quiet remotezip scapy numpy pandas scikit-learn matplotlib
 
       - name: Show runner env
         run: |
@@ -81,9 +81,10 @@ jobs:
       - name: Build pinned CICFlowMeter image
         timeout-minutes: 30
         run: |
-          set -eux
+          set -euxo pipefail
           DOCKER_BUILDKIT=1 docker build --progress=plain --platform linux/amd64 \
             -t cfm-pinned models/pcap_analysis_v4/parity/cicflowmeter/ 2>&1 | tee cfm_build.log
+          docker image inspect cfm-pinned >/dev/null
 
       - name: Verify CICFlowMeter starts (JNI + libpcap load)
         run: |
@@ -96,10 +97,11 @@ jobs:
 
       - name: Run CICFlowMeter on the 21 pcaps (per file)
         run: |
-          set -eux
+          set -euxo pipefail
           mkdir -p flows
           docker run --rm -v "$PWD/pcaps":/pcap -v "$PWD/flows":/flow cfm-pinned /pcap /flow 2>&1 | tee cfm_run.log
           ls -la flows
+          n=$(ls flows/*_Flow.csv 2>/dev/null | wc -l); echo "produced $n _Flow.csv"; test "$n" -ge 1
 
       # ---- STEP 8 flag clip + create_network_states_v2 aggregation + compare ----
       - name: Aggregate + compare (official vs emulation vs training)
