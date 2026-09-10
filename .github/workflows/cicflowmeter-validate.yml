@@ -1,0 +1,125 @@
+name: cicflowmeter-validate
+
+# Runs official Java CICFlowMeter on the 21-host March-2 PCAP subset, applies the
+# documented CIC ML-data flag clip, builds 10s network states via the training
+# definition, and compares official-CICFlowMeter vs corrected-emulation vs training.
+# Does NOT touch the V4 model. x86_64 Linux only (ubuntu-latest).
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [cicflowmeter-validation]
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Python deps
+        run: pip install --quiet remotezip scapy numpy pandas scikit-learn
+
+      - name: Show runner env
+        run: |
+          uname -a
+          cat /etc/os-release | head -3
+          docker --version
+          df -h / | tail -1
+
+      # ---- 21-host PCAP subset via remotezip RANGE extraction (NOT the full 42 GB archive) ----
+      - name: Fetch 21 host pcaps
+        run: |
+          set -eux
+          mkdir -p pcaps
+          URL='https://cse-cic-ids2018.s3.amazonaws.com/Original%20Network%20Traffic%20and%20Log%20data/Friday-02-03-2018/pcap.zip'
+          remotezip -d pcaps "$URL" \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.64.4 \
+            pcap/capWIN-J6GMIG1DQE5-172.31.64.47 \
+            pcap/capWIN-J6GMIG1DQE5-172.31.64.88 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.65.5 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.66.5 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.66.124 \
+            pcap/capWIN-J6GMIG1DQE5-172.31.67.4 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.67.64 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.67.126 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.68.4 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.6 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.8 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.10 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.12 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.14 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.17 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.23 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.26 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.26a \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.29 \
+            pcap/capEC2AMAZ-O4EL3NG-172.31.69.30
+          mv pcaps/pcap/* pcaps/ && rmdir pcaps/pcap
+          ls -la pcaps
+          test "$(ls pcaps | wc -l)" -eq 21
+
+      # ---- training reference: 1 flow CSV + the tracked states builder (no data committed) ----
+      - name: Build training states_v2 reference (March 2)
+        run: |
+          set -eux
+          mkdir -p data/processed
+          aws s3 cp --no-sign-request \
+            "s3://cse-cic-ids2018/Processed Traffic Data for ML Algorithms/Friday-02-03-2018_TrafficForML_CICFlowMeter.csv" \
+            data/processed/Friday-02-03-2018_TrafficForML_CICFlowMeter.csv
+          python -c "import sys; sys.path.insert(0,'archive'); from create_network_states_v2 import create_states; create_states('Friday-02-03-2018_TrafficForML_CICFlowMeter.csv')"
+          ls -la data/processed/states_v2/
+
+      # ---- official CICFlowMeter (pinned) via the kit's Dockerfile ----
+      - name: Build pinned CICFlowMeter image
+        run: |
+          set -eux
+          docker build --platform linux/amd64 \
+            -t cfm-pinned models/pcap_analysis_v4/parity/cicflowmeter/ 2>&1 | tee cfm_build.log
+
+      - name: Verify CICFlowMeter starts (JNI + libpcap load)
+        run: |
+          set -eux
+          docker run --rm cfm-pinned java \
+            -Djava.library.path=/opt/CICFlowMeter/jnetpcap/linux/jnetpcap-1.4.r1425 \
+            -cp /opt/CICFlowMeter/build/classes/java/main \
+            cic.cs.unb.ca.ifm.Cmd 2>&1 | tee cfm_start.log || true
+          grep -qi "select pcap" cfm_start.log && echo "STARTUP OK" || (echo "STARTUP CHECK: inspect cfm_start.log"; true)
+
+      - name: Run CICFlowMeter on the 21 pcaps (per file)
+        run: |
+          set -eux
+          mkdir -p flows
+          docker run --rm -v "$PWD/pcaps":/pcap -v "$PWD/flows":/flow cfm-pinned /pcap /flow 2>&1 | tee cfm_run.log
+          ls -la flows
+
+      # ---- STEP 8 flag clip + create_network_states_v2 aggregation + compare ----
+      - name: Aggregate + compare (official vs emulation vs training)
+        run: |
+          set -eux
+          python models/pcap_analysis_v4/parity/cicflowmeter/aggregate_and_compare.py flows/ pcaps/ 2>&1 | tee compare.log || true
+          echo "----- cicflowmeter_vs_emulation_vs_training.csv -----"
+          cat flows/cicflowmeter_vs_emulation_vs_training.csv || true
+          echo "----- cicflowmeter_compare_summary.json -----"
+          cat flows/cicflowmeter_compare_summary.json || true
+
+      - name: Upload outputs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cicflowmeter-validation
+          path: |
+            flows/*.csv
+            flows/*.json
+            cfm_build.log
+            cfm_start.log
+            cfm_run.log
+            compare.log
+          if-no-files-found: warn
