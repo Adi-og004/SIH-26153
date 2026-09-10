@@ -1,0 +1,54 @@
+name: cicflowmeter-smoke
+
+# Build-and-start smoke test ONLY. Builds the pinned CICFlowMeter image with
+# per-layer progress and proves the executable loads its JNI + libpcap native
+# libs. Does NOT fetch or process any PCAP. Manual trigger only.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Runner env
+        run: |
+          uname -m; cat /etc/os-release | head -2; docker --version
+
+      - name: Build pinned CICFlowMeter image (per-layer progress)
+        run: |
+          set -euxo pipefail
+          DOCKER_BUILDKIT=1 docker build --progress=plain --no-cache --platform linux/amd64 \
+            -t cfm-pinned models/pcap_analysis_v4/parity/cicflowmeter/ 2>&1 | tee cfm_build.log
+          docker image inspect cfm-pinned --format 'IMAGE OK: {{.Id}} size={{.Size}}'
+
+      - name: Assert CICFlowMeter classes compiled
+        run: |
+          set -euxo pipefail
+          docker run --rm cfm-pinned ls -la /opt/CICFlowMeter/build/classes/java/main/cic/cs/unb/ca/ifm/
+
+      - name: Startup check (JNI + libpcap load)
+        run: |
+          set -euxo pipefail
+          out=$(docker run --rm cfm-pinned java \
+                  -Djava.library.path=/opt/CICFlowMeter/jnetpcap/linux/jnetpcap-1.4.r1425 \
+                  -cp /opt/CICFlowMeter/build/classes/java/main \
+                  cic.cs.unb.ca.ifm.Cmd 2>&1 || true)
+          echo "$out"
+          echo "$out" | grep -qi "select pcap" \
+            && echo "STARTUP OK -- JNI + jnetpcap + libpcap loaded, Cmd reached arg parsing" \
+            || { echo "STARTUP FAILED -- see output above"; exit 1; }
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cicflowmeter-smoke
+          path: cfm_build.log
+          if-no-files-found: warn

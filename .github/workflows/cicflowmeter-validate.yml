@@ -6,9 +6,7 @@ name: cicflowmeter-validate
 # Does NOT touch the V4 model. x86_64 Linux only (ubuntu-latest).
 
 on:
-  workflow_dispatch:
-  push:
-    branches: [cicflowmeter-validation]
+  workflow_dispatch:      # manual only -- do not auto-run on every push
 
 permissions:
   contents: read
@@ -25,7 +23,9 @@ jobs:
           python-version: '3.11'
 
       - name: Python deps
-        run: pip install --quiet remotezip scapy numpy pandas scikit-learn matplotlib
+        run: |
+          pip install --quiet remotezip scapy numpy pandas scikit-learn matplotlib
+          pip install --quiet --index-url https://download.pytorch.org/whl/cpu torch
 
       - name: Show runner env
         run: |

@@ -1,0 +1,11 @@
+{
+  "cfm_windows": 3259,
+  "emu_windows": 3277,
+  "mean_absz_cfm": 3.0031608536647174,
+  "mean_absz_emu": 2.502922203283869,
+  "within_1sd_cfm": 8,
+  "within_1sd_emu": 9,
+  "within_2sd_cfm": 15,
+  "within_2sd_emu": 15,
+  "flag_values_gt1_clipped": 950582
+}
