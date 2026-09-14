@@ -28,6 +28,7 @@ MITRE ATT&CK Tactics relevant to network telemetry:
 =============================================================
 """
 
+import argparse
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Optional
@@ -964,11 +965,29 @@ class LatentWorldModelV3(nn.Module):
 
 if __name__ == "__main__":
 
+    parser = argparse.ArgumentParser(
+        description=(
+            "Map World Model attack predictions to the "
+            "MITRE ATT&CK framework."
+        )
+    )
+    parser.add_argument(
+        "--version",
+        choices=["v3", "v4"],
+        default="v4",
+        help=(
+            "Which World Model checkpoint to map "
+            "(default: v4, the canonical model)."
+        ),
+    )
+    args = parser.parse_args()
+    version = args.version
+
     DATA_DIR = Path(
         "data/processed/temporal_benchmark_v2"
     )
     MODEL_DIR = Path(
-        "models/latent_world_model_v3"
+        f"models/latent_world_model_{version}"
     )
     OUTPUT_DIR = MODEL_DIR / "mitre_mapping"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -985,28 +1004,38 @@ if __name__ == "__main__":
     print("MITRE ATT&CK MAPPING — INTERPRETABLE")
     print("DECISION SUPPORT LAYER")
     print("=" * 80)
+    print(f"Model version: {version.upper()}")
     print(f"Device: {DEVICE}")
 
     # Load model
-    print("\n--- Loading V3 model ---")
-    checkpoint = torch.load(
-        MODEL_DIR / "latent_world_model_v3.pt",
-        map_location=DEVICE,
-        weights_only=False,
-    )
+    print(f"\n--- Loading {version.upper()} model ---")
+    if version == "v4":
+        # Reuse the canonical V4 model/checkpoint loader instead of
+        # duplicating the class definition (this file already carries
+        # the V3 one below) -- see src/pcap_ingest_v4.py.
+        from pcap_ingest_v4 import load_v4_model, CHECKPOINT_PATH
 
-    model = LatentWorldModelV3(
-        input_size=checkpoint["input_size"],
-        hidden_size=checkpoint["hidden_size"],
-        latent_size=checkpoint["latent_size"],
-        output_size=checkpoint["output_size"],
-        num_layers=checkpoint["num_layers"],
-        dropout=0.20,
-    )
-    model.load_state_dict(
-        checkpoint["model_state_dict"]
-    )
-    model = model.to(DEVICE)
+        model, checkpoint = load_v4_model(CHECKPOINT_PATH)
+        model = model.to(DEVICE)
+    else:
+        checkpoint = torch.load(
+            MODEL_DIR / "latent_world_model_v3.pt",
+            map_location=DEVICE,
+            weights_only=False,
+        )
+
+        model = LatentWorldModelV3(
+            input_size=checkpoint["input_size"],
+            hidden_size=checkpoint["hidden_size"],
+            latent_size=checkpoint["latent_size"],
+            output_size=checkpoint["output_size"],
+            num_layers=checkpoint["num_layers"],
+            dropout=0.20,
+        )
+        model.load_state_dict(
+            checkpoint["model_state_dict"]
+        )
+        model = model.to(DEVICE)
     model.eval()
 
     threshold = checkpoint["selected_threshold"]

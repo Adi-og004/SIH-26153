@@ -115,6 +115,26 @@ def main(flow_dir, pcap_dir):
     raw = pd.concat(frames, ignore_index=True)
     print(f"CICFlowMeter rows (all {len(files)} files): {len(raw):,}")
 
+    # ---- CICFlowMeter V4 header -> V3/training header aliases (mechanical rename,
+    #      NOT a value change). The V4.0 repo renamed many columns vs the V3 the
+    #      CSE-CIC-IDS2018 CSVs used.
+    V4_TO_V3 = {
+        "Total Fwd Packet": "Tot Fwd Pkts",
+        "Total Bwd packets": "Tot Bwd Pkts",
+        "Total Length of Fwd Packet": "TotLen Fwd Pkts",
+        "Total Length of Bwd Packet": "TotLen Bwd Pkts",
+        "Packet Length Mean": "Pkt Len Mean",
+        "Packet Length Std": "Pkt Len Std",
+        "FIN Flag Count": "FIN Flag Cnt",
+        "SYN Flag Count": "SYN Flag Cnt",
+        "RST Flag Count": "RST Flag Cnt",
+        "PSH Flag Count": "PSH Flag Cnt",
+        "ACK Flag Count": "ACK Flag Cnt",
+        "URG Flag Count": "URG Flag Cnt",
+    }
+    raw = raw.rename(columns={k: v for k, v in V4_TO_V3.items() if k in raw.columns})
+    print("applied V4->V3 header aliases:", [k for k in V4_TO_V3 if k in frames[0].columns])
+
     need = ["Flow ID","Src IP","Src Port","Dst IP","Dst Port","Protocol","Timestamp",
             "Flow Duration","Fwd IAT Mean","Bwd IAT Mean","Pkt Len Mean","Pkt Len Std",
             "Tot Fwd Pkts","Tot Bwd Pkts","TotLen Fwd Pkts","TotLen Bwd Pkts",

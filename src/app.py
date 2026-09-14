@@ -17,7 +17,6 @@ Run: streamlit run src/app.py
 """
 
 import json
-import pickle
 import tempfile
 from collections import defaultdict
 from pathlib import Path
@@ -30,6 +29,16 @@ from plotly.subplots import make_subplots
 import streamlit as st
 import torch
 import torch.nn as nn
+
+# Canonical PCAP -> V4 inference pipeline (single source of truth for
+# the "Live PCAP Ingestion" page). streamlit runs this file from src/,
+# so a bare module import resolves.
+import pcap_ingest_v4 as pcap_v4
+
+# Reused so an uploaded PCAP's results can drive every page (MITRE
+# mapping + feature attribution), not just the ingestion page itself.
+from mitre_mapper import MITREMapper
+from shap_explainer import FeatureExplainer
 
 
 # =============================================================
@@ -180,6 +189,22 @@ class LatentWorldModelV4(nn.Module):
     def predict_attack(self, z):
         return self.attack_head(z).squeeze(-1)
 
+    def k_step_rollout(self, x, k):
+        """Recursive K-step rollout. Returns (traj_z, traj_probs,
+        traj_states), each of length k + 1. Index 0 is Z_0
+        (nowcast); index i is the predicted state at t+i, with the
+        predicted latent fed back into the transition each step."""
+        z_current = self.encode(x)
+        traj_z = [z_current]
+        traj_probs = [torch.sigmoid(self.predict_attack(z_current))]
+        traj_states = [self.decode(z_current)]
+        for _ in range(k):
+            z_current = self.transition_step(z_current)
+            traj_probs.append(torch.sigmoid(self.predict_attack(z_current)))
+            traj_z.append(z_current)
+            traj_states.append(self.decode(z_current))
+        return traj_z, traj_probs, traj_states
+
     def forward(self, x):
         z = self.encode(x)
         z_next = self.transition_step(z)
@@ -297,6 +322,17 @@ def load_window_explanations():
     return None
 
 
+@st.cache_data
+def load_baseline_data():
+    """Benign training windows -- used only as the Integrated
+    Gradients baseline when explaining an uploaded PCAP. Unrelated
+    to the PCAP's own (unlabeled) data."""
+    X_train = np.load(DATA_DIR / "X_train.npy")
+    train_meta = pd.read_csv(DATA_DIR / "train_metadata.csv")
+    benign_mask = train_meta["attack_present"].values == 0
+    return X_train[benign_mask]
+
+
 @st.cache_resource
 def load_model():
     checkpoint = torch.load(
@@ -374,6 +410,28 @@ with st.sidebar:
         label_visibility="collapsed",
     )
 
+    st.divider()
+
+    st.markdown("### Data Source")
+    pcap_data = st.session_state.get("pcap_data")
+    if pcap_data is not None:
+        data_source = st.radio(
+            "Analyze which data?",
+            ["📊 Benchmark Dataset", "📡 My Uploaded PCAP"],
+            index=1,
+            label_visibility="collapsed",
+        )
+        st.caption(
+            f"📡 `{pcap_data['filename']}` — "
+            f"{pcap_data['n_windows']} windows analyzed"
+        )
+    else:
+        data_source = "📊 Benchmark Dataset"
+        st.caption(
+            "Upload a PCAP on **📡 Live PCAP Ingestion** to "
+            "analyze your own traffic on every page."
+        )
+
 
 # =============================================================
 # LOAD DATA
@@ -400,6 +458,42 @@ n_attacks_gt = test_meta["attack_present"].sum()
 
 
 # =============================================================
+# ACTIVE DATASET (Benchmark vs. uploaded-PCAP toggle)
+# =============================================================
+# Every page below reads *_active variables so the "Data Source"
+# sidebar toggle can swap in the just-uploaded PCAP's own results
+# (stashed in st.session_state by the Live PCAP Ingestion page)
+# without duplicating each page's rendering logic.
+
+using_pcap = (
+    data_source == "📡 My Uploaded PCAP" and pcap_data is not None
+)
+
+if using_pcap:
+    X_active = pcap_data["X"]
+    meta_active = pcap_data["meta"]
+    probs_active = pcap_data["probs"]
+    mitre_active = pcap_data["mitre_df"]
+    importance_active = pcap_data["importance_df"]
+    attributions_active = pcap_data["attributions"]
+    n_windows_active = pcap_data["n_windows"]
+    n_alerts_active = int(
+        (probs_active >= threshold).sum()
+    )
+    has_ground_truth = False
+else:
+    X_active = X_test
+    meta_active = test_meta
+    probs_active = probs
+    mitre_active = mitre_df
+    importance_active = importance_df
+    attributions_active = attributions
+    n_windows_active = n_windows
+    n_alerts_active = n_alerts
+    has_ground_truth = True
+
+
+# =============================================================
 # PAGE: OVERVIEW
 # =============================================================
 
@@ -414,25 +508,35 @@ if page == "🏠 Overview":
         "compromise — SIH 2026*"
     )
 
+    if using_pcap:
+        st.info(
+            f"📡 Showing your uploaded PCAP: "
+            f"**{pcap_data['filename']}**"
+        )
+
     st.divider()
 
     # Key metrics
-    c1, c2, c3, c4, c5 = st.columns(5)
+    if has_ground_truth:
+        c1, c2, c3, c4, c5 = st.columns(5)
+    else:
+        c1, c2, c4, c5 = st.columns(4)
 
     c1.metric(
-        "Total Windows", f"{n_windows}",
+        "Total Windows", f"{n_windows_active}",
         help="10-second temporal windows analyzed"
     )
     c2.metric(
         "🚨 Alerts",
-        f"{n_alerts}",
-        f"{n_alerts/n_windows*100:.1f}% of windows",
+        f"{n_alerts_active}",
+        f"{n_alerts_active/n_windows_active*100:.1f}% of windows",
     )
-    c3.metric(
-        "Ground Truth Attacks",
-        f"{n_attacks_gt}",
-        f"{n_attacks_gt/n_windows*100:.1f}%",
-    )
+    if has_ground_truth:
+        c3.metric(
+            "Ground Truth Attacks",
+            f"{n_attacks_gt}",
+            f"{n_attacks_gt/n_windows*100:.1f}%",
+        )
     c4.metric(
         "Features",
         "52",
@@ -449,44 +553,49 @@ if page == "🏠 Overview":
     # Quick timeline
     st.markdown("### 📈 Attack Probability Timeline")
 
-    fig = make_subplots(
-        rows=2, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.08,
-        row_heights=[0.3, 0.7],
-        subplot_titles=[
-            "Ground Truth", "Model Predictions"
-        ],
-    )
+    if has_ground_truth:
+        fig = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.08,
+            row_heights=[0.3, 0.7],
+            subplot_titles=[
+                "Ground Truth", "Model Predictions"
+            ],
+        )
 
-    # Ground truth
-    fig.add_trace(
-        go.Scatter(
-            x=test_meta["timestamp"],
-            y=test_meta["attack_present"],
-            fill="tozeroy",
-            fillcolor="rgba(231,76,60,0.3)",
-            line=dict(color="rgba(231,76,60,0.6)"),
-            name="Attack (GT)",
-        ),
-        row=1, col=1,
-    )
+        # Ground truth
+        fig.add_trace(
+            go.Scatter(
+                x=meta_active["timestamp"],
+                y=meta_active["attack_present"],
+                fill="tozeroy",
+                fillcolor="rgba(231,76,60,0.3)",
+                line=dict(color="rgba(231,76,60,0.6)"),
+                name="Attack (GT)",
+            ),
+            row=1, col=1,
+        )
+        prob_row = 2
+    else:
+        fig = make_subplots(rows=1, cols=1)
+        prob_row = 1
 
     # Attack probability
     fig.add_trace(
         go.Scatter(
-            x=test_meta["timestamp"],
-            y=probs,
+            x=meta_active["timestamp"],
+            y=probs_active,
             mode="lines",
             line=dict(color="#3498db", width=1.5),
             name="Attack Probability",
         ),
-        row=2, col=1,
+        row=prob_row, col=1,
     )
 
     # Threshold line
     fig.add_hline(
-        y=threshold, row=2, col=1,
+        y=threshold, row=prob_row, col=1,
         line_dash="dash",
         line_color="red",
         annotation_text=f"Threshold={threshold}",
@@ -501,11 +610,12 @@ if page == "🏠 Overview":
             x=0.5, xanchor="center",
         ),
     )
+    if has_ground_truth:
+        fig.update_yaxes(
+            title_text="Label", row=1, col=1,
+        )
     fig.update_yaxes(
-        title_text="Label", row=1, col=1,
-    )
-    fig.update_yaxes(
-        title_text="Probability", row=2, col=1,
+        title_text="Probability", row=prob_row, col=1,
     )
 
     st.plotly_chart(fig, use_container_width=True)
@@ -554,20 +664,34 @@ elif page == "🗺️ MITRE ATT&CK Timeline":
         "intelligence*"
     )
 
-    if mitre_df is None:
-        st.error(
-            "MITRE mapping data not found. "
-            "Run `python src/mitre_mapper.py` first."
-        )
+    if mitre_active is None:
+        if using_pcap:
+            st.error(
+                "MITRE mapping for this PCAP is not "
+                "available (feature attribution failed "
+                "during upload — see the Live PCAP "
+                "Ingestion page)."
+            )
+        else:
+            st.error(
+                "MITRE mapping data not found. "
+                "Run `python src/mitre_mapper.py` first."
+            )
         st.stop()
+
+    if using_pcap:
+        st.info(
+            f"📡 Showing your uploaded PCAP: "
+            f"**{pcap_data['filename']}**"
+        )
 
     st.divider()
 
     # Tactic distribution
     st.markdown("### Tactic Distribution")
 
-    alert_df = mitre_df[
-        mitre_df["tactic_id"] != "NONE"
+    alert_df = mitre_active[
+        mitre_active["tactic_id"] != "NONE"
     ]
 
     c1, c2 = st.columns([1, 2])
@@ -647,49 +771,63 @@ elif page == "🗺️ MITRE ATT&CK Timeline":
     # Timeline
     st.markdown("### MITRE ATT&CK Timeline")
 
-    mitre_df["timestamp_dt"] = pd.to_datetime(
-        mitre_df["timestamp"]
+    mitre_active["timestamp_dt"] = pd.to_datetime(
+        mitre_active["timestamp"]
     )
 
-    fig_timeline = make_subplots(
-        rows=3, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.06,
-        row_heights=[0.25, 0.5, 0.25],
-        subplot_titles=[
-            "Ground Truth",
-            "Attack Probability + MITRE Tactics",
-            "Confidence Level",
-        ],
-    )
+    if has_ground_truth:
+        prob_row, conf_row = 2, 3
+        fig_timeline = make_subplots(
+            rows=3, cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.06,
+            row_heights=[0.25, 0.5, 0.25],
+            subplot_titles=[
+                "Ground Truth",
+                "Attack Probability + MITRE Tactics",
+                "Confidence Level",
+            ],
+        )
 
-    # Ground truth
-    fig_timeline.add_trace(
-        go.Scatter(
-            x=mitre_df["timestamp_dt"],
-            y=mitre_df["ground_truth"],
-            fill="tozeroy",
-            fillcolor="rgba(231,76,60,0.3)",
-            line=dict(
-                color="rgba(231,76,60,0.6)"
+        # Ground truth
+        fig_timeline.add_trace(
+            go.Scatter(
+                x=mitre_active["timestamp_dt"],
+                y=mitre_active["ground_truth"],
+                fill="tozeroy",
+                fillcolor="rgba(231,76,60,0.3)",
+                line=dict(
+                    color="rgba(231,76,60,0.6)"
+                ),
+                name="Attack (GT)",
+                showlegend=True,
             ),
-            name="Attack (GT)",
-            showlegend=True,
-        ),
-        row=1, col=1,
-    )
+            row=1, col=1,
+        )
+    else:
+        prob_row, conf_row = 1, 2
+        fig_timeline = make_subplots(
+            rows=2, cols=1,
+            shared_xaxes=True,
+            vertical_spacing=0.08,
+            row_heights=[0.65, 0.35],
+            subplot_titles=[
+                "Attack Probability + MITRE Tactics",
+                "Confidence Level",
+            ],
+        )
 
     # Attack probability
     fig_timeline.add_trace(
         go.Scatter(
-            x=mitre_df["timestamp_dt"],
-            y=mitre_df["attack_probability"],
+            x=mitre_active["timestamp_dt"],
+            y=mitre_active["attack_probability"],
             mode="lines",
             line=dict(color="#ecf0f1", width=1),
             name="Attack Prob",
             showlegend=True,
         ),
-        row=2, col=1,
+        row=prob_row, col=1,
     )
 
     # MITRE tactic markers
@@ -716,12 +854,12 @@ elif page == "🗺️ MITRE ATT&CK Timeline":
                 name=tactic,
                 showlegend=True,
             ),
-            row=2, col=1,
+            row=prob_row, col=1,
         )
 
     # Threshold
     fig_timeline.add_hline(
-        y=threshold, row=2, col=1,
+        y=threshold, row=prob_row, col=1,
         line_dash="dash", line_color="red",
         annotation_text="Threshold",
     )
@@ -729,44 +867,45 @@ elif page == "🗺️ MITRE ATT&CK Timeline":
     # Confidence
     conf_map = {"n/a": 0, "low": 1,
                 "medium": 2, "high": 3}
-    conf_values = mitre_df["confidence"].map(
+    conf_values = mitre_active["confidence"].map(
         conf_map
     ).fillna(0)
     conf_colors = [
         CONFIDENCE_COLORS.get(c, "#34495e")
-        for c in mitre_df["confidence"]
+        for c in mitre_active["confidence"]
     ]
 
     fig_timeline.add_trace(
         go.Bar(
-            x=mitre_df["timestamp_dt"],
+            x=mitre_active["timestamp_dt"],
             y=conf_values,
             marker_color=conf_colors,
             name="Confidence",
             showlegend=False,
         ),
-        row=3, col=1,
+        row=conf_row, col=1,
     )
 
     fig_timeline.update_layout(
-        height=700,
+        height=700 if has_ground_truth else 550,
         template="plotly_dark",
         legend=dict(
             orientation="h", y=-0.08,
             x=0.5, xanchor="center",
         ),
     )
+    if has_ground_truth:
+        fig_timeline.update_yaxes(
+            title_text="Label", row=1, col=1,
+        )
     fig_timeline.update_yaxes(
-        title_text="Label", row=1, col=1,
-    )
-    fig_timeline.update_yaxes(
-        title_text="Prob", row=2, col=1,
+        title_text="Prob", row=prob_row, col=1,
     )
     fig_timeline.update_yaxes(
         title_text="Conf",
         tickvals=[0, 1, 2, 3],
         ticktext=["None", "Low", "Med", "High"],
-        row=3, col=1,
+        row=conf_row, col=1,
     )
 
     st.plotly_chart(
@@ -811,12 +950,25 @@ elif page == "🔍 Feature Attribution":
         "telemetry features drive each prediction.*"
     )
 
-    if importance_df is None:
-        st.error(
-            "Attribution data not found. "
-            "Run `python src/shap_explainer.py` first."
-        )
+    if importance_active is None:
+        if using_pcap:
+            st.error(
+                "Feature attribution for this PCAP is not "
+                "available (it may have failed during "
+                "upload — see the Live PCAP Ingestion page)."
+            )
+        else:
+            st.error(
+                "Attribution data not found. "
+                "Run `python src/shap_explainer.py` first."
+            )
         st.stop()
+
+    if using_pcap:
+        st.info(
+            f"📡 Showing your uploaded PCAP: "
+            f"**{pcap_data['filename']}**"
+        )
 
     st.divider()
 
@@ -828,7 +980,7 @@ elif page == "🔍 Feature Attribution":
         5, 52, 20,
     )
 
-    top_df = importance_df.head(top_n)
+    top_df = importance_active.head(top_n)
 
     colors = [
         "#e74c3c" if "_rel_change" in f
@@ -856,12 +1008,12 @@ elif page == "🔍 Feature Attribution":
     st.divider()
 
     # Attribution heatmap
-    if attributions is not None:
+    if attributions_active is not None:
         st.markdown(
             "### 🌡️ Attribution Heatmap Over Time"
         )
 
-        top10_feats = importance_df.head(10)[
+        top10_feats = importance_active.head(10)[
             "feature"
         ].values
         top10_idx = [
@@ -869,8 +1021,8 @@ elif page == "🔍 Feature Attribution":
             for f in top10_feats
         ]
 
-        n = min(attributions.shape[0], n_windows)
-        last_attr = attributions[:n, -1, :]
+        n = min(attributions_active.shape[0], n_windows_active)
+        last_attr = attributions_active[:n, -1, :]
         heatmap_data = last_attr[:, top10_idx].T
 
         fig_heat = make_subplots(
@@ -886,8 +1038,8 @@ elif page == "🔍 Feature Attribution":
 
         fig_heat.add_trace(
             go.Scatter(
-                x=test_meta["timestamp"][:n],
-                y=probs[:n],
+                x=meta_active["timestamp"][:n],
+                y=probs_active[:n],
                 fill="tozeroy",
                 fillcolor="rgba(52,152,219,0.3)",
                 line=dict(
@@ -903,7 +1055,7 @@ elif page == "🔍 Feature Attribution":
         fig_heat.add_trace(
             go.Heatmap(
                 z=heatmap_data,
-                x=test_meta["timestamp"][:n],
+                x=meta_active["timestamp"][:n],
                 y=list(top10_feats),
                 colorscale="RdBu_r",
                 zmin=-vmax, zmax=vmax,
@@ -929,11 +1081,18 @@ elif page == "🔍 Feature Attribution":
         "### ⚔️ Attack vs Benign Attribution"
     )
 
-    if attributions is not None:
-        n = min(attributions.shape[0], n_windows)
-        last_attr = attributions[:n, -1, :]
+    if not has_ground_truth:
+        st.info(
+            "This comparison needs labeled ground truth, "
+            "which an uploaded PCAP doesn't have. Switch "
+            "Data Source to **📊 Benchmark Dataset** to "
+            "see it."
+        )
+    elif attributions_active is not None:
+        n = min(attributions_active.shape[0], n_windows_active)
+        last_attr = attributions_active[:n, -1, :]
         attack_mask = (
-            test_meta["attack_present"]
+            meta_active["attack_present"]
             .values[:n] == 1
         )
 
@@ -1019,6 +1178,12 @@ elif page == "📊 Window Inspector":
         "mapping, and feature explanation.*"
     )
 
+    if using_pcap:
+        st.info(
+            f"📡 Showing your uploaded PCAP: "
+            f"**{pcap_data['filename']}**"
+        )
+
     st.divider()
 
     # Window selector
@@ -1027,13 +1192,13 @@ elif page == "📊 Window Inspector":
     with col1:
         selected_idx = st.slider(
             "Select Window Index",
-            0, n_windows - 1, 0,
+            0, n_windows_active - 1, 0,
         )
 
     with col2:
         # Quick jump to alerts
         alert_indices = np.where(
-            probs >= threshold
+            probs_active >= threshold
         )[0]
         if len(alert_indices) > 0:
             jump_to = st.selectbox(
@@ -1041,7 +1206,7 @@ elif page == "📊 Window Inspector":
                 alert_indices,
                 format_func=lambda x: (
                     f"Window {x} "
-                    f"(p={probs[x]:.2f})"
+                    f"(p={probs_active[x]:.2f})"
                 ),
             )
             if st.button("Go →"):
@@ -1050,26 +1215,30 @@ elif page == "📊 Window Inspector":
     st.divider()
 
     # Window details
-    prob = probs[selected_idx]
-    ts = test_meta["timestamp"].iloc[selected_idx]
-    gt = test_meta["attack_present"].iloc[
-        selected_idx
-    ]
-    gt_label = "🔴 ATTACK" if gt else "🟢 BENIGN"
+    prob = probs_active[selected_idx]
+    ts = meta_active["timestamp"].iloc[selected_idx]
 
     # Top metrics
-    mc1, mc2, mc3, mc4 = st.columns(4)
+    if has_ground_truth:
+        mc1, mc2, mc3, mc4 = st.columns(4)
+    else:
+        mc1, mc2, mc3 = st.columns(3)
     mc1.metric("Window", f"#{selected_idx}")
     mc2.metric("Timestamp", str(ts)[11:19])
     mc3.metric(
         "Attack Probability",
         f"{prob:.3f}",
     )
-    mc4.metric("Ground Truth", gt_label)
+    if has_ground_truth:
+        gt = meta_active["attack_present"].iloc[
+            selected_idx
+        ]
+        gt_label = "🔴 ATTACK" if gt else "🟢 BENIGN"
+        mc4.metric("Ground Truth", gt_label)
 
     # MITRE mapping for this window
-    if mitre_df is not None:
-        row = mitre_df.iloc[selected_idx]
+    if mitre_active is not None:
+        row = mitre_active.iloc[selected_idx]
 
         st.divider()
         st.markdown("### 🗺️ MITRE ATT&CK Assessment")
@@ -1103,14 +1272,14 @@ elif page == "📊 Window Inspector":
             )
 
     # Feature attribution for this window
-    if (attributions is not None
-            and selected_idx < attributions.shape[0]):
+    if (attributions_active is not None
+            and selected_idx < attributions_active.shape[0]):
 
         st.divider()
         st.markdown("### 🔍 Feature Attribution")
 
-        attr = attributions[selected_idx, -1, :]
-        vals = X_test[selected_idx, -1, :]
+        attr = attributions_active[selected_idx, -1, :]
+        vals = X_active[selected_idx, -1, :]
 
         top_k = 10
         abs_attr = np.abs(attr)
@@ -1178,7 +1347,7 @@ elif page == "📊 Window Inspector":
     with st.expander(
         "📋 Raw Feature Values (last timestep)"
     ):
-        raw_vals = X_test[selected_idx, -1, :]
+        raw_vals = X_active[selected_idx, -1, :]
         raw_df = pd.DataFrame({
             "Feature": INPUT_FEATURES,
             "Value (z-scored)": raw_vals,
@@ -1203,6 +1372,12 @@ elif page == "🔮 Trajectory Rollout":
         "anticipate attacker progression.*"
     )
 
+    if using_pcap:
+        st.info(
+            f"📡 Showing your uploaded PCAP: "
+            f"**{pcap_data['filename']}**"
+        )
+
     st.divider()
 
     # Controls
@@ -1210,7 +1385,8 @@ elif page == "🔮 Trajectory Rollout":
     with col1:
         rollout_window = st.slider(
             "Select starting window",
-            0, n_windows - 1, 140,
+            0, n_windows_active - 1,
+            min(140, n_windows_active - 1),
         )
     with col2:
         k_steps = st.slider(
@@ -1225,7 +1401,7 @@ elif page == "🔮 Trajectory Rollout":
 
     with torch.no_grad():
         x = torch.tensor(
-            X_test[rollout_window:rollout_window+1],
+            X_active[rollout_window:rollout_window+1],
             dtype=torch.float32,
         )
         z = model.encode(x)
@@ -1417,242 +1593,28 @@ elif page == "📡 Live PCAP Ingestion":
         )
 
     def parse_pcap_upload(pcap_bytes):
-        from scapy.all import rdpcap, IP, TCP, UDP
+        # Streaming parse via the canonical pipeline (PcapReader
+        # iterator -- constant memory, no rdpcap).
         with tempfile.NamedTemporaryFile(
             suffix=".pcap", delete=False
         ) as tmp:
             tmp.write(pcap_bytes)
             tmp_path = tmp.name
-
-        packets = rdpcap(tmp_path)
-        rows = []
-        for pkt in packets:
-            if not pkt.haslayer(IP):
-                continue
-            ip = pkt[IP]
-            src_port, dst_port, flags = 0, 0, ""
-            if pkt.haslayer(TCP):
-                tcp = pkt[TCP]
-                src_port = tcp.sport
-                dst_port = tcp.dport
-                flags = str(tcp.flags)
-            elif pkt.haslayer(UDP):
-                udp = pkt[UDP]
-                src_port = udp.sport
-                dst_port = udp.dport
-            rows.append({
-                "timestamp": float(pkt.time),
-                "src_ip": ip.src,
-                "dst_ip": ip.dst,
-                "src_port": src_port,
-                "dst_port": dst_port,
-                "protocol": ip.proto,
-                "pkt_len": len(pkt),
-                "flags": flags,
-            })
-        df = pd.DataFrame(rows)
-        if len(df) > 0:
-            df["timestamp"] = (
-                df["timestamp"] - df["timestamp"].min()
-            )
-        return df
+        return pcap_v4.parse_pcap_streaming(tmp_path)
 
     def pcap_reconstruct_flows(packet_df):
-        if len(packet_df) == 0:
-            return pd.DataFrame()
-        packet_df = packet_df.copy()
-        packet_df["window_idx"] = (
-            packet_df["timestamp"] // WINDOW_SECONDS
-        ).astype(int)
-
-        def make_flow_key(row):
-            ips = sorted(
-                [row["src_ip"], row["dst_ip"]]
-            )
-            ports = sorted(
-                [row["src_port"], row["dst_port"]]
-            )
-            return (
-                f"{ips[0]}:{ips[1]}:"
-                f"{ports[0]}:{ports[1]}:"
-                f"{row['protocol']}"
-            )
-
-        packet_df["flow_key"] = packet_df.apply(
-            make_flow_key, axis=1
-        )
-        packet_df["is_forward"] = (
-            packet_df["src_ip"] <= packet_df["dst_ip"]
-        )
-
-        flows = []
-        for (win_idx, fk), grp in \
-                packet_df.groupby(
-                    ["window_idx", "flow_key"]
-                ):
-            fwd = grp[grp["is_forward"]]
-            bwd = grp[~grp["is_forward"]]
-            ts = grp["timestamp"].values
-            dur = (
-                ts.max() - ts.min()
-                if len(ts) > 1 else 0.0
-            )
-            fwd_iats = (
-                np.diff(sorted(
-                    fwd["timestamp"].values
-                ))
-                if len(fwd) > 1
-                else np.array([0.0])
-            )
-            bwd_iats = (
-                np.diff(sorted(
-                    bwd["timestamp"].values
-                ))
-                if len(bwd) > 1
-                else np.array([0.0])
-            )
-            flows.append({
-                "window_idx": win_idx,
-                "flow_key": fk,
-                "total_packets": len(grp),
-                "total_bytes": grp["pkt_len"].sum(),
-                "fwd_packets": len(fwd),
-                "bwd_packets": len(bwd),
-                "fwd_bytes": (
-                    fwd["pkt_len"].sum()
-                    if len(fwd) > 0 else 0
-                ),
-                "bwd_bytes": (
-                    bwd["pkt_len"].sum()
-                    if len(bwd) > 0 else 0
-                ),
-                "duration": dur,
-                "mean_fwd_iat": fwd_iats.mean(),
-                "mean_bwd_iat": bwd_iats.mean(),
-                "pkt_lengths": grp[
-                    "pkt_len"
-                ].values.tolist(),
-                "dst_port": grp[
-                    "dst_port"
-                ].iloc[0],
-                "protocol": grp[
-                    "protocol"
-                ].iloc[0],
-                "flags": "|".join(
-                    grp["flags"].unique()
-                ),
-                "down_up_ratio": (
-                    len(bwd) / max(len(fwd), 1)
-                ),
-            })
-        return pd.DataFrame(flows)
+        # Canonical 5-tuple flow reconstruction.
+        return pcap_v4.reconstruct_flows(packet_df)
 
     def pcap_compute_features(flow_df, packet_df):
-        if len(flow_df) == 0:
-            return pd.DataFrame()
-        all_wins = sorted(
-            flow_df["window_idx"].unique()
-        )
-        win_pkts = packet_df.groupby(
-            (packet_df["timestamp"] // WINDOW_SECONDS)
-            .astype(int)
-        )
-        rows = []
-        for win_idx in all_wins:
-            wf = flow_df[
-                flow_df["window_idx"] == win_idx
-            ]
-            try:
-                wp = win_pkts.get_group(win_idx)
-            except KeyError:
-                wp = pd.DataFrame()
-
-            fc = len(wf)
-            tp = wf["total_packets"].sum()
-            tb = wf["total_bytes"].sum()
-            wpr = tp / WINDOW_SECONDS
-            wbr = tb / WINDOW_SECONDS
-
-            af = "|".join(
-                wf["flags"].fillna("")
-            ).upper()
-            nf = max(len(wp), 1)
-
-            all_lens = []
-            for lens in wf["pkt_lengths"]:
-                all_lens.extend(lens)
-
-            tfp = wf["fwd_packets"].sum()
-            tbp = wf["bwd_packets"].sum()
-            tfb = wf["fwd_bytes"].sum()
-            tbb = wf["bwd_bytes"].sum()
-            pt = max(tfp + tbp, 1)
-            bt = max(tfb + tbb, 1)
-
-            rows.append({
-                "window_idx": win_idx,
-                "timestamp": win_idx * WINDOW_SECONDS,
-                "flow_count": fc,
-                "log_flow_count": np.log1p(fc),
-                "log_total_packets": np.log1p(tp),
-                "log_total_bytes": np.log1p(tb),
-                "window_packet_rate": wpr,
-                "window_byte_rate": wbr,
-                "syn_rate": af.count("S") / nf,
-                "ack_rate": af.count("A") / nf,
-                "rst_rate": af.count("R") / nf,
-                "fin_rate": af.count("F") / nf,
-                "psh_rate": af.count("P") / nf,
-                "urg_rate": af.count("U") / nf,
-                "mean_pkt_len": (
-                    np.mean(all_lens)
-                    if all_lens else 0.0
-                ),
-                "std_pkt_len": (
-                    np.std(all_lens)
-                    if len(all_lens) > 1 else 0.0
-                ),
-                "log_mean_flow_duration": np.log1p(
-                    wf["duration"].mean()
-                ),
-                "log_mean_fwd_iat": np.log1p(
-                    wf["mean_fwd_iat"].mean()
-                ),
-                "log_mean_bwd_iat": np.log1p(
-                    wf["mean_bwd_iat"].mean()
-                ),
-                "fwd_packet_ratio": tfp / pt,
-                "bwd_packet_ratio": tbp / pt,
-                "fwd_byte_ratio": tfb / bt,
-                "bwd_byte_ratio": tbb / bt,
-                "mean_down_up_ratio": wf[
-                    "down_up_ratio"
-                ].mean(),
-                "log_unique_dst_ports": np.log1p(
-                    wf["dst_port"].nunique()
-                ),
-                "unique_protocols": wf[
-                    "protocol"
-                ].nunique(),
-                "dst_port_entropy": pcap_entropy(
-                    wf["dst_port"].values
-                ),
-                "protocol_entropy": pcap_entropy(
-                    wf["protocol"].values
-                ),
-            })
-        return pd.DataFrame(rows)
+        # Canonical 26 base features per 10s window (per-packet TCP
+        # flag fractions, matching pcap_ingest_v4).
+        return pcap_v4.compute_window_features(flow_df, packet_df)
 
     def pcap_add_rel_changes(window_df):
-        df = window_df.copy()
-        eps = 1e-8
-        for feat in BASE_FEATURES:
-            prev = df[feat].shift(1).fillna(0)
-            df[f"{feat}_rel_change"] = (
-                (df[feat] - prev)
-                / (prev.abs() + eps)
-            ).clip(-10, 10)
-        return df
+        # Canonical rel-change semantics (first row zeroed, inf->0,
+        # clip [-10, 10]) -- matches prepare_multiday_benchmark.py.
+        return pcap_v4.add_relative_changes(window_df)
 
     # --- Upload widget ---
     uploaded = st.file_uploader(
@@ -1663,6 +1625,7 @@ elif page == "📡 Live PCAP Ingestion":
     )
 
     if uploaded is not None:
+        file_id = (uploaded.name, uploaded.size)
         pcap_bytes = uploaded.read()
         file_size_mb = len(pcap_bytes) / (1024 * 1024)
 
@@ -1725,75 +1688,48 @@ elif page == "📡 Live PCAP Ingestion":
                 f"across **{n_windows}** time windows"
             )
 
-            # Normalize
-            scaler_path = (
-                DATA_DIR / "input_scaler.pkl"
+            # Canonical scaling + strictly-contiguous sequence
+            # windowing (rejects sequences that span an empty-window
+            # temporal gap). Uses the multiday_benchmark_K5 scaler.
+            pcap_scaler = pcap_v4.load_scaler(
+                pcap_v4.INPUT_SCALER_PATH
             )
-            with open(scaler_path, "rb") as f:
-                scaler = pickle.load(f)
-
-            feat_matrix = feature_df[
-                INPUT_FEATURES
-            ].values
-            feat_scaled = scaler.transform(
-                feat_matrix
+            seq_pack = pcap_v4.build_sequences(
+                feature_df, pcap_scaler
             )
+            X_pcap = seq_pack["X"]
+            seq_timestamps = seq_pack["seq_ts_rel"]
+            n_gap_rejected = seq_pack["n_rejected_gap"]
 
-            # Create sequences
-            sequences = []
-            seq_timestamps = []
-            for i in range(
-                len(feat_scaled) - SEQ_LEN + 1
-            ):
-                sequences.append(
-                    feat_scaled[i:i + SEQ_LEN]
-                )
-                seq_timestamps.append(
-                    feature_df["timestamp"].iloc[
-                        i + SEQ_LEN - 1
-                    ]
-                )
-
-            if len(sequences) == 0:
+            if len(X_pcap) == 0:
                 st.warning(
-                    f"⚠️ Need at least "
-                    f"{SEQ_LEN * WINDOW_SECONDS}s "
-                    f"of traffic for analysis. "
-                    f"This file has {duration:.0f}s."
+                    f"⚠️ Need at least {SEQ_LEN} strictly "
+                    f"contiguous 10s windows "
+                    f"({SEQ_LEN * WINDOW_SECONDS}s of gap-free "
+                    f"traffic). Candidates: "
+                    f"{seq_pack['n_candidate']}, all rejected "
+                    f"for temporal gaps: {n_gap_rejected}."
                 )
             else:
-                X_pcap = np.array(
-                    sequences, dtype=np.float32
-                )
-
-                # Run inference
+                # True recursive K=5 latent rollout (encode once,
+                # feed each predicted latent back through the gated
+                # transition). NOT five independent predictions.
+                k_pcap = int(ckpt["max_k"])
                 with st.spinner(
-                    "🧠 Running V4 World Model "
-                    "inference..."
+                    f"🧠 Running V4 recursive K={k_pcap} "
+                    f"rollout..."
                 ):
-                    with torch.no_grad():
-                        X_pt = torch.tensor(
-                            X_pcap,
-                            dtype=torch.float32,
-                        )
-                        z_pcap = model.encode(X_pt)
-                        z_next_pcap = (
-                            model.transition_step(
-                                z_pcap
-                            )
-                        )
-                        logits_pcap = (
-                            model.predict_attack(
-                                z_next_pcap
-                            )
-                        )
-                        probs_pcap = torch.sigmoid(
-                            logits_pcap
-                        ).numpy()
+                    roll_pcap = pcap_v4.run_k_rollout(
+                        model, X_pcap, k_pcap
+                    )
+                traj_pcap = roll_pcap["probs"]          # (N, K+1)
+                nowcast_pcap = traj_pcap[:, 0]
+                # Alert horizon = peak probability across t+0..t+K.
+                probs_pcap = traj_pcap.max(axis=1)
 
-                pcap_threshold = ckpt[
-                    "selected_threshold"
-                ]
+                pcap_threshold = float(
+                    ckpt["selected_threshold"]
+                )  # FROZEN — from checkpoint, never from PCAP
                 alerts_pcap = (
                     probs_pcap >= pcap_threshold
                 )
@@ -1803,6 +1739,138 @@ elif page == "📡 Live PCAP Ingestion":
                 max_prob_pcap = float(
                     probs_pcap.max()
                 )
+
+                # --- Pseudo-datetimes so every other page's
+                # datetime-based plotting/slicing works unchanged
+                # (a PCAP has elapsed seconds since capture start,
+                # not calendar dates). ---
+                pcap_timestamps_dt = (
+                    pd.Timestamp("2000-01-01")
+                    + pd.to_timedelta(seq_timestamps, unit="s")
+                )
+                pcap_meta = pd.DataFrame({
+                    "timestamp": pcap_timestamps_dt,
+                    "attack_present": np.nan,
+                })
+
+                # --- MITRE ATT&CK mapping, reusing the same rule
+                # library the benchmark dataset uses. ---
+                with st.spinner(
+                    "🗺️ Mapping to MITRE ATT&CK..."
+                ):
+                    pcap_mapper = MITREMapper(
+                        model=model,
+                        threshold=pcap_threshold,
+                        device="cpu",
+                    )
+                    first_alert_idx_pcap = (
+                        int(np.argmax(alerts_pcap))
+                        if alerts_pcap.any() else None
+                    )
+                    pcap_mappings = [
+                        pcap_mapper.map_single_window(
+                            x_window=X_pcap[i],
+                            window_idx=i,
+                            timestamp=str(pcap_timestamps_dt[i]),
+                            total_windows=len(X_pcap),
+                            first_alert_idx=first_alert_idx_pcap,
+                            attack_prob=float(probs_pcap[i]),
+                        )
+                        for i in range(len(X_pcap))
+                    ]
+                    pcap_mitre_df = pd.DataFrame([
+                        {
+                            "window_index": m.window_index,
+                            "timestamp": m.timestamp,
+                            "attack_probability": (
+                                m.attack_probability
+                            ),
+                            "tactic_id": m.tactic_id,
+                            "tactic_name": m.tactic_name,
+                            "technique_id": m.technique_id or "",
+                            "technique_name": (
+                                m.technique_name or ""
+                            ),
+                            "confidence": m.confidence,
+                            "temporal_phase": m.temporal_phase,
+                            "triggering_features": "; ".join(
+                                m.triggering_features
+                            ),
+                            "explanation": m.analyst_explanation,
+                        }
+                        for m in pcap_mappings
+                    ])
+
+                # --- Feature attribution (Integrated Gradients).
+                # Baseline is drawn from benign BENCHMARK training
+                # windows -- the baseline is orthogonal to the
+                # PCAP's own (unlabeled) traffic. ---
+                pcap_importance_df = None
+                pcap_attributions = None
+                try:
+                    with st.spinner(
+                        "🔍 Computing feature attribution "
+                        "(Integrated Gradients)..."
+                    ):
+                        baseline_data = load_baseline_data()
+                        pcap_explainer = FeatureExplainer(
+                            model=model,
+                            baseline_data=baseline_data,
+                            device="cpu",
+                        )
+                        pcap_attributions = (
+                            pcap_explainer.explain_windows(
+                                X_pcap, max_windows=len(X_pcap)
+                            )
+                        )
+                        pcap_importance_df = (
+                            pcap_explainer.get_feature_importance(
+                                pcap_attributions
+                            )
+                        )
+                except Exception as exc:
+                    st.warning(
+                        f"⚠️ Feature attribution failed: {exc}"
+                    )
+
+                # --- Persist for every other page (Overview,
+                # MITRE Timeline, Feature Attribution, Window
+                # Inspector, Trajectory Rollout) via the sidebar
+                # "Data Source" toggle. ---
+                st.session_state.pcap_data = {
+                    "file_id": file_id,
+                    "filename": uploaded.name,
+                    "X": X_pcap,
+                    "meta": pcap_meta,
+                    "probs": probs_pcap,
+                    "mitre_df": pcap_mitre_df,
+                    "importance_df": pcap_importance_df,
+                    "attributions": pcap_attributions,
+                    "n_windows": len(X_pcap),
+                }
+                st.success(
+                    "📌 Results saved — every other page now "
+                    "shows **📡 My Uploaded PCAP** via the "
+                    "sidebar Data Source toggle."
+                )
+
+                # The sidebar (rendered earlier in this same script
+                # pass) can't see the pcap_data we just stashed
+                # above -- force one rerun so it picks it up
+                # immediately. Guarded so re-running the pipeline
+                # after the rerun doesn't loop forever.
+                if st.session_state.get(
+                    "_pcap_rerun_done_for"
+                ) != file_id:
+                    st.session_state._pcap_rerun_done_for = file_id
+                    st.rerun()
+
+                if n_gap_rejected:
+                    st.caption(
+                        f"⏱️ {n_gap_rejected} candidate "
+                        f"sequence(s) rejected: they spanned "
+                        f"an empty-window temporal gap."
+                    )
 
                 st.divider()
 
@@ -1850,12 +1918,25 @@ elif page == "📡 Live PCAP Ingestion":
                         x=seq_timestamps,
                         y=probs_pcap,
                         mode="lines+markers",
-                        name="Attack Prob",
+                        name="Peak prob (t+0..t+K)",
                         line=dict(
-                            color="#3498db",
+                            color="#8e44ad",
                             width=2,
                         ),
                         marker=dict(size=4),
+                    )
+                )
+                fig_pcap.add_trace(
+                    go.Scatter(
+                        x=seq_timestamps,
+                        y=nowcast_pcap,
+                        mode="lines",
+                        name="Nowcast prob (t+0)",
+                        line=dict(
+                            color="#3498db",
+                            width=1,
+                            dash="dot",
+                        ),
                     )
                 )
                 fig_pcap.add_hline(
@@ -1893,6 +1974,66 @@ elif page == "📡 Live PCAP Ingestion":
                 )
                 st.plotly_chart(
                     fig_pcap, use_container_width=True
+                )
+
+                # K-step recursive rollout trajectories
+                st.markdown(
+                    f"### Recursive K={k_pcap} Rollout "
+                    f"Trajectories"
+                )
+                st.caption(
+                    "Each grey line is one sequence rolled "
+                    "forward t+0 → t+%d in latent space; the "
+                    "predicted latent is fed back into the "
+                    "gated transition at every step. Red = "
+                    "mean trajectory." % k_pcap
+                )
+                steps_pcap = list(range(k_pcap + 1))
+                fig_traj = go.Figure()
+                for row in traj_pcap:
+                    fig_traj.add_trace(
+                        go.Scatter(
+                            x=steps_pcap, y=row,
+                            mode="lines",
+                            line=dict(
+                                color="rgba(150,150,150,0.25)",
+                                width=1,
+                            ),
+                            showlegend=False,
+                            hoverinfo="skip",
+                        )
+                    )
+                fig_traj.add_trace(
+                    go.Scatter(
+                        x=steps_pcap,
+                        y=traj_pcap.mean(axis=0),
+                        mode="lines+markers",
+                        name="mean trajectory",
+                        line=dict(color="#e74c3c", width=3),
+                    )
+                )
+                fig_traj.add_hline(
+                    y=pcap_threshold,
+                    line_dash="dash",
+                    line_color="red",
+                    annotation_text=(
+                        f"Threshold ({pcap_threshold})"
+                    ),
+                )
+                fig_traj.update_layout(
+                    xaxis_title="Rollout step (t+k)",
+                    yaxis_title="Attack Probability",
+                    yaxis_range=[0, 1],
+                    xaxis=dict(
+                        tickmode="array",
+                        tickvals=steps_pcap,
+                    ),
+                    template="plotly_dark",
+                    height=380,
+                    margin=dict(l=40, r=20, t=30, b=40),
+                )
+                st.plotly_chart(
+                    fig_traj, use_container_width=True
                 )
 
                 # Protocol distribution
@@ -1940,7 +2081,11 @@ elif page == "📡 Live PCAP Ingestion":
                             f"{t:.1f}"
                             for t in seq_timestamps
                         ],
-                        "Attack Prob": [
+                        "Nowcast (t+0)": [
+                            f"{p:.4f}"
+                            for p in nowcast_pcap
+                        ],
+                        "Peak (t+0..t+K)": [
                             f"{p:.4f}"
                             for p in probs_pcap
                         ],
@@ -1949,6 +2094,11 @@ elif page == "📡 Live PCAP Ingestion":
                             for a in alerts_pcap
                         ],
                     })
+                    for _kk in range(1, k_pcap + 1):
+                        res_df[f"t+{_kk}"] = [
+                            f"{p:.4f}"
+                            for p in traj_pcap[:, _kk]
+                        ]
                     st.dataframe(
                         res_df,
                         use_container_width=True,
@@ -1962,26 +2112,29 @@ elif page == "📡 Live PCAP Ingestion":
             "start the analysis pipeline.\n\n"
             "**Supported formats:** `.pcap`, "
             "`.pcapng`, `.cap`\n\n"
-            "**How it works:**\n"
-            "1. Packets are parsed using Scapy\n"
+            "**How it works** (canonical `pcap_ingest_v4` "
+            "pipeline):\n"
+            "1. Packets are streamed with Scapy "
+            "`PcapReader`\n"
             "2. Flows are reconstructed (5-tuple)\n"
             "3. 52 features are extracted per "
             "10-second window\n"
-            "4. Features are z-score normalized "
-            "using the training scaler\n"
-            "5. V4 World Model runs inference "
-            "and flags threats"
+            "4. Features are z-score normalized using the "
+            "`multiday_benchmark_K5` scaler\n"
+            "5. V4 World Model runs a recursive K=5 latent "
+            "rollout; threshold (0.05) is read from the "
+            "checkpoint"
         )
 
         st.markdown("### Pipeline Architecture")
         st.code(
             ".pcap file\n"
-            "  → Scapy packet parser\n"
+            "  → Scapy PcapReader (streaming)\n"
             "  → Bidirectional flow reconstruction\n"
             "  → 10-second window aggregation\n"
             "  → 52-feature extraction\n"
-            "  → Z-score normalization\n"
-            "  → V4 World Model inference\n"
+            "  → Z-score normalization (K5 scaler)\n"
+            "  → V4 recursive K=5 latent rollout\n"
             "  → Threat alerts + MITRE mapping",
             language=None,
         )

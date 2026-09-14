@@ -1,7 +1,30 @@
 """
 =============================================================
-RAW NETWORK TRAFFIC INGESTION — PCAP PROCESSING
+[DEPRECATED] LEGACY PCAP INGESTION — V3 SINGLE-STEP
 =============================================================
+
+>>> DEPRECATED. Do not use for new work. <<<
+
+The canonical PCAP -> World Model inference implementation is
+now:
+
+    src/pcap_ingest_v4.py
+
+That script targets the V4 architecture (gated residual
+deterministic transition + latent LayerNorm), loads the V4
+checkpoint (models/latent_world_model_v4/latent_world_model_v4.pt),
+uses the canonical scaler and feature ordering from
+data/processed/multiday_benchmark_K5/, performs a true
+recursive K=5 latent rollout, and reads the frozen validation
+threshold (0.05) from the checkpoint.
+
+This file is kept only for historical reference / comparison.
+It loads the V3 model, the temporal_benchmark_v2 scaler, does a
+single-step (K=1) prediction, and hardcodes threshold=0.10.
+None of those match the current V4 contract.
+
+=============================================================
+LEGACY DESCRIPTION (V3):
 
 This module reads raw .pcap (packet capture) files and
 converts them into the exact 52-feature, 10-second window

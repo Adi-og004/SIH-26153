@@ -203,13 +203,21 @@ class AttackProbWrapper(nn.Module):
     Thin wrapper that Captum can call.
     Input: (batch, seq_len, 52)
     Output: (batch, 1) attack probability
+
+    Built from the encode -> transition_step -> predict_attack
+    chain directly (rather than a model-specific convenience
+    method) so it works unmodified against both the V3 and V4
+    model classes.
     """
     def __init__(self, model):
         super().__init__()
         self.model = model
 
     def forward(self, x):
-        return self.model.attack_probability(x)
+        z = self.model.encode(x)
+        z_next = self.model.transition_step(z)
+        logit = self.model.predict_attack(z_next)
+        return torch.sigmoid(logit).unsqueeze(-1)
 
 
 # =============================================================
@@ -417,11 +425,31 @@ class FeatureExplainer:
 
 if __name__ == "__main__":
 
+    import argparse
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Compute Integrated Gradients feature "
+            "attribution for a World Model checkpoint."
+        )
+    )
+    parser.add_argument(
+        "--version",
+        choices=["v3", "v4"],
+        default="v4",
+        help=(
+            "Which World Model version to explain "
+            "(default: v4, the canonical model)."
+        ),
+    )
+    args = parser.parse_args()
+    version = args.version
+
     DATA_DIR = Path(
         "data/processed/temporal_benchmark_v2"
     )
     MODEL_DIR = Path(
-        "models/latent_world_model_v3"
+        f"models/latent_world_model_{version}"
     )
     OUTPUT_DIR = MODEL_DIR / "shap_analysis"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -432,28 +460,38 @@ if __name__ == "__main__":
     print("=" * 80)
     print("FEATURE ATTRIBUTION — INTEGRATED GRADIENTS")
     print("=" * 80)
+    print(f"Model version: {version.upper()}")
     print(f"Device: {DEVICE}")
 
     # Load model
-    print("\n--- Loading V3 model ---")
-    checkpoint = torch.load(
-        MODEL_DIR / "latent_world_model_v3.pt",
-        map_location=DEVICE,
-        weights_only=False,
-    )
+    print(f"\n--- Loading {version.upper()} model ---")
+    if version == "v4":
+        # Reuse the canonical V4 model/checkpoint loader instead of
+        # duplicating the class definition -- see
+        # src/pcap_ingest_v4.py.
+        from pcap_ingest_v4 import load_v4_model, CHECKPOINT_PATH
 
-    model = LatentWorldModelV3(
-        input_size=checkpoint["input_size"],
-        hidden_size=checkpoint["hidden_size"],
-        latent_size=checkpoint["latent_size"],
-        output_size=checkpoint["output_size"],
-        num_layers=checkpoint["num_layers"],
-        dropout=0.20,
-    )
-    model.load_state_dict(
-        checkpoint["model_state_dict"]
-    )
-    model = model.to(DEVICE)
+        model, checkpoint = load_v4_model(CHECKPOINT_PATH)
+        model = model.to(DEVICE)
+    else:
+        checkpoint = torch.load(
+            MODEL_DIR / "latent_world_model_v3.pt",
+            map_location=DEVICE,
+            weights_only=False,
+        )
+
+        model = LatentWorldModelV3(
+            input_size=checkpoint["input_size"],
+            hidden_size=checkpoint["hidden_size"],
+            latent_size=checkpoint["latent_size"],
+            output_size=checkpoint["output_size"],
+            num_layers=checkpoint["num_layers"],
+            dropout=0.20,
+        )
+        model.load_state_dict(
+            checkpoint["model_state_dict"]
+        )
+        model = model.to(DEVICE)
     model.eval()
 
     threshold = checkpoint["selected_threshold"]
@@ -485,9 +523,11 @@ if __name__ == "__main__":
         X_test_t = torch.tensor(
             X_test, dtype=torch.float32
         ).to(DEVICE)
+        z_test = model.encode(X_test_t)
+        z_test_next = model.transition_step(z_test)
         test_probs = (
-            model.attack_probability(X_test_t)
-            .squeeze(-1).cpu().numpy()
+            torch.sigmoid(model.predict_attack(z_test_next))
+            .cpu().numpy()
         )
 
     # =========================================================
