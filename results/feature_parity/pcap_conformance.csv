@@ -1,0 +1,8 @@
+pcap,size_bytes,packets,flows,windows,base_feature_order_matches_contract,all_52_features_present,feature_order_matches_contract,all_finite,relative_change_within_clip,first_row_relative_change_is_zero,window_index_is_floor_aligned,status,error
+demo_c2_beacon.pcap,321049,1390,194,22,True,True,True,True,True,True,True,CONFORMS,
+demo_dos_flood.pcap,463239,5857,5431,22,True,True,True,True,True,True,True,CONFORMS,
+demo_exfiltration.pcap,9697049,10470,744,22,True,True,True,True,True,True,True,CONFORMS,
+demo_lateral_movement.pcap,3478321,38406,4821,22,True,True,True,True,True,True,True,CONFORMS,
+demo_portscan.pcap,766549,10190,4924,22,True,True,True,True,True,True,True,CONFORMS,
+smallFlows.pcap,9444731,14243,641,30,True,True,True,True,True,True,True,CONFORMS,
+synthetic_traffic.pcap,36984,660,420,13,True,True,True,True,True,True,True,CONFORMS,

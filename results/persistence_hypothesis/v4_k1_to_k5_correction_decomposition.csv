@@ -1,0 +1,31 @@
+analysis,model,horizon,phase,attack_windows,fn,tp,recall,mean_probability,fn_k1,fn_k5,fn_reduction,fraction_of_total_reduction,attack_windows_k1,attack_windows_k5,paired_attack_windows,missed_at_k1_caught_at_k5,caught_at_k1_missed_at_k5,caught_at_both,missed_at_both,mean_prob_k1,mean_prob_k5
+A_category_fn_counts,v4_world_model,1,early,12.0,10.0,2.0,0.16666666666666666,0.07919494275745112,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,1,late,35.0,14.0,21.0,0.6,0.46988844123802015,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,1,mid,1981.0,1129.0,852.0,0.43008581524482586,0.3282747933406999,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,1,onset_related,2.0,1.0,1.0,0.5,0.25689590290837216,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,1,short_episode,1.0,0.0,1.0,1.0,0.6876021027565002,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,2,early,12.0,9.0,3.0,0.25,0.15545982707728653,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,2,late,36.0,12.0,24.0,0.6666666666666666,0.5172380223973758,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,2,mid,1980.0,949.0,1031.0,0.5207070707070707,0.418630019687682,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,2,onset_related,2.0,1.0,1.0,0.5,0.3077475016165021,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,2,short_episode,1.0,0.0,1.0,1.0,0.7312012910842896,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,3,early,12.0,9.0,3.0,0.25,0.23532808178259637,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,3,late,37.0,10.0,27.0,0.7297297297297297,0.6391362330398044,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,3,mid,1979.0,905.0,1074.0,0.5426983324911572,0.5094937850099528,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,3,onset_related,2.0,1.0,1.0,0.5,0.36142501701004903,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,3,short_episode,1.0,0.0,1.0,1.0,0.7549981474876404,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,5,early,12.0,6.0,6.0,0.5,0.37605285593219645,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,5,late,39.0,9.0,30.0,0.7692307692307693,0.6455461992285191,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,5,mid,1977.0,763.0,1214.0,0.6140617096611026,0.5755869941913793,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,5,onset_related,2.0,2.0,0.0,0.0,0.3549813518345104,,,,,,,,,,,,,
+A_category_fn_counts,v4_world_model,5,short_episode,1.0,0.0,1.0,1.0,0.7668306827545166,,,,,,,,,,,,,
+B_k1_minus_k5_fn_delta,v4_world_model,1->5,early,,,,,,10.0,6.0,4.0,0.0106951871657754,12.0,12.0,,,,,,,
+B_k1_minus_k5_fn_delta,v4_world_model,1->5,late,,,,,,14.0,9.0,5.0,0.013368983957219251,35.0,39.0,,,,,,,
+B_k1_minus_k5_fn_delta,v4_world_model,1->5,mid,,,,,,1129.0,763.0,366.0,0.9786096256684492,1981.0,1977.0,,,,,,,
+B_k1_minus_k5_fn_delta,v4_world_model,1->5,onset_related,,,,,,1.0,2.0,-1.0,-0.00267379679144385,2.0,2.0,,,,,,,
+B_k1_minus_k5_fn_delta,v4_world_model,1->5,short_episode,,,,,,0.0,0.0,0.0,0.0,1.0,1.0,,,,,,,
+C_target_aligned_pairs,v4_world_model,1 vs 5 (same target window),early,,,,,,,,,,,,12.0,4.0,0.0,2.0,6.0,0.07919494275745112,0.37605285593219645
+C_target_aligned_pairs,v4_world_model,1 vs 5 (same target window),late,,,,,,,,,,,,35.0,11.0,6.0,15.0,3.0,0.46988844123802015,0.6347059656466757
+C_target_aligned_pairs,v4_world_model,1 vs 5 (same target window),mid,,,,,,,,,,,,1977.0,525.0,163.0,689.0,600.0,0.3284617135206121,0.5755869941913793
+C_target_aligned_pairs,v4_world_model,1 vs 5 (same target window),onset_related,,,,,,,,,,,,2.0,0.0,1.0,0.0,1.0,0.25689590290837216,0.3549813518345104
+C_target_aligned_pairs,v4_world_model,1 vs 5 (same target window),short_episode,,,,,,,,,,,,1.0,0.0,0.0,1.0,0.0,0.6876021027565002,0.7668306827545166

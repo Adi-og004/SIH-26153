@@ -1,0 +1,122 @@
+{
+  "name": "15_window_boundary_causality",
+  "description": "a window-size change that straddles a 10 s boundary \u2014 it must be attributed to the LATER window and must leave the earlier window untouched",
+  "derivation": "window 0 holds p1 (t=1, win=1000) and p2 (t=2, win=1000): eligible = 1 (p2), changed = 0, rate = 0.0. window 1 holds p3 (t=11, win=2000) and p4 (t=12, win=2000): eligible = 2, changed = 1 (p3 differs from its predecessor p2), rate = 0.5. If the builder leaked backwards, window 0's mean would not be exactly log1p(1000).",
+  "packet_defaults": {
+    "timestamp_abs": 0.0,
+    "ip_version": 4,
+    "src_ip": "10.0.0.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 1000,
+    "dst_port": 80,
+    "protocol": 6,
+    "ttl": 64,
+    "ip_df": false,
+    "ip_mf": false,
+    "ip_frag_offset": 0,
+    "is_tcp": true,
+    "tcp_window": 1000,
+    "tcp_seq": 0,
+    "tcp_syn": false,
+    "tcp_fin": false,
+    "payload_len": 0
+  },
+  "packets": [
+    {
+      "timestamp_abs": 1.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 1000,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 2.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 1100,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 11.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 2000,
+      "tcp_seq": 1200,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 12.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 2000,
+      "tcp_seq": 1300,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    }
+  ],
+  "expected_windows": [
+    {
+      "window_idx": 0,
+      "packet_count": 2,
+      "features": {
+        "log_tcp_window_mean": 6.90875477931522,
+        "log_tcp_window_max": 6.90875477931522,
+        "tcp_window_change_rate": 0.0
+      }
+    },
+    {
+      "window_idx": 1,
+      "packet_count": 2,
+      "features": {
+        "log_tcp_window_mean": 7.601402334583733,
+        "log_tcp_window_max": 7.601402334583733,
+        "tcp_window_change_rate": 0.5
+      }
+    }
+  ]
+}

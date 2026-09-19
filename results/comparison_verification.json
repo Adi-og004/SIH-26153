@@ -1,0 +1,120 @@
+{
+  "generated_utc": "2026-09-19T04:21:01Z",
+  "overall": "PASS",
+  "checks": {
+    "v4_baseline_verifier_pass": "PASS",
+    "lr_baseline_verifier_pass": "PASS",
+    "train_days_expected": "PASS",
+    "validation_days_expected": "PASS",
+    "test_day_is_mar2_only": "PASS",
+    "test_day_absent_from_train_and_validation": "PASS",
+    "validation_is_chronologically_after_train": "PASS",
+    "no_duplicate_sequences_within_splits": "PASS",
+    "no_overlapping_sequences_across_splits": "PASS",
+    "target_alignment_t_plus_k_verified": "PASS",
+    "input_scaler_fitted_on_train_only": "PASS",
+    "input_scaler_not_refit_for_comparison": "PASS",
+    "v4_metrics_match_frozen_reference": "PASS",
+    "lr_metrics_match_frozen_baseline": "PASS",
+    "all_thresholds_re_derived_from_validation": "PASS",
+    "test_labels_not_used_for_threshold_selection": "PASS",
+    "all_models_same_test_examples": "PASS",
+    "all_models_same_targets": "PASS",
+    "identical_horizon_alignment": "PASS",
+    "no_model_retrained": "PASS",
+    "no_frozen_artifact_modified": "PASS"
+  },
+  "threshold_provenance": {
+    "lr_point_k1": {
+      "frozen": 0.6,
+      "re_derived_on_validation": 0.6,
+      "matches": true
+    },
+    "v4_point_k1": {
+      "frozen": 0.45,
+      "re_derived_on_validation": 0.45,
+      "matches": true
+    },
+    "lr_point_k2": {
+      "frozen": 0.6,
+      "re_derived_on_validation": 0.6,
+      "matches": true
+    },
+    "v4_point_k2": {
+      "frozen": 0.54,
+      "re_derived_on_validation": 0.54,
+      "matches": true
+    },
+    "lr_point_k3": {
+      "frozen": 0.6,
+      "re_derived_on_validation": 0.6,
+      "matches": true
+    },
+    "v4_point_k3": {
+      "frozen": 0.65,
+      "re_derived_on_validation": 0.65,
+      "matches": true
+    },
+    "lr_point_k5": {
+      "frozen": 0.54,
+      "re_derived_on_validation": 0.54,
+      "matches": true
+    },
+    "v4_point_k5": {
+      "frozen": 0.72,
+      "re_derived_on_validation": 0.72,
+      "matches": true
+    },
+    "lr_trajectory_k2": {
+      "frozen": 0.6,
+      "re_derived_on_validation": 0.6,
+      "matches": true
+    },
+    "v4_trajectory_k2": {
+      "frozen": 0.51,
+      "re_derived_on_validation": 0.51,
+      "matches": true
+    },
+    "lr_trajectory_k3": {
+      "frozen": 0.6,
+      "re_derived_on_validation": 0.6,
+      "matches": true
+    },
+    "v4_trajectory_k3": {
+      "frozen": 0.68,
+      "re_derived_on_validation": 0.68,
+      "matches": true
+    },
+    "lr_trajectory_k5": {
+      "frozen": 0.6,
+      "re_derived_on_validation": 0.6,
+      "matches": true
+    },
+    "v4_trajectory_k5": {
+      "frozen": 0.69,
+      "re_derived_on_validation": 0.6900000000000001,
+      "matches": true
+    }
+  },
+  "frozen_manifest_agreement": {
+    "v4_point_k1": "MATCH",
+    "v4_point_k2": "MATCH",
+    "v4_point_k3": "MATCH",
+    "v4_point_k5": "MATCH",
+    "v4_trajectory_k2": "MATCH",
+    "v4_trajectory_k3": "MATCH",
+    "v4_trajectory_k5": "MATCH",
+    "lr_point_k1": "MATCH",
+    "lr_point_k2": "MATCH",
+    "lr_point_k3": "MATCH",
+    "lr_point_k5": "MATCH",
+    "lr_trajectory_k2": "MATCH",
+    "lr_trajectory_k3": "MATCH",
+    "lr_trajectory_k5": "MATCH"
+  },
+  "notes": [
+    "Persistence consumes the observed label A(t); the other two models receive only features. This asymmetry favours persistence and is inherent to the rule.",
+    "Persistence ROC-AUC is computed from a binary 0/1 score: the ROC curve has a single interior point, so the value equals balanced accuracy and is not a ranking AUC.",
+    "The V4 side of this comparison is the frozen reference as currently defined; the V4 provenance caveats in docs/V4_REFERENCE_BASELINE.md section 12 still apply."
+  ]
+}

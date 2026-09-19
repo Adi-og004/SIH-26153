@@ -1,0 +1,1486 @@
+{
+  "test_day": "2018-03-02 (Friday-02-03-2018)",
+  "generated_utc": "2026-09-19T04:26:56Z",
+  "evaluated_windows": 3115,
+  "evaluated_hours": 8.6528,
+  "horizons": [
+    1,
+    2,
+    3,
+    5
+  ],
+  "frozen_thresholds": {
+    "v4_world_model": {
+      "1": 0.45,
+      "2": 0.54,
+      "3": 0.65,
+      "5": 0.72
+    },
+    "logistic_regression": {
+      "1": 0.6,
+      "2": 0.6,
+      "3": 0.6,
+      "5": 0.54
+    },
+    "persistence": "none (deterministic rule)"
+  },
+  "models": {
+    "persistence": {
+      "K=1": {
+        "tp": 2028,
+        "fp": 3,
+        "tn": 1081,
+        "fn": 3,
+        "precision": 0.9985228951255539,
+        "recall": 0.9985228951255539,
+        "f1": 0.9985228951255539,
+        "roc_auc": 0.9978776837251386,
+        "fpr": 0.0027675276752767526,
+        "fp_per_hour": 0.3467094703049759,
+        "fn_per_hour": 0.3467094703049759,
+        "median_fp_run": 1.0,
+        "max_fp_run": 1.0,
+        "median_fn_run": 1.0,
+        "max_fn_run": 1.0
+      },
+      "K=2": {
+        "tp": 2026,
+        "fp": 5,
+        "tn": 1079,
+        "fn": 5,
+        "precision": 0.9975381585425899,
+        "recall": 0.9975381585425899,
+        "f1": 0.9975381585425899,
+        "roc_auc": 0.9964628062085642,
+        "fpr": 0.004612546125461255,
+        "fp_per_hour": 0.5778491171749598,
+        "fn_per_hour": 0.5778491171749598,
+        "median_fp_run": 2.0,
+        "max_fp_run": 2.0,
+        "median_fn_run": 2.0,
+        "max_fn_run": 2.0
+      },
+      "K=3": {
+        "tp": 2025,
+        "fp": 6,
+        "tn": 1078,
+        "fn": 6,
+        "precision": 0.9970457902511078,
+        "recall": 0.9970457902511078,
+        "f1": 0.9970457902511078,
+        "roc_auc": 0.9957553674502772,
+        "fpr": 0.005535055350553505,
+        "fp_per_hour": 0.6934189406099518,
+        "fn_per_hour": 0.6934189406099518,
+        "median_fp_run": 2.0,
+        "max_fp_run": 3.0,
+        "median_fn_run": 2.0,
+        "max_fn_run": 3.0
+      },
+      "K=5": {
+        "tp": 2024,
+        "fp": 7,
+        "tn": 1077,
+        "fn": 7,
+        "precision": 0.9965534219596258,
+        "recall": 0.9965534219596258,
+        "f1": 0.9965534219596258,
+        "roc_auc": 0.9950479286919901,
+        "fpr": 0.006457564575645757,
+        "fp_per_hour": 0.8089887640449438,
+        "fn_per_hour": 0.8089887640449438,
+        "median_fp_run": 1.5,
+        "max_fp_run": 3.0,
+        "median_fn_run": 3.5,
+        "max_fn_run": 5.0
+      }
+    },
+    "logistic_regression": {
+      "K=1": {
+        "tp": 443,
+        "fp": 11,
+        "tn": 1073,
+        "fn": 1588,
+        "precision": 0.9757709251101322,
+        "recall": 0.21811915312653865,
+        "f1": 0.35653923541247484,
+        "roc_auc": 0.9464140690151361,
+        "fpr": 0.01014760147601476,
+        "fp_per_hour": 1.2712680577849116,
+        "fn_per_hour": 183.52487961476723,
+        "median_fp_run": 1.0,
+        "max_fp_run": 3.0,
+        "median_fn_run": 6.0,
+        "max_fn_run": 287.0
+      },
+      "K=2": {
+        "tp": 453,
+        "fp": 12,
+        "tn": 1072,
+        "fn": 1578,
+        "precision": 0.9741935483870968,
+        "recall": 0.22304283604135894,
+        "f1": 0.3629807692307692,
+        "roc_auc": 0.9464576735870758,
+        "fpr": 0.01107011070110701,
+        "fp_per_hour": 1.3868378812199036,
+        "fn_per_hour": 182.36918138041733,
+        "median_fp_run": 2.0,
+        "max_fp_run": 3.0,
+        "median_fn_run": 6.0,
+        "max_fn_run": 287.0
+      },
+      "K=3": {
+        "tp": 450,
+        "fp": 12,
+        "tn": 1072,
+        "fn": 1581,
+        "precision": 0.974025974025974,
+        "recall": 0.22156573116691286,
+        "f1": 0.36101083032490977,
+        "roc_auc": 0.9475605058857087,
+        "fpr": 0.01107011070110701,
+        "fp_per_hour": 1.3868378812199036,
+        "fn_per_hour": 182.7158908507223,
+        "median_fp_run": 1.0,
+        "max_fp_run": 3.0,
+        "median_fn_run": 5.5,
+        "max_fn_run": 325.0
+      },
+      "K=5": {
+        "tp": 522,
+        "fp": 14,
+        "tn": 1070,
+        "fn": 1509,
+        "precision": 0.9738805970149254,
+        "recall": 0.2570162481536189,
+        "f1": 0.40670042851577715,
+        "roc_auc": 0.9464926480874852,
+        "fpr": 0.012915129151291513,
+        "fp_per_hour": 1.6179775280898876,
+        "fn_per_hour": 174.39486356340288,
+        "median_fp_run": 2.0,
+        "max_fp_run": 3.0,
+        "median_fn_run": 4.5,
+        "max_fn_run": 110.0
+      }
+    },
+    "v4_world_model": {
+      "K=1": {
+        "tp": 877,
+        "fp": 55,
+        "tn": 1029,
+        "fn": 1154,
+        "precision": 0.9409871244635193,
+        "recall": 0.43180699162973907,
+        "f1": 0.591967600404995,
+        "roc_auc": 0.8558010432393837,
+        "fpr": 0.0507380073800738,
+        "fp_per_hour": 6.356340288924558,
+        "fn_per_hour": 133.36757624398072,
+        "median_fp_run": 4.0,
+        "max_fp_run": 13.0,
+        "median_fn_run": 6.0,
+        "max_fn_run": 112.0
+      },
+      "K=2": {
+        "tp": 1060,
+        "fp": 55,
+        "tn": 1029,
+        "fn": 971,
+        "precision": 0.9506726457399103,
+        "recall": 0.5219103889709503,
+        "f1": 0.673871582962492,
+        "roc_auc": 0.8774389036357129,
+        "fpr": 0.0507380073800738,
+        "fp_per_hour": 6.356340288924558,
+        "fn_per_hour": 112.2182985553772,
+        "median_fp_run": 5.0,
+        "max_fp_run": 13.0,
+        "median_fn_run": 4.0,
+        "max_fn_run": 38.0
+      },
+      "K=3": {
+        "tp": 1106,
+        "fp": 45,
+        "tn": 1039,
+        "fn": 925,
+        "precision": 0.9609035621198957,
+        "recall": 0.5445593303791236,
+        "f1": 0.6951602765556254,
+        "roc_auc": 0.8893420433465782,
+        "fpr": 0.04151291512915129,
+        "fp_per_hour": 5.200642054574638,
+        "fn_per_hour": 106.90208667736756,
+        "median_fp_run": 2.5,
+        "max_fp_run": 13.0,
+        "median_fn_run": 3.0,
+        "max_fn_run": 34.0
+      },
+      "K=5": {
+        "tp": 1251,
+        "fp": 44,
+        "tn": 1040,
+        "fn": 780,
+        "precision": 0.9660231660231661,
+        "recall": 0.6159527326440177,
+        "f1": 0.7522549609140108,
+        "roc_auc": 0.8876532746125098,
+        "fpr": 0.04059040590405904,
+        "fp_per_hour": 5.085072231139646,
+        "fn_per_hour": 90.14446227929373,
+        "median_fp_run": 3.0,
+        "max_fp_run": 12.0,
+        "median_fn_run": 4.0,
+        "max_fn_run": 32.0
+      }
+    }
+  },
+  "episodes": [
+    {
+      "episode_id": 1,
+      "attack_onset": "2018-03-02 01:00:00",
+      "attack_offset": "2018-03-02 03:54:10",
+      "duration_windows": 1046,
+      "duration_sec": 10460,
+      "attack_type": "Bot(1046)",
+      "observable_onset": false
+    },
+    {
+      "episode_id": 2,
+      "attack_onset": "2018-03-02 03:54:50",
+      "attack_offset": "2018-03-02 03:54:50",
+      "duration_windows": 1,
+      "duration_sec": 10,
+      "attack_type": "Bot(1)",
+      "observable_onset": true
+    },
+    {
+      "episode_id": 3,
+      "attack_onset": "2018-03-02 10:13:20",
+      "attack_offset": "2018-03-02 12:13:00",
+      "duration_windows": 719,
+      "duration_sec": 7190,
+      "attack_type": "Bot(719)",
+      "observable_onset": true
+    },
+    {
+      "episode_id": 4,
+      "attack_onset": "2018-03-02 12:13:30",
+      "attack_offset": "2018-03-02 12:59:50",
+      "duration_windows": 279,
+      "duration_sec": 2790,
+      "attack_type": "Bot(279)",
+      "observable_onset": true
+    }
+  ],
+  "transition_counts": {
+    "K=1": {
+      "transition_0to1": 3,
+      "transition_1to0": 3,
+      "correct_by_model": {
+        "persistence": {
+          "0to1": 0,
+          "1to0": 0
+        },
+        "logistic_regression": {
+          "0to1": 0,
+          "1to0": 3
+        },
+        "v4_world_model": {
+          "0to1": 2,
+          "1to0": 0
+        }
+      }
+    },
+    "K=2": {
+      "transition_0to1": 5,
+      "transition_1to0": 5,
+      "correct_by_model": {
+        "persistence": {
+          "0to1": 0,
+          "1to0": 0
+        },
+        "logistic_regression": {
+          "0to1": 0,
+          "1to0": 5
+        },
+        "v4_world_model": {
+          "0to1": 3,
+          "1to0": 0
+        }
+      }
+    },
+    "K=3": {
+      "transition_0to1": 6,
+      "transition_1to0": 6,
+      "correct_by_model": {
+        "persistence": {
+          "0to1": 0,
+          "1to0": 0
+        },
+        "logistic_regression": {
+          "0to1": 0,
+          "1to0": 5
+        },
+        "v4_world_model": {
+          "0to1": 3,
+          "1to0": 1
+        }
+      }
+    },
+    "K=5": {
+      "transition_0to1": 7,
+      "transition_1to0": 7,
+      "correct_by_model": {
+        "persistence": {
+          "0to1": 0,
+          "1to0": 0
+        },
+        "logistic_regression": {
+          "0to1": 0,
+          "1to0": 5
+        },
+        "v4_world_model": {
+          "0to1": 2,
+          "1to0": 0
+        }
+      }
+    }
+  },
+  "horizon_summary": [
+    {
+      "model": "persistence",
+      "horizon": 1,
+      "threshold": null,
+      "tp": 2028,
+      "tn": 1081,
+      "fp": 3,
+      "fn": 3,
+      "precision": 0.9985228951,
+      "recall": 0.9985228951,
+      "f1": 0.9985228951,
+      "roc_auc": 0.9978776837,
+      "fpr": 0.0027675277,
+      "fp_per_hour": 0.3467094703,
+      "fn_per_hour": 0.3467094703,
+      "median_fp_run": 1.0,
+      "median_fn_run": 1.0,
+      "max_fp_run": 1,
+      "max_fn_run": 1,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "threshold": 0.6,
+      "tp": 443,
+      "tn": 1073,
+      "fp": 11,
+      "fn": 1588,
+      "precision": 0.9757709251,
+      "recall": 0.2181191531,
+      "f1": 0.3565392354,
+      "roc_auc": 0.946414069,
+      "fpr": 0.0101476015,
+      "fp_per_hour": 1.2712680578,
+      "fn_per_hour": 183.5248796148,
+      "median_fp_run": 1.0,
+      "median_fn_run": 6.0,
+      "max_fp_run": 3,
+      "max_fn_run": 287,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "threshold": 0.45,
+      "tp": 877,
+      "tn": 1029,
+      "fp": 55,
+      "fn": 1154,
+      "precision": 0.9409871245,
+      "recall": 0.4318069916,
+      "f1": 0.5919676004,
+      "roc_auc": 0.8558010432,
+      "fpr": 0.0507380074,
+      "fp_per_hour": 6.3563402889,
+      "fn_per_hour": 133.367576244,
+      "median_fp_run": 4.0,
+      "median_fn_run": 6.0,
+      "max_fp_run": 13,
+      "max_fn_run": 112,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "persistence",
+      "horizon": 2,
+      "threshold": null,
+      "tp": 2026,
+      "tn": 1079,
+      "fp": 5,
+      "fn": 5,
+      "precision": 0.9975381585,
+      "recall": 0.9975381585,
+      "f1": 0.9975381585,
+      "roc_auc": 0.9964628062,
+      "fpr": 0.0046125461,
+      "fp_per_hour": 0.5778491172,
+      "fn_per_hour": 0.5778491172,
+      "median_fp_run": 2.0,
+      "median_fn_run": 2.0,
+      "max_fp_run": 2,
+      "max_fn_run": 2,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "threshold": 0.6,
+      "tp": 453,
+      "tn": 1072,
+      "fp": 12,
+      "fn": 1578,
+      "precision": 0.9741935484,
+      "recall": 0.223042836,
+      "f1": 0.3629807692,
+      "roc_auc": 0.9464576736,
+      "fpr": 0.0110701107,
+      "fp_per_hour": 1.3868378812,
+      "fn_per_hour": 182.3691813804,
+      "median_fp_run": 2.0,
+      "median_fn_run": 6.0,
+      "max_fp_run": 3,
+      "max_fn_run": 287,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "threshold": 0.54,
+      "tp": 1060,
+      "tn": 1029,
+      "fp": 55,
+      "fn": 971,
+      "precision": 0.9506726457,
+      "recall": 0.521910389,
+      "f1": 0.673871583,
+      "roc_auc": 0.8774389036,
+      "fpr": 0.0507380074,
+      "fp_per_hour": 6.3563402889,
+      "fn_per_hour": 112.2182985554,
+      "median_fp_run": 5.0,
+      "median_fn_run": 4.0,
+      "max_fp_run": 13,
+      "max_fn_run": 38,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "persistence",
+      "horizon": 3,
+      "threshold": null,
+      "tp": 2025,
+      "tn": 1078,
+      "fp": 6,
+      "fn": 6,
+      "precision": 0.9970457903,
+      "recall": 0.9970457903,
+      "f1": 0.9970457903,
+      "roc_auc": 0.9957553675,
+      "fpr": 0.0055350554,
+      "fp_per_hour": 0.6934189406,
+      "fn_per_hour": 0.6934189406,
+      "median_fp_run": 2.0,
+      "median_fn_run": 2.0,
+      "max_fp_run": 3,
+      "max_fn_run": 3,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "threshold": 0.6,
+      "tp": 450,
+      "tn": 1072,
+      "fp": 12,
+      "fn": 1581,
+      "precision": 0.974025974,
+      "recall": 0.2215657312,
+      "f1": 0.3610108303,
+      "roc_auc": 0.9475605059,
+      "fpr": 0.0110701107,
+      "fp_per_hour": 1.3868378812,
+      "fn_per_hour": 182.7158908507,
+      "median_fp_run": 1.0,
+      "median_fn_run": 5.5,
+      "max_fp_run": 3,
+      "max_fn_run": 325,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "threshold": 0.65,
+      "tp": 1106,
+      "tn": 1039,
+      "fp": 45,
+      "fn": 925,
+      "precision": 0.9609035621,
+      "recall": 0.5445593304,
+      "f1": 0.6951602766,
+      "roc_auc": 0.8893420433,
+      "fpr": 0.0415129151,
+      "fp_per_hour": 5.2006420546,
+      "fn_per_hour": 106.9020866774,
+      "median_fp_run": 2.5,
+      "median_fn_run": 3.0,
+      "max_fp_run": 13,
+      "max_fn_run": 34,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "persistence",
+      "horizon": 5,
+      "threshold": null,
+      "tp": 2024,
+      "tn": 1077,
+      "fp": 7,
+      "fn": 7,
+      "precision": 0.996553422,
+      "recall": 0.996553422,
+      "f1": 0.996553422,
+      "roc_auc": 0.9950479287,
+      "fpr": 0.0064575646,
+      "fp_per_hour": 0.808988764,
+      "fn_per_hour": 0.808988764,
+      "median_fp_run": 1.5,
+      "median_fn_run": 3.5,
+      "max_fp_run": 3,
+      "max_fn_run": 5,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "threshold": 0.54,
+      "tp": 522,
+      "tn": 1070,
+      "fp": 14,
+      "fn": 1509,
+      "precision": 0.973880597,
+      "recall": 0.2570162482,
+      "f1": 0.4067004285,
+      "roc_auc": 0.9464926481,
+      "fpr": 0.0129151292,
+      "fp_per_hour": 1.6179775281,
+      "fn_per_hour": 174.3948635634,
+      "median_fp_run": 2.0,
+      "median_fn_run": 4.5,
+      "max_fp_run": 3,
+      "max_fn_run": 110,
+      "total_evaluated": 3115
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "threshold": 0.72,
+      "tp": 1251,
+      "tn": 1040,
+      "fp": 44,
+      "fn": 780,
+      "precision": 0.966023166,
+      "recall": 0.6159527326,
+      "f1": 0.7522549609,
+      "roc_auc": 0.8876532746,
+      "fpr": 0.0405904059,
+      "fp_per_hour": 5.0850722311,
+      "fn_per_hour": 90.1444622793,
+      "median_fp_run": 3.0,
+      "median_fn_run": 4.0,
+      "max_fp_run": 12,
+      "max_fn_run": 32,
+      "total_evaluated": 3115
+    }
+  ],
+  "horizon_evolution": [
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 0,
+      "missed_fn": 13,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.0687740326,
+      "median_probability": 0.022235807
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 68,
+      "detected_tp": 0,
+      "missed_fn": 68,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.1682007258,
+      "median_probability": 0.1444394
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 29,
+      "missed_fn": 421,
+      "recall_in_bucket": 0.0644444444,
+      "mean_probability": 0.2677961158,
+      "median_probability": 0.241151875
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1500,
+      "detected_tp": 414,
+      "missed_fn": 1086,
+      "recall_in_bucket": 0.276,
+      "mean_probability": 0.450725232,
+      "median_probability": 0.33242445
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 0,
+      "missed_fn": 13,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.0572117305,
+      "median_probability": 0.012315371
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 67,
+      "detected_tp": 0,
+      "missed_fn": 67,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.177525156,
+      "median_probability": 0.16497324
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 31,
+      "missed_fn": 419,
+      "recall_in_bucket": 0.0688888889,
+      "mean_probability": 0.2769413958,
+      "median_probability": 0.25003469
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1501,
+      "detected_tp": 422,
+      "missed_fn": 1079,
+      "recall_in_bucket": 0.2811459027,
+      "mean_probability": 0.4579424839,
+      "median_probability": 0.3455089
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 0,
+      "missed_fn": 13,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.052487826,
+      "median_probability": 0.012485219
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 66,
+      "detected_tp": 0,
+      "missed_fn": 66,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.1794889738,
+      "median_probability": 0.14090676
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 30,
+      "missed_fn": 420,
+      "recall_in_bucket": 0.0666666667,
+      "mean_probability": 0.2807152781,
+      "median_probability": 0.257788255
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1502,
+      "detected_tp": 420,
+      "missed_fn": 1082,
+      "recall_in_bucket": 0.2796271638,
+      "mean_probability": 0.4627838668,
+      "median_probability": 0.356259795
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 1,
+      "missed_fn": 12,
+      "recall_in_bucket": 0.0769230769,
+      "mean_probability": 0.1434642086,
+      "median_probability": 0.033821356
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 64,
+      "detected_tp": 0,
+      "missed_fn": 64,
+      "recall_in_bucket": 0.0,
+      "mean_probability": 0.1808866687,
+      "median_probability": 0.149499615
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 42,
+      "missed_fn": 408,
+      "recall_in_bucket": 0.0933333333,
+      "mean_probability": 0.290283912,
+      "median_probability": 0.270741195
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1504,
+      "detected_tp": 479,
+      "missed_fn": 1025,
+      "recall_in_bucket": 0.3184840426,
+      "mean_probability": 0.4739039312,
+      "median_probability": 0.36922343
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 4,
+      "missed_fn": 9,
+      "recall_in_bucket": 0.3076923077,
+      "mean_probability": 0.1655178915,
+      "median_probability": 6.411e-07
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 68,
+      "detected_tp": 6,
+      "missed_fn": 62,
+      "recall_in_bucket": 0.0882352941,
+      "mean_probability": 0.1035159982,
+      "median_probability": 0.0022511606
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 132,
+      "missed_fn": 318,
+      "recall_in_bucket": 0.2933333333,
+      "mean_probability": 0.2439366714,
+      "median_probability": 0.0965982266
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1500,
+      "detected_tp": 735,
+      "missed_fn": 765,
+      "recall_in_bucket": 0.49,
+      "mean_probability": 0.3666319144,
+      "median_probability": 0.4390659034
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 5,
+      "missed_fn": 8,
+      "recall_in_bucket": 0.3846153846,
+      "mean_probability": 0.2470933442,
+      "median_probability": 1.91338e-05
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 67,
+      "detected_tp": 6,
+      "missed_fn": 61,
+      "recall_in_bucket": 0.0895522388,
+      "mean_probability": 0.1683336046,
+      "median_probability": 0.0184429958
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 158,
+      "missed_fn": 292,
+      "recall_in_bucket": 0.3511111111,
+      "mean_probability": 0.3285279547,
+      "median_probability": 0.309537366
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1501,
+      "detected_tp": 891,
+      "missed_fn": 610,
+      "recall_in_bucket": 0.5936042638,
+      "mean_probability": 0.4586223034,
+      "median_probability": 0.5801662207
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 5,
+      "missed_fn": 8,
+      "recall_in_bucket": 0.3846153846,
+      "mean_probability": 0.3309053148,
+      "median_probability": 5.5274e-05
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 66,
+      "detected_tp": 16,
+      "missed_fn": 50,
+      "recall_in_bucket": 0.2424242424,
+      "mean_probability": 0.2381191003,
+      "median_probability": 0.051706465
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 171,
+      "missed_fn": 279,
+      "recall_in_bucket": 0.38,
+      "mean_probability": 0.4303107943,
+      "median_probability": 0.5811459124
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1502,
+      "detected_tp": 914,
+      "missed_fn": 588,
+      "recall_in_bucket": 0.6085219707,
+      "mean_probability": 0.547656817,
+      "median_probability": 0.687379241
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "time_since_episode_onset": "0-60s",
+      "attack_windows": 13,
+      "detected_tp": 6,
+      "missed_fn": 7,
+      "recall_in_bucket": 0.4615384615,
+      "mean_probability": 0.404742436,
+      "median_probability": 0.7099610567
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "time_since_episode_onset": "60-300s",
+      "attack_windows": 64,
+      "detected_tp": 15,
+      "missed_fn": 49,
+      "recall_in_bucket": 0.234375,
+      "mean_probability": 0.2825250612,
+      "median_probability": 0.0672032945
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "time_since_episode_onset": "300-1800s",
+      "attack_windows": 450,
+      "detected_tp": 206,
+      "missed_fn": 244,
+      "recall_in_bucket": 0.4577777778,
+      "mean_probability": 0.5188297559,
+      "median_probability": 0.7113475204
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "time_since_episode_onset": ">1800s",
+      "attack_windows": 1504,
+      "detected_tp": 1024,
+      "missed_fn": 480,
+      "recall_in_bucket": 0.6808510638,
+      "mean_probability": 0.6065721883,
+      "median_probability": 0.7484630644
+    }
+  ],
+  "taxonomy_counts": [
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FN-A",
+      "count": 12
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FN-C",
+      "count": 2
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FN-D",
+      "count": 1406
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FN-E",
+      "count": 98
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FP-A",
+      "count": 4
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "FP-D",
+      "count": 3
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 1,
+      "taxonomy_category": "uncertain",
+      "count": 73
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FN-A",
+      "count": 10
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FN-C",
+      "count": 4
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FN-D",
+      "count": 1391
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FN-E",
+      "count": 104
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FP-A",
+      "count": 3
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "FP-D",
+      "count": 3
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 2,
+      "taxonomy_category": "uncertain",
+      "count": 74
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FN-A",
+      "count": 9
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FN-C",
+      "count": 5
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FN-D",
+      "count": 1387
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FN-E",
+      "count": 112
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FP-A",
+      "count": 4
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FP-C",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "FP-D",
+      "count": 3
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 3,
+      "taxonomy_category": "uncertain",
+      "count": 71
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FN-A",
+      "count": 6
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FN-C",
+      "count": 7
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FN-D",
+      "count": 1246
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FN-E",
+      "count": 187
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FP-A",
+      "count": 3
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FP-B",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FP-C",
+      "count": 1
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "FP-D",
+      "count": 3
+    },
+    {
+      "model": "logistic_regression",
+      "horizon": 5,
+      "taxonomy_category": "uncertain",
+      "count": 68
+    },
+    {
+      "model": "persistence",
+      "horizon": 1,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "persistence",
+      "horizon": 1,
+      "taxonomy_category": "FN-C",
+      "count": 2
+    },
+    {
+      "model": "persistence",
+      "horizon": 1,
+      "taxonomy_category": "FP-C",
+      "count": 3
+    },
+    {
+      "model": "persistence",
+      "horizon": 2,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "persistence",
+      "horizon": 2,
+      "taxonomy_category": "FN-C",
+      "count": 4
+    },
+    {
+      "model": "persistence",
+      "horizon": 2,
+      "taxonomy_category": "FP-B",
+      "count": 2
+    },
+    {
+      "model": "persistence",
+      "horizon": 2,
+      "taxonomy_category": "FP-C",
+      "count": 3
+    },
+    {
+      "model": "persistence",
+      "horizon": 3,
+      "taxonomy_category": "FN-B",
+      "count": 1
+    },
+    {
+      "model": "persistence",
+      "horizon": 3,
+      "taxonomy_category": "FN-C",
+      "count": 5
+    },
+    {
+      "model": "persistence",
+      "horizon": 3,
+      "taxonomy_category": "FP-B",
+      "count": 3
+    },
+    {
+      "model": "persistence",
+      "horizon": 3,
+      "taxonomy_category": "FP-C",
+      "count": 3
+    },
+    {
+      "model": "persistence",
+      "horizon": 5,
+      "taxonomy_category": "FN-C",
+      "count": 7
+    },
+    {
+      "model": "persistence",
+      "horizon": 5,
+      "taxonomy_category": "FP-B",
+      "count": 3
+    },
+    {
+      "model": "persistence",
+      "horizon": 5,
+      "taxonomy_category": "FP-C",
+      "count": 4
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FN-A",
+      "count": 10
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FN-C",
+      "count": 1
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FN-D",
+      "count": 914
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FN-E",
+      "count": 167
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FP-A",
+      "count": 1
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FP-B",
+      "count": 3
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FP-C",
+      "count": 6
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "FP-D",
+      "count": 41
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 1,
+      "taxonomy_category": "uncertain",
+      "count": 66
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FN-A",
+      "count": 8
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FN-C",
+      "count": 2
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FN-D",
+      "count": 725
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FN-E",
+      "count": 184
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FP-B",
+      "count": 3
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FP-C",
+      "count": 8
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "FP-D",
+      "count": 40
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 2,
+      "taxonomy_category": "uncertain",
+      "count": 56
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FN-A",
+      "count": 7
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FN-C",
+      "count": 3
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FN-D",
+      "count": 626
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FN-E",
+      "count": 240
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FP-A",
+      "count": 1
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FP-B",
+      "count": 3
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FP-C",
+      "count": 6
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "FP-D",
+      "count": 29
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 3,
+      "taxonomy_category": "uncertain",
+      "count": 55
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FN-A",
+      "count": 3
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FN-C",
+      "count": 5
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FN-D",
+      "count": 529
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FN-E",
+      "count": 200
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FP-A",
+      "count": 4
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FP-B",
+      "count": 3
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FP-C",
+      "count": 11
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "FP-D",
+      "count": 26
+    },
+    {
+      "model": "v4_world_model",
+      "horizon": 5,
+      "taxonomy_category": "uncertain",
+      "count": 43
+    }
+  ],
+  "verification": {
+    "task3_aggregate_metrics_reproduced": true,
+    "thresholds_frozen_not_reselected": true,
+    "test_set_unchanged": true,
+    "no_model_retrained": true,
+    "no_artifact_modified": true
+  },
+  "provenance": {
+    "repository_commit": "53c22227d368b82ff9e736206a92e85b6bed2514",
+    "v4_reference_commit": "2be30736872dd7bb072b2e5c4cf7e7fe62605af6",
+    "v4_checkpoint_sha256": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "lr_predictions_sha256": "9c9fd9874814750454eeda91e6c9b76250b4bb88189f59a97cfc77b1fdd7a48a",
+    "task3_csv_sha256": "d8db7c6d9fb604b140c7291b4062d91b8fa3eff982e5ceb7b51ab5cd72709ad7"
+  },
+  "caveats": [
+    "Persistence receives the observed label A(t); V4 and LR receive only features.",
+    "Only one held-out day and three observable attack onsets exist \u2014 onset findings are descriptive, not statistically conclusive.",
+    "All four episodes on this day are labelled Bot.",
+    "A false positive near an attack onset remains a false positive under the benchmark label.",
+    "The V4 training/evaluation normalisation provenance caveat from Task 1 is unresolved."
+  ]
+}

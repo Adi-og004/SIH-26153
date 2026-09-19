@@ -1,0 +1,329 @@
+{
+  "schema_name": "v4_input_feature_schema",
+  "frozen_from": "data/processed/multiday_benchmark_K5/input_feature_names.txt",
+  "source_sha256": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+  "sequence_length": 10,
+  "feature_dimension": 52,
+  "window_seconds": 10,
+  "input_shape": [
+    10,
+    52
+  ],
+  "base_feature_count": 26,
+  "relative_feature_count": 26,
+  "ordering_rule": "indices 0-25 = base features in the order below; indices 26-51 = the SAME 26 features in the SAME order, suffixed _rel_change",
+  "features": [
+    {
+      "index": 0,
+      "name": "flow_count",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 1,
+      "name": "log_flow_count",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 2,
+      "name": "log_total_packets",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 3,
+      "name": "log_total_bytes",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 4,
+      "name": "window_packet_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 5,
+      "name": "window_byte_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 6,
+      "name": "syn_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 7,
+      "name": "ack_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 8,
+      "name": "rst_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 9,
+      "name": "fin_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 10,
+      "name": "psh_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 11,
+      "name": "urg_rate",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 12,
+      "name": "mean_pkt_len",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 13,
+      "name": "std_pkt_len",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 14,
+      "name": "log_mean_flow_duration",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 15,
+      "name": "log_mean_fwd_iat",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 16,
+      "name": "log_mean_bwd_iat",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 17,
+      "name": "fwd_packet_ratio",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 18,
+      "name": "bwd_packet_ratio",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 19,
+      "name": "fwd_byte_ratio",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 20,
+      "name": "bwd_byte_ratio",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 21,
+      "name": "mean_down_up_ratio",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 22,
+      "name": "log_unique_dst_ports",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 23,
+      "name": "unique_protocols",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 24,
+      "name": "dst_port_entropy",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 25,
+      "name": "protocol_entropy",
+      "kind": "base",
+      "base_of": null
+    },
+    {
+      "index": 26,
+      "name": "flow_count_rel_change",
+      "kind": "relative_change",
+      "base_of": "flow_count"
+    },
+    {
+      "index": 27,
+      "name": "log_flow_count_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_flow_count"
+    },
+    {
+      "index": 28,
+      "name": "log_total_packets_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_total_packets"
+    },
+    {
+      "index": 29,
+      "name": "log_total_bytes_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_total_bytes"
+    },
+    {
+      "index": 30,
+      "name": "window_packet_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "window_packet_rate"
+    },
+    {
+      "index": 31,
+      "name": "window_byte_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "window_byte_rate"
+    },
+    {
+      "index": 32,
+      "name": "syn_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "syn_rate"
+    },
+    {
+      "index": 33,
+      "name": "ack_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "ack_rate"
+    },
+    {
+      "index": 34,
+      "name": "rst_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "rst_rate"
+    },
+    {
+      "index": 35,
+      "name": "fin_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "fin_rate"
+    },
+    {
+      "index": 36,
+      "name": "psh_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "psh_rate"
+    },
+    {
+      "index": 37,
+      "name": "urg_rate_rel_change",
+      "kind": "relative_change",
+      "base_of": "urg_rate"
+    },
+    {
+      "index": 38,
+      "name": "mean_pkt_len_rel_change",
+      "kind": "relative_change",
+      "base_of": "mean_pkt_len"
+    },
+    {
+      "index": 39,
+      "name": "std_pkt_len_rel_change",
+      "kind": "relative_change",
+      "base_of": "std_pkt_len"
+    },
+    {
+      "index": 40,
+      "name": "log_mean_flow_duration_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_mean_flow_duration"
+    },
+    {
+      "index": 41,
+      "name": "log_mean_fwd_iat_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_mean_fwd_iat"
+    },
+    {
+      "index": 42,
+      "name": "log_mean_bwd_iat_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_mean_bwd_iat"
+    },
+    {
+      "index": 43,
+      "name": "fwd_packet_ratio_rel_change",
+      "kind": "relative_change",
+      "base_of": "fwd_packet_ratio"
+    },
+    {
+      "index": 44,
+      "name": "bwd_packet_ratio_rel_change",
+      "kind": "relative_change",
+      "base_of": "bwd_packet_ratio"
+    },
+    {
+      "index": 45,
+      "name": "fwd_byte_ratio_rel_change",
+      "kind": "relative_change",
+      "base_of": "fwd_byte_ratio"
+    },
+    {
+      "index": 46,
+      "name": "bwd_byte_ratio_rel_change",
+      "kind": "relative_change",
+      "base_of": "bwd_byte_ratio"
+    },
+    {
+      "index": 47,
+      "name": "mean_down_up_ratio_rel_change",
+      "kind": "relative_change",
+      "base_of": "mean_down_up_ratio"
+    },
+    {
+      "index": 48,
+      "name": "log_unique_dst_ports_rel_change",
+      "kind": "relative_change",
+      "base_of": "log_unique_dst_ports"
+    },
+    {
+      "index": 49,
+      "name": "unique_protocols_rel_change",
+      "kind": "relative_change",
+      "base_of": "unique_protocols"
+    },
+    {
+      "index": 50,
+      "name": "dst_port_entropy_rel_change",
+      "kind": "relative_change",
+      "base_of": "dst_port_entropy"
+    },
+    {
+      "index": 51,
+      "name": "protocol_entropy_rel_change",
+      "kind": "relative_change",
+      "base_of": "protocol_entropy"
+    }
+  ]
+}

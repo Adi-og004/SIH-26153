@@ -1,0 +1,25 @@
+quantity,k5,k10,absolute_change,relative_change_pct,k5_region,k10_region,note
+latent_norm_mean,6.352209874745917,6.300835837570727,-0.05137403717519007,-0.8087584980375824,reference_in_curriculum,extrapolative,lower is not better — bounded by LayerNorm
+latent_delta_norm_mean,1.4462846882390559,0.7400454415545851,-0.7062392466844708,-48.83127453588423,reference_in_curriculum,extrapolative,step size; shrinking = contraction
+cumulative_displacement_mean,6.656538811922312,7.062115124864304,0.40557631294199226,6.092900896417484,reference_in_curriculum,extrapolative,distance travelled from z_t
+across_sample_latent_std,0.7667982464391646,0.7122688592295843,-0.05452938720958034,-7.111308282563546,reference_in_curriculum,extrapolative,sample discriminability; collapse would drive this to 0
+decoded_state_rmse,1.0293938354032626,1.0040617851752023,-0.025332050228060288,-2.4608705975139746,reference_in_curriculum,extrapolative,vs the true future state
+skill_vs_train_mean_rmse,-0.017025867277949303,0.007815418386090789,0.02484128566404009,145.9032028060783,reference_in_curriculum,extrapolative,1 - rmse/mean-predictor rmse; <=0 means no skill
+mean_probability,0.3994353328946934,0.45067449461346215,0.051239161718768744,12.827899161408782,reference_in_curriculum,extrapolative,mean P(t+k)
+brier,0.18673496943794363,0.15959242453208275,-0.027142544905860877,-14.535330467323623,reference_in_curriculum,extrapolative,lower is better
+roc_auc,0.8876532746125096,0.9003158201947435,0.012662545582233897,1.4265193341129194,reference_in_curriculum,extrapolative,threshold-free discrimination
+pr_auc,0.9256410765541511,0.9380944850573628,0.01245340850321175,1.3453820080642467,reference_in_curriculum,extrapolative,"threshold-free, prevalence-sensitive"
+f1,0.7522549609140108,0.8474855729596042,0.09523061204559347,12.659353144030533,reference_in_curriculum,extrapolative,K=5 frozen threshold vs K=10 exploratory — NOT like-for-like
+recall,0.6159527326440177,0.7611056268509379,0.14515289420692012,23.565589778917246,reference_in_curriculum,extrapolative,same caveat as f1
+precision,0.9660231660231661,0.9559826410415375,-0.010040524981628551,-1.039366894581053,reference_in_curriculum,extrapolative,same caveat as f1
+persistence_accuracy,0.9955056179775281,0.9922705314009662,-0.0032350865765619075,-0.3249691933566701,reference_in_curriculum,extrapolative,how often A(t+k)==A(t)
+transition_fraction,0.0044943820224719105,0.007729468599033816,0.0032350865765619057,71.9806763285024,reference_in_curriculum,extrapolative,the only part a forecaster can win
+onset_count,7.0,12.0,5.0,71.42857142857143,reference_in_curriculum,extrapolative,sample size for onset statistics
+mean_onset_probability,0.21789267009147903,0.13195272337649536,-0.08593994671498367,-39.44141245270116,reference_in_curriculum,extrapolative,P on genuine onsets
+mean_persistent_negative_probability,0.0648581991219319,0.09267609787920672,0.02781789875727482,42.890334813302196,reference_in_curriculum,extrapolative,P on quiet-stays-quiet
+onset_minus_persistent_negative,0.15303447096954714,0.039276625497288636,-0.1137578454722585,-74.3347853274806,reference_in_curriculum,extrapolative,onset separation; <=0 means onsets are not distinguished
+trajectory_f1,0.7979274611398963,0.8463656387665198,0.0484381776266235,6.070498884375544,reference_in_curriculum,extrapolative,max-aggregated event F1
+trajectory_roc_auc,0.8928704970360237,0.9066169566418116,0.013746459605787908,1.5395804488356046,reference_in_curriculum,extrapolative,max-aggregated event ROC-AUC
+early_warning_coverage_pct,66.66666666666667,66.66666666666667,0.0,0.0,reference_in_curriculum,extrapolative,only 3 observable onsets — anecdotal
+early_warning_mean_lead_s,50.0,100.0,50.0,100.0,reference_in_curriculum,extrapolative,only 3 observable onsets — anecdotal
+false_alarm_windows_per_hour,5.547351524879614,6.9341894060995175,1.3868378812199031,24.999999999999993,reference_in_curriculum,extrapolative,only 3 observable onsets — anecdotal

@@ -1,0 +1,133 @@
+{
+  "analysis": "feature_parity",
+  "generated_utc": "2026-09-19T04:56:51Z",
+  "schema_version": "v4",
+  "feature_count": 52,
+  "contract_hash": "6ec22f95a7c1cf30b3915b0327120745d368bf2e7684c329f82beb7a4b9b6674",
+  "layers": {
+    "window_aggregation_and_transforms": "EXACT",
+    "relative_change": "EXACT",
+    "scaler_interface": "EXACT",
+    "flow_record_production": "APPROXIMATE"
+  },
+  "exact_matches": [],
+  "approximate_matches": [
+    "ack_rate",
+    "ack_rate_rel_change",
+    "bwd_byte_ratio",
+    "bwd_byte_ratio_rel_change",
+    "bwd_packet_ratio",
+    "bwd_packet_ratio_rel_change",
+    "dst_port_entropy",
+    "dst_port_entropy_rel_change",
+    "fin_rate",
+    "fin_rate_rel_change",
+    "flow_count",
+    "flow_count_rel_change",
+    "fwd_byte_ratio",
+    "fwd_byte_ratio_rel_change",
+    "fwd_packet_ratio",
+    "fwd_packet_ratio_rel_change",
+    "log_flow_count",
+    "log_flow_count_rel_change",
+    "log_mean_bwd_iat",
+    "log_mean_bwd_iat_rel_change",
+    "log_mean_flow_duration",
+    "log_mean_flow_duration_rel_change",
+    "log_mean_fwd_iat",
+    "log_mean_fwd_iat_rel_change",
+    "log_total_bytes",
+    "log_total_bytes_rel_change",
+    "log_total_packets",
+    "log_total_packets_rel_change",
+    "log_unique_dst_ports",
+    "log_unique_dst_ports_rel_change",
+    "mean_down_up_ratio",
+    "mean_down_up_ratio_rel_change",
+    "mean_pkt_len",
+    "mean_pkt_len_rel_change",
+    "protocol_entropy",
+    "protocol_entropy_rel_change",
+    "psh_rate",
+    "psh_rate_rel_change",
+    "rst_rate",
+    "rst_rate_rel_change",
+    "std_pkt_len",
+    "std_pkt_len_rel_change",
+    "syn_rate",
+    "syn_rate_rel_change",
+    "unique_protocols",
+    "unique_protocols_rel_change",
+    "urg_rate",
+    "urg_rate_rel_change",
+    "window_byte_rate",
+    "window_byte_rate_rel_change",
+    "window_packet_rate",
+    "window_packet_rate_rel_change"
+  ],
+  "non_parity_features": [],
+  "unknown_features": [],
+  "window_semantics": {
+    "window_seconds": 10,
+    "training_binning": "df[\"Timestamp\"].dt.floor(\"10s\") in archive/create_network_states_v2.py",
+    "pcap_binning": "int(flow_start_epoch // 10) - win0 in src/pcap_ingest_v4.py",
+    "interval": "[t, t+10) \u2014 left-closed, right-open (floor semantics on both sides)",
+    "origin": "epoch-aligned multiples of 10 s in both paths (floor of an absolute timestamp)",
+    "row_assignment": "a flow belongs to the window of its START time (CIC Timestamp / first packet), and ALL of its statistics are attributed to that window",
+    "rounding": "floor, never round-half; no tolerance band",
+    "ordering": "groupby(..., sort=True) in training; groupby('window_idx', sort=True) in the PCAP path",
+    "empty_windows": "produce NO row in either path \u2014 the window simply does not exist. Downstream, the 10-second contiguity gate rejects any sequence spanning the gap (np.all(diffs == 10) in prepare_multiday_benchmark.py, mirrored by build_sequences in pcap_ingest_v4.py).",
+    "first_window": "kept as-is; its relative-change row is forced to 0.0",
+    "last_window": "kept as-is; sequences needing K future targets simply are not formed",
+    "timezone": {
+      "training": "naive local timestamps parsed from the CIC CSV Timestamp column; no tz conversion is applied anywhere in the training path",
+      "pcap": "absolute UTC epoch seconds from the capture",
+      "parity": "APPROXIMATE",
+      "note": "Both floor to 10 s multiples, so bin WIDTH and boundary RULE are identical, but the two paths are not anchored to the same clock. The CSE-CIC-IDS2018 CSV clock is Atlantic local with the AM/PM marker dropped, which cannot be reconciled with UTC epoch bins without an explicit offset. This matters only when aligning a PCAP window to a dataset window; it does not change any feature value."
+    }
+  },
+  "transform_semantics": {
+    "safe_log1p": "EXACT",
+    "safe_divide": "EXACT",
+    "entropy_from_counts": "EXACT",
+    "flag_rate": "EXACT",
+    "window_rate": "EXACT",
+    "nan_inf_handling_state": "EXACT",
+    "scaled_nan_clip": "EXACT"
+  },
+  "relative_change_semantics": {
+    "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)",
+    "parity": "EXACT",
+    "reset_scope_parity": "EXACT"
+  },
+  "scaler": {
+    "class": "sklearn.preprocessing.StandardScaler",
+    "expected_input_dimension": 52,
+    "parity": "EXACT"
+  },
+  "golden_tests": {
+    "fixtures": 18,
+    "comparisons": 954,
+    "failures": 0,
+    "status": "PASS"
+  },
+  "synthetic_parity": {
+    "status": "PASS",
+    "interpretation": "identical flow records produce identical 52-feature states in both implementations"
+  },
+  "real_pcap": {
+    "captures_tested": 7,
+    "conforming": 7,
+    "status": "PASS"
+  },
+  "overall_status": "APPROXIMATE_PARITY",
+  "overall_statement": "Training and PCAP feature pipelines are approximately semantically equivalent: the window aggregation, transforms, relative-change and scaler layers are exactly equivalent (verified on identical flow records), while the flow-record production layer differs (CICFlowMeter vs packet reconstruction) so numerical equality is not guaranteed.",
+  "known_limitations": [
+    "CICFlowMeter (Java) and the PCAP path reconstruct flows differently: CIC terminates on FIN/RST plus a timeout, the PCAP path splits only on a >120 s idle gap.",
+    "Byte accounting differs: CIC TotLen/Pkt Len vs L4 payload length in the PCAP path.",
+    "The CIC CSV flag columns are binarised 0/1 by the dataset authors' preprocessing; the PCAP path reproduces that binarisation, but the definition is highly sensitive to flow length, so measured flag-rate distributions still differ materially.",
+    "Capture scope differs: training aggregates the whole victim subnet, a demo PCAP covers only the captured hosts. This shifts every volume and diversity feature.",
+    "Timestamp anchoring differs (CIC CSV local clock with AM/PM dropped vs UTC epoch); the binning RULE is identical but the two clocks are not aligned.",
+    "No packet-level feature (TTL, TCP window, fragmentation, retransmission) is part of this contract \u2014 that is a later roadmap task."
+  ]
+}

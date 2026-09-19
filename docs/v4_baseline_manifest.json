@@ -1,0 +1,760 @@
+{
+  "baseline_name": "V4 Latent World Model \u2014 frozen reference baseline (multi-day CSE-CIC-IDS2018, Mar-2 held out)",
+  "baseline_version": "V4",
+  "frozen_on_utc": "2026-09-19T04:06:19Z",
+  "frozen_by": "src/verify_v4_baseline.py + docs/V4_REFERENCE_BASELINE.md",
+  "status": "FROZEN",
+  "checkpoint": {
+    "path": "models/latent_world_model_v4/latent_world_model_v4.pt",
+    "sha256": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "size_bytes": 986987,
+    "mtime_local": "2026-09-02T10:50:22",
+    "model_class": "LatentWorldModelV4",
+    "parameter_count": 244027,
+    "state_dict_keys": 28,
+    "loads_with_strict_true": true,
+    "embedded_metadata": {
+      "model_class": "LatentWorldModelV4",
+      "input_size": 52,
+      "hidden_size": 128,
+      "latent_size": 32,
+      "output_size": 26,
+      "num_layers": 2,
+      "sequence_length": 10,
+      "positive_class_weight": 5.807471264367816,
+      "best_validation_f1": 0.8043478260869565,
+      "selected_threshold": 0.05,
+      "test_state_loss": 0.2688717890073596,
+      "test_attack_f1": 0.2966507177033493,
+      "test_roc_auc": 0.6708944543828265,
+      "test_fpr": 0.018461538461538463,
+      "max_k": 5,
+      "gamma": 0.8,
+      "curriculum": [
+        [
+          1,
+          1
+        ],
+        [
+          21,
+          2
+        ],
+        [
+          41,
+          3
+        ],
+        [
+          61,
+          4
+        ],
+        [
+          81,
+          5
+        ]
+      ],
+      "changes_from_v3": [
+        "multi_step_objective",
+        "gated_residual_transition",
+        "latent_layer_norm",
+        "curriculum_training"
+      ],
+      "transition_type": "deterministic"
+    }
+  },
+  "architecture": {
+    "encoder": "nn.LSTM(input=52, hidden=128, num_layers=2, batch_first=True, dropout=0.20) -> last timestep -> LayerNorm(128) -> Linear(128->32)",
+    "transition": "candidate=MLP(32->128->32, ReLU); gate=sigmoid(Linear(32->32)); z'=LayerNorm(gate*candidate + (1-gate)*z)",
+    "transition_type": "deterministic point estimate in latent space (NOT a probabilistic P(S_t+1|S_t))",
+    "decoder": "Linear(32->64) -> ReLU -> Linear(64->26)",
+    "attack_head": "Linear(32->32) -> ReLU -> Dropout(0.10) -> Linear(32->1) -> sigmoid",
+    "latent_dimension": 32,
+    "hidden_size": 128,
+    "num_layers": 2,
+    "dropout": 0.2,
+    "input_size": 52,
+    "output_size": 26,
+    "rollout_semantics": "k_step_rollout(x,k) returns K+1 probabilities: index 0 = encoder latent z_t (no transition), index k = after k transitions = prediction for t+k"
+  },
+  "input": {
+    "sequence_length": 10,
+    "feature_dimension": 52,
+    "base_feature_count": 26,
+    "relative_feature_count": 26,
+    "window_seconds": 10,
+    "input_shape": [
+      10,
+      52
+    ],
+    "feature_order_file": "data/processed/multiday_benchmark_K5/input_feature_names.txt",
+    "feature_order_sha256": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "state_feature_file": "data/processed/multiday_benchmark_K5/state_feature_names.txt",
+    "state_feature_sha256": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+    "frozen_schema_copy": "docs/v4_feature_schema.json",
+    "base_features": [
+      "flow_count",
+      "log_flow_count",
+      "log_total_packets",
+      "log_total_bytes",
+      "window_packet_rate",
+      "window_byte_rate",
+      "syn_rate",
+      "ack_rate",
+      "rst_rate",
+      "fin_rate",
+      "psh_rate",
+      "urg_rate",
+      "mean_pkt_len",
+      "std_pkt_len",
+      "log_mean_flow_duration",
+      "log_mean_fwd_iat",
+      "log_mean_bwd_iat",
+      "fwd_packet_ratio",
+      "bwd_packet_ratio",
+      "fwd_byte_ratio",
+      "bwd_byte_ratio",
+      "mean_down_up_ratio",
+      "log_unique_dst_ports",
+      "unique_protocols",
+      "dst_port_entropy",
+      "protocol_entropy"
+    ],
+    "relative_features": [
+      "flow_count_rel_change",
+      "log_flow_count_rel_change",
+      "log_total_packets_rel_change",
+      "log_total_bytes_rel_change",
+      "window_packet_rate_rel_change",
+      "window_byte_rate_rel_change",
+      "syn_rate_rel_change",
+      "ack_rate_rel_change",
+      "rst_rate_rel_change",
+      "fin_rate_rel_change",
+      "psh_rate_rel_change",
+      "urg_rate_rel_change",
+      "mean_pkt_len_rel_change",
+      "std_pkt_len_rel_change",
+      "log_mean_flow_duration_rel_change",
+      "log_mean_fwd_iat_rel_change",
+      "log_mean_bwd_iat_rel_change",
+      "fwd_packet_ratio_rel_change",
+      "bwd_packet_ratio_rel_change",
+      "fwd_byte_ratio_rel_change",
+      "bwd_byte_ratio_rel_change",
+      "mean_down_up_ratio_rel_change",
+      "log_unique_dst_ports_rel_change",
+      "unique_protocols_rel_change",
+      "dst_port_entropy_rel_change",
+      "protocol_entropy_rel_change"
+    ],
+    "relative_change_definition": "per source day, chronological: r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8); first row set to 0.0; inf/NaN -> 0.0; clipped to [-10, 10]",
+    "preprocessing": [
+      "10-second window aggregation of CICFlowMeter flows (data/processed/states_v2/*.csv)",
+      "pd.to_numeric(errors='coerce'); +/-inf -> NaN; NaN -> 0.0 on the 26 base features",
+      "26 relative-change features appended per source day (see relative_change_definition)",
+      "StandardScaler (fit on train partition only) applied to all 52 input features",
+      "np.nan_to_num(nan=0.0, posinf=10.0, neginf=-10.0), cast to float32",
+      "sequences of 10 consecutive windows, accepted only if inputs+K targets are exactly 10s apart"
+    ]
+  },
+  "scalers": {
+    "input_scaler": {
+      "path": "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+      "sha256": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "size_bytes": 2938,
+      "class": "StandardScaler",
+      "sklearn_module": "sklearn.preprocessing._data",
+      "n_features_in": 52,
+      "n_samples_seen": 8575,
+      "with_mean": true,
+      "with_std": true,
+      "fitted_on": "train partition only (85% chronological head of Feb-14, Feb-15, Feb-28) = 8575 windows",
+      "mean_first3": [
+        266.7463556851312,
+        5.203379604968038,
+        7.474836071682246
+      ],
+      "scale_first3": [
+        243.47124933052643,
+        0.9690180083300648,
+        1.1774111244972663
+      ],
+      "mean_sum": 131822.96542653782,
+      "scale_sum": 476157.3909062886
+    },
+    "target_scaler": {
+      "path": "data/processed/multiday_benchmark_K5/target_scaler.pkl",
+      "sha256": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "size_bytes": 1589,
+      "class": "StandardScaler",
+      "sklearn_module": "sklearn.preprocessing._data",
+      "n_features_in": 26,
+      "n_samples_seen": 8575,
+      "with_mean": true,
+      "with_std": true,
+      "fitted_on": "train partition only (same 8575 windows), 26 base features",
+      "mean_first3": [
+        266.7463556851312,
+        5.203379604968038,
+        7.474836071682246
+      ],
+      "scale_first3": [
+        243.47124933052643,
+        0.9690180083300648,
+        1.1774111244972663
+      ],
+      "mean_sum": 131814.587860009,
+      "scale_sum": 476129.6950824192
+    },
+    "applied_by": "src/prepare_multiday_benchmark.py at dataset build time; the .npy arrays consumed by the evaluation are already scaled",
+    "used_at_inference_by": "src/pcap_ingest_v4.py (CANON_DIR = data/processed/multiday_benchmark_K5)",
+    "note": "The scalers in data/processed/temporal_benchmark_v2/ are a DIFFERENT (single-day Feb-28) fit and are NOT part of this baseline."
+  },
+  "dataset": {
+    "benchmark_directory": "data/processed/multiday_benchmark_K5",
+    "builder_script": "src/prepare_multiday_benchmark.py",
+    "source_state_directory": "data/processed/states_v2",
+    "train": [
+      {
+        "source_day": "Wednesday-14-02-2018",
+        "state_file": "data/processed/states_v2/Wednesday-14-02-2018_TrafficForML_CICFlowMeter_states_v2.csv",
+        "sha256": "2743f80a8697c09cd1e2c4495d7babfab97545e1d9d0ddcd6576ab0f9a64481b",
+        "total_windows": 3255,
+        "train_windows": 2766,
+        "validation_windows": 489,
+        "train_last_window_start": "2018-02-14 11:38:20",
+        "validation_first_window_start": "2018-02-14 11:38:30"
+      },
+      {
+        "source_day": "Thursday-15-02-2018",
+        "state_file": "data/processed/states_v2/Thursday-15-02-2018_TrafficForML_CICFlowMeter_states_v2.csv",
+        "sha256": "bfd835c85f06d9c3009ac9505516cd7287b04a25933239a52e5393db65ac4728",
+        "total_windows": 3429,
+        "train_windows": 2914,
+        "validation_windows": 515,
+        "train_last_window_start": "2018-02-15 11:34:00",
+        "validation_first_window_start": "2018-02-15 11:34:10"
+      },
+      {
+        "source_day": "Wednesday-28-02-2018",
+        "state_file": "data/processed/states_v2/Wednesday-28-02-2018_TrafficForML_CICFlowMeter_states_v2.csv",
+        "sha256": "dae0573df4e8b23b56f23a1b8c80d39c2d1a9e894f6f792acf3638466474b247",
+        "total_windows": 3406,
+        "train_windows": 2895,
+        "validation_windows": 511,
+        "train_last_window_start": "2018-02-28 11:34:40",
+        "validation_first_window_start": "2018-02-28 11:34:50"
+      }
+    ],
+    "validation": [
+      {
+        "source_day": "Wednesday-14-02-2018",
+        "window_range": "2018-02-14 11:38:30 .. end of day",
+        "windows": 489
+      },
+      {
+        "source_day": "Thursday-15-02-2018",
+        "window_range": "2018-02-15 11:34:10 .. end of day",
+        "windows": 515
+      },
+      {
+        "source_day": "Wednesday-28-02-2018",
+        "window_range": "2018-02-28 11:34:50 .. end of day",
+        "windows": 511
+      }
+    ],
+    "test": [
+      {
+        "source_day": "Friday-02-03-2018",
+        "state_file": "data/processed/states_v2/Friday-02-03-2018_TrafficForML_CICFlowMeter_states_v2.csv",
+        "sha256": "ce101327abfe64fe8f7175a961f72a60cb56bda6e5216a023077800a33cd20b5",
+        "total_windows": 3143,
+        "window_range": "2018-03-02 01:00:00 .. 2018-03-02 12:59:50"
+      }
+    ],
+    "test_day": "2018-03-02 (Friday-02-03-2018, CSE-CIC-IDS2018)",
+    "split_policy": "chronological held-out day; train days Feb-14/Feb-15/Feb-28 each split chronologically 85% train / 15% validation (VAL_RATIO=0.15); Mar-2 entirely held out",
+    "validation_ratio": 0.15,
+    "relative_change_computed_per_source_day": true,
+    "relative_change_computed_before_split": true,
+    "test_participates_in_any_fitting": false,
+    "sequence_construction": "SEQUENCE_LENGTH=10 inputs + MAX_K=5 targets; a window block is accepted only if all consecutive timestamp diffs equal exactly 10 seconds (no day/gap crossing)",
+    "splits": {
+      "train": {
+        "sequences": 8441,
+        "X": {
+          "path": "data/processed/multiday_benchmark_K5/X_train.npy",
+          "sha256": "24139069b9c1f35fdd8a5183d7fcf37fb82a3721bc4f6760be2fbbc0918f7065",
+          "shape": [
+            8441,
+            10,
+            52
+          ],
+          "dtype": "float32"
+        },
+        "Y_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/Y_multistep_train.npy",
+          "sha256": "5de4e535fc7d7fa37f5c44bdab79cd495f0ef2d3086d493ec0931d42a65b71e0",
+          "shape": [
+            8441,
+            5,
+            26
+          ],
+          "dtype": "float32"
+        },
+        "A_binary_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/A_binary_multistep_train.npy",
+          "sha256": "40f23948ed70a88a7c8fb46a7a33563e97d5c9e60491e9b4d147beb473c867cd",
+          "shape": [
+            8441,
+            5
+          ],
+          "dtype": "float32"
+        },
+        "A_soft_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/A_soft_multistep_train.npy",
+          "sha256": "fec8b078d55bfa24c787bb3d576c614279a583f59b19569315f48a6938a3dad5",
+          "shape": [
+            8441,
+            5
+          ],
+          "dtype": "float32"
+        },
+        "metadata_csv": {
+          "path": "data/processed/multiday_benchmark_K5/train_metadata.csv",
+          "sha256": "dd6c2c07b7f791a94d207627a54e0fb7e4858c23a78807d35da4a7e8d69cf565"
+        },
+        "attack_positive_t1": 1835,
+        "benign_t1": 6606
+      },
+      "val": {
+        "sequences": 1473,
+        "X": {
+          "path": "data/processed/multiday_benchmark_K5/X_val.npy",
+          "sha256": "083478c02131e568731923761b4df1595cfbdc25d28afd78583613c30e8d8b9f",
+          "shape": [
+            1473,
+            10,
+            52
+          ],
+          "dtype": "float32"
+        },
+        "Y_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/Y_multistep_val.npy",
+          "sha256": "96029847480ea632adddd91a0550b12577148b6633230d5b421736412072a83b",
+          "shape": [
+            1473,
+            5,
+            26
+          ],
+          "dtype": "float32"
+        },
+        "A_binary_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/A_binary_multistep_val.npy",
+          "sha256": "db34c8c5503208a2e5689c533b046ea2fb6f4a8ee60fabd23532a17b18f9192b",
+          "shape": [
+            1473,
+            5
+          ],
+          "dtype": "float32"
+        },
+        "A_soft_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/A_soft_multistep_val.npy",
+          "sha256": "6e56d6d7747a23764a04f85a19b05f6ff7bf8035e10cf571524b65601253e8f9",
+          "shape": [
+            1473,
+            5
+          ],
+          "dtype": "float32"
+        },
+        "metadata_csv": {
+          "path": "data/processed/multiday_benchmark_K5/val_metadata.csv",
+          "sha256": "d7483541ea8ac46fe59220bb401efee3f0562d6bbbbf3a6859429256668814f4"
+        },
+        "attack_positive_t1": 392,
+        "benign_t1": 1081
+      },
+      "test": {
+        "sequences": 3115,
+        "X": {
+          "path": "data/processed/multiday_benchmark_K5/X_test.npy",
+          "sha256": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+          "shape": [
+            3115,
+            10,
+            52
+          ],
+          "dtype": "float32"
+        },
+        "Y_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/Y_multistep_test.npy",
+          "sha256": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+          "shape": [
+            3115,
+            5,
+            26
+          ],
+          "dtype": "float32"
+        },
+        "A_binary_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy",
+          "sha256": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+          "shape": [
+            3115,
+            5
+          ],
+          "dtype": "float32"
+        },
+        "A_soft_multistep": {
+          "path": "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy",
+          "sha256": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+          "shape": [
+            3115,
+            5
+          ],
+          "dtype": "float32"
+        },
+        "metadata_csv": {
+          "path": "data/processed/multiday_benchmark_K5/test_metadata.csv",
+          "sha256": "113ee16157975ed14672aa105f9e093d6fe73b28d1c39499b50fce737f1edf0a"
+        },
+        "attack_positive_t1": 2031,
+        "benign_t1": 1084
+      }
+    },
+    "test_observable_attack_onsets": [
+      "2018-03-02 03:54:50",
+      "2018-03-02 10:13:20",
+      "2018-03-02 12:13:30"
+    ],
+    "attack_active_at_first_test_window": true
+  },
+  "threshold": {
+    "selection_source": "validation",
+    "selection_method": "grid search np.arange(0.01, 0.99, 0.01), keep first threshold maximizing validation F1 (strict >)",
+    "applied_to_test": "frozen validation threshold applied unchanged to Mar-2 test scores",
+    "test_labels_used_for_selection": false,
+    "per_horizon_future_prediction": {
+      "1": 0.45,
+      "2": 0.54,
+      "3": 0.65,
+      "5": 0.72
+    },
+    "per_horizon_trajectory_max": {
+      "2": 0.51,
+      "3": 0.68,
+      "5": 0.69
+    },
+    "per_horizon_trajectory_mean": {
+      "2": 0.49,
+      "3": 0.55,
+      "5": 0.62
+    },
+    "early_warning_threshold": 0.69,
+    "checkpoint_embedded_threshold": 0.05,
+    "checkpoint_embedded_threshold_note": "0.05 was selected during TRAINING on the single-day temporal_benchmark_v2 validation split. It is NOT used by the reference rollout evaluation; it IS used by src/app.py and src/shap_explainer.py."
+  },
+  "rollout": {
+    "max_k": 5,
+    "evaluated_horizons": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "note_on_k4": "K=4 is NOT evaluated by the reference evaluation script (FUTURE_HORIZONS/K_VALUES = [1,2,3,5]); the model supports it but no K=4 reference number exists.",
+    "trajectory_horizons": [
+      2,
+      3,
+      5
+    ],
+    "aggregation": "trajectory event score = MAX over probs[:, 1:k+1]; MEAN over the same slice is reported as a secondary heuristic",
+    "trajectory_target": "max(A_binary[:, 0:k]) = any attack in t+1..t+k",
+    "point_target_alignment": "probs[:, k] (k transitions) evaluated against A_binary[:, k-1] (label at t+k)",
+    "implementation": "LatentWorldModelV4.k_step_rollout \u2014 autoregressive in latent space; each step applies transition_step then attack head + decoder"
+  },
+  "evaluation": {
+    "canonical_command": "git show 2be3073:src/k_step_rollout.py > /tmp/k_step_rollout_reference.py && python /tmp/k_step_rollout_reference.py   # run from repo root",
+    "canonical_command_note": "The reference V4 numbers are produced by src/k_step_rollout.py AS OF COMMIT 2be3073 (which reads data/processed/multiday_benchmark_K5). The HEAD version of src/k_step_rollout.py reads data/processed/temporal_benchmark_v2/multistep_K5 and does NOT reproduce them \u2014 see known_issues.",
+    "reference_script_commit": "2be30736872dd7bb072b2e5c4cf7e7fe62605af6",
+    "reference_script_sha256": "1b050c6b818bb29f1565c9f338defe72ad07f3dcfab407da1703645f42b5dd86",
+    "scripts": {
+      "reference_evaluation": "src/k_step_rollout.py @ 2be3073",
+      "head_evaluation_not_reference": "src/k_step_rollout.py @ 53c2222",
+      "training": "src/train_latent_world_model_v4.py",
+      "dataset_builder": "src/prepare_multiday_benchmark.py",
+      "baselines": "src/evaluate_baselines.py"
+    },
+    "metrics": [
+      "f1",
+      "precision",
+      "recall",
+      "roc_auc",
+      "fpr",
+      "pos_samples",
+      "tp",
+      "fp",
+      "tn",
+      "fn",
+      "early_warning_coverage",
+      "lead_time_seconds",
+      "false_positive_windows_per_hour"
+    ],
+    "metric_definitions": {
+      "f1/precision/recall": "sklearn binary, zero_division=0, on (prob >= frozen threshold)",
+      "roc_auc": "sklearn roc_auc_score on raw probabilities (threshold independent)",
+      "fpr": "fp / (fp + tn)",
+      "attack_label": "attack_present at the target window: 1 if any flow in that 10s window is labelled non-Benign",
+      "lead_time": "(onset_index - first_alert_index) * 10 seconds, searched only in the 5 windows before onset",
+      "false_positive_windows_per_hour": "windows with alert but no attack in t+1..t+5, divided by (n_test_sequences*10/3600)"
+    },
+    "batch_size": 64,
+    "device_policy": "MPS if available, else CUDA, else CPU (verified reproducible on MPS, macOS arm64)",
+    "model_mode": "model.eval() + torch.no_grad() (dropout disabled)",
+    "random_seeds": "none needed \u2014 evaluation is fully deterministic (no shuffling, no sampling); training used RANDOM_SEED=42",
+    "filtering_rules": "only sequences with exact 10s contiguity are present in the arrays; no further filtering at evaluation time"
+  },
+  "results_verified": {
+    "verified_on_utc": "2026-09-19T04:06:20Z",
+    "future_prediction": {
+      "k=1": {
+        "f1": 0.591967600404995,
+        "precision": 0.9409871244635193,
+        "recall": 0.43180699162973907,
+        "roc_auc": 0.8558010432393837,
+        "fpr": 0.0507380073800738,
+        "pos_samples": 2031,
+        "tp": 877,
+        "fp": 55,
+        "tn": 1029,
+        "fn": 1154,
+        "threshold": 0.45,
+        "validation_f1_for_threshold": 0.5544267053701016
+      },
+      "k=2": {
+        "f1": 0.673871582962492,
+        "precision": 0.9506726457399103,
+        "recall": 0.5219103889709503,
+        "roc_auc": 0.8774389036357129,
+        "fpr": 0.0507380073800738,
+        "pos_samples": 2031,
+        "tp": 1060,
+        "fp": 55,
+        "tn": 1029,
+        "fn": 971,
+        "threshold": 0.54,
+        "validation_f1_for_threshold": 0.5650224215246636
+      },
+      "k=3": {
+        "f1": 0.6951602765556254,
+        "precision": 0.9609035621198957,
+        "recall": 0.5445593303791236,
+        "roc_auc": 0.8893420433465782,
+        "fpr": 0.04151291512915129,
+        "pos_samples": 2031,
+        "tp": 1106,
+        "fp": 45,
+        "tn": 1039,
+        "fn": 925,
+        "threshold": 0.65,
+        "validation_f1_for_threshold": 0.574468085106383
+      },
+      "k=5": {
+        "f1": 0.7522549609140108,
+        "precision": 0.9660231660231661,
+        "recall": 0.6159527326440177,
+        "roc_auc": 0.8876532746125098,
+        "fpr": 0.04059040590405904,
+        "pos_samples": 2031,
+        "tp": 1251,
+        "fp": 44,
+        "tn": 1040,
+        "fn": 780,
+        "threshold": 0.72,
+        "validation_f1_for_threshold": 0.5859872611464968
+      }
+    },
+    "trajectory_event_max": {
+      "k=2": {
+        "f1": 0.7127003699136868,
+        "precision": 0.9553719008264463,
+        "recall": 0.5683382497541789,
+        "roc_auc": 0.8779881696633638,
+        "fpr": 0.04995374653098982,
+        "pos_samples": 2034,
+        "tp": 1156,
+        "fp": 54,
+        "tn": 1027,
+        "fn": 878,
+        "threshold": 0.51,
+        "validation_f1_for_threshold": 0.5557163531114327
+      },
+      "k=3": {
+        "f1": 0.6370516617308325,
+        "precision": 0.9660678642714571,
+        "recall": 0.47520864015709374,
+        "roc_auc": 0.8904168977806681,
+        "fpr": 0.03153988868274583,
+        "pos_samples": 2037,
+        "tp": 968,
+        "fp": 34,
+        "tn": 1044,
+        "fn": 1069,
+        "threshold": 0.68,
+        "validation_f1_for_threshold": 0.5641025641025641
+      },
+      "k=5": {
+        "f1": 0.7979274611398963,
+        "precision": 0.9665271966527197,
+        "recall": 0.6794117647058824,
+        "roc_auc": 0.8928704970360237,
+        "fpr": 0.044651162790697675,
+        "pos_samples": 2040,
+        "tp": 1386,
+        "fp": 48,
+        "tn": 1027,
+        "fn": 654,
+        "threshold": 0.6900000000000001,
+        "validation_f1_for_threshold": 0.5638766519823789
+      }
+    },
+    "trajectory_event_mean": {
+      "k=2": {
+        "f1": 0.6294349540078844,
+        "precision": 0.9485148514851485,
+        "recall": 0.47099311701081614,
+        "roc_auc": 0.8747399663627673,
+        "fpr": 0.04810360777058279,
+        "pos_samples": 2034,
+        "tp": 958,
+        "fp": 52,
+        "tn": 1029,
+        "fn": 1076,
+        "threshold": 0.49,
+        "validation_f1_for_threshold": 0.5609397944199707
+      },
+      "k=3": {
+        "f1": 0.642578125,
+        "precision": 0.9536231884057971,
+        "recall": 0.4845360824742268,
+        "roc_auc": 0.883189746644407,
+        "fpr": 0.04452690166975881,
+        "pos_samples": 2037,
+        "tp": 987,
+        "fp": 48,
+        "tn": 1030,
+        "fn": 1050,
+        "threshold": 0.55,
+        "validation_f1_for_threshold": 0.5701492537313433
+      },
+      "k=5": {
+        "f1": 0.6438579341805148,
+        "precision": 0.9601554907677357,
+        "recall": 0.4843137254901961,
+        "roc_auc": 0.8866479708162336,
+        "fpr": 0.03813953488372093,
+        "pos_samples": 2040,
+        "tp": 988,
+        "fp": 41,
+        "tn": 1034,
+        "fn": 1052,
+        "threshold": 0.62,
+        "validation_f1_for_threshold": 0.5753012048192772
+      }
+    },
+    "early_warning": {
+      "threshold": 0.6900000000000001,
+      "validation_f1": 0.5638766519823789,
+      "active_at_start": true,
+      "onsets": 3,
+      "warned": 2,
+      "coverage_pct": 66.66666666666667,
+      "mean_lead_s": 50.0,
+      "median_lead_s": 50.0,
+      "false_positive_windows_per_hour": 5.547351524879614
+    }
+  },
+  "training_provenance": {
+    "training_script": "src/train_latent_world_model_v4.py",
+    "training_data_directory": "data/processed/temporal_benchmark_v2/multistep_K5 (SINGLE DAY: Feb-28-2018)",
+    "training_hyperparameters": {
+      "random_seed": 42,
+      "batch_size": 64,
+      "epochs": 120,
+      "patience": 20,
+      "learning_rate": 0.0005,
+      "weight_decay": 1e-05,
+      "optimizer": "AdamW",
+      "scheduler": "ReduceLROnPlateau(mode=max, factor=0.5, patience=5), reset at each curriculum phase",
+      "state_loss": "SmoothL1Loss",
+      "attack_loss": "BCEWithLogitsLoss(pos_weight=5.807471264367816)",
+      "state_loss_weight": 1.0,
+      "attack_loss_weight": 0.5,
+      "gamma": 0.8,
+      "max_k": 5,
+      "curriculum": [
+        [
+          1,
+          1
+        ],
+        [
+          21,
+          2
+        ],
+        [
+          41,
+          3
+        ],
+        [
+          61,
+          4
+        ],
+        [
+          81,
+          5
+        ]
+      ],
+      "grad_clip_max_norm": 1.0
+    },
+    "training_data_is_bit_reproducible": false,
+    "training_data_note": "checkpoint positive_class_weight=5.807471 implies 2021 benign / 348 attack training sequences and the saved confusion matrix sums to 497 test sequences; the arrays now on disk hold 2022/348 and 498. The exact training arrays were regenerated on 2026-09-04 and no longer match bit-for-bit. The evaluation arrays (multiday_benchmark_K5) DO reproduce the reported metrics exactly."
+  },
+  "contamination_check": {
+    "core_benchmark_isolated_from_v3": true,
+    "evidence": [
+      "src/k_step_rollout.py imports only stdlib/numpy/pandas/torch/sklearn \u2014 no project modules",
+      "src/k_step_rollout.py defines LatentWorldModelV4 inline and loads only models/latent_world_model_v4/latent_world_model_v4.pt",
+      "data/processed/multiday_benchmark_K5 is produced solely by src/prepare_multiday_benchmark.py from data/processed/states_v2 (V2 state files)",
+      "no V3 checkpoint, V3 scaler, V3 threshold or V3 explainer artifact participates in the reference evaluation"
+    ],
+    "v3_touching_modules_outside_the_benchmark": [
+      "src/shap_explainer.py (--version v3 path loads models/latent_world_model_v3/latent_world_model_v3.pt; its v4 path reads data/processed/temporal_benchmark_v2, not the multiday benchmark)",
+      "src/mitre_mapper.py (loads latent_world_model_v3.pt)",
+      "src/pcap_ingest.py (falls back to models/latent_world_model_v3)"
+    ]
+  },
+  "git": {
+    "commit": "53c22227d368b82ff9e736206a92e85b6bed2514",
+    "branch": "cicflowmeter-validation",
+    "commit_date": "2026-09-15 00:34:58 +0530",
+    "worktree_clean_at_freeze": true,
+    "reference_evaluation_commit": "2be30736872dd7bb072b2e5c4cf7e7fe62605af6",
+    "checkpoint_tracked_in_git": false,
+    "checkpoint_tracked_note": "models/* and data/* are .gitignore'd; the SHA256 hashes in this manifest are the only provenance record."
+  },
+  "environment": {
+    "python": "3.14.7",
+    "torch": "2.14.0",
+    "numpy": "2.5.2",
+    "platform": "darwin/arm64 (macOS)"
+  },
+  "known_issues": [
+    "CRITICAL: src/k_step_rollout.py at HEAD (53c2222) points at data/processed/temporal_benchmark_v2/multistep_K5 (single-day Feb-28 intra-day split) and yields K=1 F1=0.3562 \u2014 it does NOT reproduce the reported V4 reference results. The reference numbers come from the same file at commit 2be3073 reading data/processed/multiday_benchmark_K5.",
+    "The V4 checkpoint was TRAINED on the single-day temporal_benchmark_v2 arrays (scaler fit on Feb-28 only, n=2384) but the reference EVALUATION feeds it multiday_benchmark_K5 arrays scaled by a different StandardScaler (fit on Feb-14/15/28, n=8575). The reference results are therefore an out-of-distribution-normalisation evaluation. Recorded, not changed.",
+    "K=4 has no reference number: the reference script evaluates horizons [1,2,3,5] only.",
+    "models/latent_world_model_v4/trajectory_evaluation.csv (written by the training script) has swapped columns: `trajectory_best_f1` actually holds the threshold and `trajectory_threshold` holds the F1, because find_best_threshold returns (threshold, f1) but the caller unpacks it as (f1, threshold).",
+    "src/train_latent_world_model_v4.py selects its K-step trajectory thresholds with TEST labels (find_best_threshold(all_max_probs, y_test_binary)). Those training-script trajectory numbers are test-optimised and must not be quoted. The reference rollout evaluation does NOT do this \u2014 it selects every threshold on validation only.",
+    "The exact training arrays that produced the checkpoint no longer exist on disk (see training_provenance); training is not bit-reproducible, evaluation is.",
+    "src/app.py and src/shap_explainer.py use the checkpoint-embedded threshold 0.05 (a single-day training artefact) rather than the validation-frozen rollout thresholds.",
+    "models/latent_world_model_v4/metrics.csv / confusion_matrix.csv / test_attack_predictions.csv are TRAINING-TIME artefacts on the Feb-28 intra-day test split (test_f1=0.2967). They are not the V4 reference results."
+  ]
+}

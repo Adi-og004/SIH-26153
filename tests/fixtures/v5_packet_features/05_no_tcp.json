@@ -1,0 +1,87 @@
+{
+  "name": "05_no_tcp",
+  "description": "UDP-only window \u2014 every TCP-dependent feature must be the 0.0 absent-encoding, while the TTL and payload families are still computed normally",
+  "derivation": "no TCP packet exists, so every TCP denominator is 0 and _ratio returns exactly 0.0; log1p(0) = 0.0 for the log-transformed TCP features",
+  "packet_defaults": {
+    "timestamp_abs": 0.0,
+    "ip_version": 4,
+    "src_ip": "10.0.0.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 1000,
+    "dst_port": 80,
+    "protocol": 6,
+    "ttl": 64,
+    "ip_df": false,
+    "ip_mf": false,
+    "ip_frag_offset": 0,
+    "is_tcp": true,
+    "tcp_window": 1000,
+    "tcp_seq": 0,
+    "tcp_syn": false,
+    "tcp_fin": false,
+    "payload_len": 0
+  },
+  "packets": [
+    {
+      "timestamp_abs": 0.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 5353,
+      "dst_port": 5353,
+      "protocol": 17,
+      "ttl": 50,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 200
+    },
+    {
+      "timestamp_abs": 1.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 5353,
+      "dst_port": 5353,
+      "protocol": 17,
+      "ttl": 60,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 300
+    }
+  ],
+  "expected_windows": [
+    {
+      "window_idx": 0,
+      "packet_count": 2,
+      "features": {
+        "ttl_mean": 55.0,
+        "ttl_std": 7.0710678118654755,
+        "log_tcp_window_mean": 0.0,
+        "log_tcp_window_std": 0.0,
+        "log_tcp_window_max": 0.0,
+        "tcp_window_zero_ratio": 0.0,
+        "tcp_window_change_rate": 0.0,
+        "log_tcp_retrans_count": 0.0,
+        "tcp_retrans_ratio": 0.0,
+        "log_tcp_retrans_bytes": 0.0,
+        "payload_len_p50": 250.0,
+        "payload_len_p90": 290.0,
+        "payload_len_max": 300.0,
+        "payload_zero_ratio": 0.0,
+        "payload_len_entropy": 0.9999999999971146
+      }
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "contract_name": "v4_explainability_contract",
+  "contract_version": "1.0",
+  "generated_utc": "2026-09-19T05:47:52.899435Z",
+  "status": "FROZEN",
+  "produced_by": "src/run_v4_explainability.py",
+  "verified_by": "src/verify_v4_explainability.py",
+  "core_claim": "The explanation is generated from the same V4 inference computation used to produce the displayed prediction.",
+  "model_identity": {
+    "model_version": "V4",
+    "model_class": "LatentWorldModelV4",
+    "checkpoint_path": "models/latent_world_model_v4/latent_world_model_v4.pt",
+    "checkpoint_hash": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "checkpoint_hash_expected": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "feature_schema_path": "docs/v4_feature_schema.json",
+    "feature_schema_hash": "2b4f820ca1f193e47b3b9c1eae4163cd9b2643886665f5f5d83f876e3ee094c4",
+    "feature_order_hash": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "feature_order_hash_expected": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "scaler_path": "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+    "scaler_hash": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+    "scaler_hash_expected": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+    "input_shape": [
+      10,
+      52
+    ],
+    "parameter_count": 244027,
+    "torch_version": "2.14.0",
+    "manifest_path": "docs/v4_baseline_manifest.json",
+    "manifest_hash": "b2765c2489ccee3845e9dc43990b187d894237905087f3969ed2fae82613937e"
+  },
+  "input_contract": {
+    "input_shape": [
+      10,
+      52
+    ],
+    "sequence_length": 10,
+    "feature_dimension": 52,
+    "window_seconds": 10,
+    "feature_schema": "docs/v4_feature_schema.json",
+    "feature_schema_sha256": "2b4f820ca1f193e47b3b9c1eae4163cd9b2643886665f5f5d83f876e3ee094c4",
+    "feature_order_file": "data/processed/multiday_benchmark_K5/input_feature_names.txt",
+    "feature_order_sha256": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "scaler": "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+    "scaler_sha256": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+    "preprocessing": "The explainer consumes the ALREADY-SCALED inference tensor. It implements no second preprocessing path: dataset explanations read the pre-built multiday_benchmark_K5 .npy arrays; PCAP explanations reuse src/pcap_ingest_v4.py's build_sequences() output verbatim.",
+    "temporal_indexing_preserved": true,
+    "attribution_axes": [
+      "time_step (10, labelled t-9..t)",
+      "feature_index (52, schema order)"
+    ]
+  },
+  "target_definitions": {
+    "TARGET_A_horizon_probability": {
+      "definition": "P(attack at t+5) = sigmoid(attack_head(z_5)), z_5 = transition_step^5(encode(x)); identical to k_step_rollout(x, K).probs[5]",
+      "supported_horizons": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "evaluated_horizons": [
+        1,
+        3,
+        5
+      ],
+      "thresholds": {
+        "1": 0.45,
+        "2": 0.54,
+        "3": 0.65,
+        "5": 0.72
+      },
+      "threshold_provenance": "validation-selected, frozen in docs/v4_baseline_manifest.json; never re-selected here"
+    },
+    "TARGET_B_trajectory_max": {
+      "definition": "MAX is non-differentiable at ties. The explainer attributes the fixed horizon k* = argmax at the input, so the attributed function value equals the displayed max exactly. In 43.8% of sampled windows the argmax changes somewhere along the straight-line integration path, so the completeness reference is F_k*(baseline), not max(baseline). Recorded per sample in trajectory_max_explanations.csv.",
+      "thresholds": {
+        "2": 0.51,
+        "3": 0.68,
+        "5": 0.69
+      },
+      "argmax_switches_on_path_rate": 0.4375
+    },
+    "recorded_per_explanation": [
+      "target_type",
+      "target_horizon",
+      "target_definition",
+      "prediction_probability",
+      "threshold",
+      "input_source"
+    ]
+  },
+  "attribution_method": {
+    "primary": "Integrated Gradients (captum.attr.IntegratedGradients)",
+    "captum_version": "0.9.0",
+    "approximation_method": "gausslegendre",
+    "n_steps": 1024,
+    "n_steps_rationale": "chosen from the measured convergence sweep in completeness_checks.csv (50/128/256/1024); 1024 is the first setting with worst-case mean relative completeness error below 1% at every evaluated horizon. Not chosen for appearance.",
+    "cross_check": "Feature Ablation (model-agnostic, gradient-free), results/v4_explainability/ablation_crosscheck.csv",
+    "rejected_methods": {
+      "attention": "V4 has no attention mechanism; no attention-based explanation is produced and no attribution is called 'attention'",
+      "shap": "src/shap_explainer.py is retained for the historical V3 artifacts only; it is not provenance-locked, targets a single transition step, reads temporal_benchmark_v2, and draws a random baseline without a seed"
+    },
+    "model_mode": "model.eval() -- both Dropout layers disabled",
+    "gradients": "enabled through the input; parameters never updated",
+    "device": "cpu",
+    "dtype": "float32 (identical to the inference path)"
+  },
+  "baseline_definition": {
+    "primary": "zero vector in scaled feature space, shape (10, 52)",
+    "rationale": "The frozen StandardScaler subtracts the training-partition mean, so the zero vector IS the average training window held constant across all 10 history windows. It is label-free, uses no test data, and is exactly reproducible.",
+    "secondary_sensitivity_baseline": "mean of the 6568 fully-benign TRAINING sequences (A_binary_multistep_train all-zero); training labels only, never test labels",
+    "caveat": "A constant-over-time reference window is not itself a realisable capture. This is the standard IG reference-point compromise and is reported, not hidden.",
+    "not_selected_for_appearance": true
+  },
+  "tolerances": {
+    "prediction_identity": 1e-09,
+    "prediction_identity_observed_max": 0.0,
+    "prediction_identity_is_bit_exact": true,
+    "completeness_acceptance": "mean relative error < 0.01 per horizon",
+    "repeatability": "bit-exact attribution tensors required"
+  },
+  "representative_case_policy": {
+    "defined_before_computing_explanations": true,
+    "horizon": 5,
+    "threshold": "frozen validation threshold for K=5 (0.72)",
+    "label": "A_binary_multistep_test[:, 4]  (attack present at t+5)",
+    "true_positive": "median-probability sample among predicted=1, actual=1",
+    "true_negative": "median-probability sample among predicted=0, actual=0",
+    "false_positive": "median-probability sample among predicted=1, actual=0",
+    "false_negative": "median-probability sample among predicted=0, actual=1",
+    "near_threshold": "argmin |p - 0.72| over all test sequences",
+    "high_confidence": "argmax p over all test sequences",
+    "low_confidence": "argmin p over all test sequences",
+    "median_rule": "sort the group's probabilities ascending, take element n//2; ties broken by ascending sample index",
+    "not_selected_on": "explanation content, attribution magnitude, or agreement with any expected narrative"
+  },
+  "sanity_tests": {
+    "randomization_test": {
+      "acceptance_rule": "mean |spearman| of SIGNED attribution between the real and randomised models below 0.30, averaged over three seeds -- learned structure must be lost",
+      "passed": true
+    },
+    "perturbation_test": {
+      "acceptance_rule": "mean |dP| for top-attributed features must exceed that of the low-attribution control",
+      "passed": true
+    },
+    "completeness_test": {
+      "acceptance_rule": "PRIMARY: the attributed output is a probability in [0, 1], so the completeness residual |sum(attr) - (F(x) - F(baseline))| is read on the probability scale -- mean AND p99 absolute error must be below 0.01 (one probability point) at every evaluated horizon. SECONDARY: mean relative error below 1% restricted to the well-posed subset |F(x) - F(baseline)| > 0.05.",
+      "passed": true
+    }
+  },
+  "mitre_separation": {
+    "rule": "Attribution never produces ATT&CK labels. The MITRE layer (src/mitre_mapper.py) is rule-based over feature VALUES and runs independently of attribution values. Any joint display must label the two blocks separately: 'MODEL ATTRIBUTION' and 'ATT&CK INTERPRETATION (rule-based)'.",
+    "attribution_feeds_mitre": false,
+    "mitre_feeds_attribution": false
+  },
+  "pcap_policy": {
+    "input_source_values": [
+      "dataset",
+      "pcap"
+    ],
+    "required_caveat": "The PCAP explanation uses the same V4 feature contract and transform chain, but flow-record production differences can affect the resulting values. Task 7 proved exact parity for the 26 base-feature aggregations, the 26 relative-change features, all transforms, the scaler interface and 10-second windowing; flow-record production remains APPROXIMATE. These values are NOT numerically equivalent to training features.",
+    "numerical_equivalence_claimed": false
+  },
+  "limitations": [
+    "Attribution measures model sensitivity/contribution. It does NOT establish causality, attacker intent, attack stage, actual compromise, or root cause.",
+    "Integrated Gradients is a path-integral approximation; the residual completeness error is reported per sample in completeness_checks.csv and is not zero.",
+    "Attributions are baseline-relative. A different reference point yields different values; the baseline-sensitivity overlap is recorded in completeness_checks.csv.",
+    "The trajectory-max target is attributed at a fixed argmax; in 43.8% of sampled windows the argmax changes along the integration path.",
+    "PCAP explanations inherit the Task 7 finding: flow-record production is APPROXIMATE, so PCAP feature values are not numerically equivalent to training features.",
+    "The V4 checkpoint was trained on single-day temporal_benchmark_v2 arrays and evaluated on multiday_benchmark_K5 arrays scaled by a different StandardScaler (frozen-baseline known issue). Explanations inherit that out-of-distribution-normalisation regime.",
+    "Re-batching the same frozen model shifts LSTM reduction order by up to 1.5e-06; identity is therefore asserted on the identical tensor in the identical batch.",
+    "No K=4 reference threshold exists, so K=4 is not explained against a frozen threshold."
+  ]
+}

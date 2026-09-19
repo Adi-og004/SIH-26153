@@ -1,0 +1,94 @@
+{
+  "name": "16_syn_retransmission",
+  "description": "a SYN re-sent twice with no payload \u2014 the count must fire while the byte counter stays 0",
+  "derivation": "a SYN consumes one sequence number, so eff_len = 1 and the packet IS seq-bearing. p1 sets the high-water mark to 501. p2 and p3 reuse seq=500 and end at 501 <= 501, so both are retransmissions. Their payload is 0, so retrans bytes = 0 and log_tcp_retrans_bytes = log1p(0) = 0.0 while log_tcp_retrans_count = log1p(2). This is the documented count-vs-bytes distinction: control-plane retransmission at no data cost.",
+  "packet_defaults": {
+    "timestamp_abs": 0.0,
+    "ip_version": 4,
+    "src_ip": "10.0.0.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 1000,
+    "dst_port": 80,
+    "protocol": 6,
+    "ttl": 64,
+    "ip_df": false,
+    "ip_mf": false,
+    "ip_frag_offset": 0,
+    "is_tcp": true,
+    "tcp_window": 1000,
+    "tcp_seq": 0,
+    "tcp_syn": false,
+    "tcp_fin": false,
+    "payload_len": 0
+  },
+  "packets": [
+    {
+      "timestamp_abs": 0.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 8192,
+      "tcp_seq": 500,
+      "tcp_syn": true,
+      "tcp_fin": false,
+      "payload_len": 0
+    },
+    {
+      "timestamp_abs": 1.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 8192,
+      "tcp_seq": 500,
+      "tcp_syn": true,
+      "tcp_fin": false,
+      "payload_len": 0
+    },
+    {
+      "timestamp_abs": 2.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 8192,
+      "tcp_seq": 500,
+      "tcp_syn": true,
+      "tcp_fin": false,
+      "payload_len": 0
+    }
+  ],
+  "expected_windows": [
+    {
+      "window_idx": 0,
+      "packet_count": 3,
+      "features": {
+        "log_tcp_retrans_count": 1.0986122886681098,
+        "tcp_retrans_ratio": 0.6666666666666666,
+        "log_tcp_retrans_bytes": 0.0
+      }
+    }
+  ]
+}

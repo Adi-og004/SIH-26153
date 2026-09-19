@@ -1,0 +1,11 @@
+# V5 feature-contract SHA-256
+# Canonical payload = feature names, order, formulas, units, windowing,
+# transforms, missing-value policy and relative-change definitions.
+# Descriptive prose is excluded, so this hash moves if and only if the
+# SEMANTICS the model receives change.
+# Reproduce: ./venv/bin/python -c "import sys; sys.path.insert(0,'src'); "
+#            "import v5_feature_contract as c; print(c.schema_hash())"
+v5_schema_sha256            5f52e2d0a7c65e651ba3e948a19c63af108e7b278dddf4e1a7f41b8b21ba6704
+v5_canonical_payload_bytes  60802
+v5_dimension                82
+v4_contract_sha256          6ec22f95a7c1cf30b3915b0327120745d368bf2e7684c329f82beb7a4b9b6674   (read-only, unchanged by V5)

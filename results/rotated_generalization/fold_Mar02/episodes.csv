@@ -1,0 +1,5 @@
+episode_id,onset,offset,windows,duration_sec,families,primary_family,cold_start_episode,test_day
+1,2018-03-02 01:00:00,2018-03-02 03:54:10,1046,10460,Bot(1046),Bot,True,Mar02
+2,2018-03-02 03:54:50,2018-03-02 03:54:50,1,10,Bot(1),Bot,False,Mar02
+3,2018-03-02 10:13:20,2018-03-02 12:13:00,719,7190,Bot(719),Bot,False,Mar02
+4,2018-03-02 12:13:30,2018-03-02 12:59:50,279,2790,Bot(279),Bot,False,Mar02

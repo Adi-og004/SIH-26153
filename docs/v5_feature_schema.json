@@ -1,0 +1,2992 @@
+{
+  "version": "v5",
+  "contract_version": "1.0.0",
+  "description": "V5 experimental packet-aware network state. V4 remains the frozen reference baseline and is NOT modified by this schema.",
+  "total_dimension": 82,
+  "sequence_length": 10,
+  "window_seconds": 10,
+  "model_input_shape": [
+    10,
+    82
+  ],
+  "feature_order": [
+    "flow_count",
+    "log_flow_count",
+    "log_total_packets",
+    "log_total_bytes",
+    "window_packet_rate",
+    "window_byte_rate",
+    "syn_rate",
+    "ack_rate",
+    "rst_rate",
+    "fin_rate",
+    "psh_rate",
+    "urg_rate",
+    "mean_pkt_len",
+    "std_pkt_len",
+    "log_mean_flow_duration",
+    "log_mean_fwd_iat",
+    "log_mean_bwd_iat",
+    "fwd_packet_ratio",
+    "bwd_packet_ratio",
+    "fwd_byte_ratio",
+    "bwd_byte_ratio",
+    "mean_down_up_ratio",
+    "log_unique_dst_ports",
+    "unique_protocols",
+    "dst_port_entropy",
+    "protocol_entropy",
+    "flow_count_rel_change",
+    "log_flow_count_rel_change",
+    "log_total_packets_rel_change",
+    "log_total_bytes_rel_change",
+    "window_packet_rate_rel_change",
+    "window_byte_rate_rel_change",
+    "syn_rate_rel_change",
+    "ack_rate_rel_change",
+    "rst_rate_rel_change",
+    "fin_rate_rel_change",
+    "psh_rate_rel_change",
+    "urg_rate_rel_change",
+    "mean_pkt_len_rel_change",
+    "std_pkt_len_rel_change",
+    "log_mean_flow_duration_rel_change",
+    "log_mean_fwd_iat_rel_change",
+    "log_mean_bwd_iat_rel_change",
+    "fwd_packet_ratio_rel_change",
+    "bwd_packet_ratio_rel_change",
+    "fwd_byte_ratio_rel_change",
+    "bwd_byte_ratio_rel_change",
+    "mean_down_up_ratio_rel_change",
+    "log_unique_dst_ports_rel_change",
+    "unique_protocols_rel_change",
+    "dst_port_entropy_rel_change",
+    "protocol_entropy_rel_change",
+    "ttl_mean",
+    "ttl_std",
+    "ttl_min",
+    "ttl_max",
+    "log_ttl_unique_count",
+    "log_tcp_window_mean",
+    "log_tcp_window_std",
+    "log_tcp_window_max",
+    "tcp_window_zero_ratio",
+    "tcp_window_change_rate",
+    "log_frag_packet_count",
+    "frag_packet_ratio",
+    "ip_df_ratio",
+    "log_tcp_retrans_count",
+    "tcp_retrans_ratio",
+    "log_tcp_retrans_bytes",
+    "payload_len_p50",
+    "payload_len_p90",
+    "payload_len_max",
+    "payload_zero_ratio",
+    "payload_len_entropy",
+    "ttl_mean_rel_change",
+    "ttl_std_rel_change",
+    "log_ttl_unique_count_rel_change",
+    "log_tcp_window_mean_rel_change",
+    "log_tcp_window_std_rel_change",
+    "log_tcp_retrans_count_rel_change",
+    "payload_len_p50_rel_change",
+    "payload_len_p90_rel_change",
+    "payload_len_entropy_rel_change"
+  ],
+  "layout": {
+    "0-25": "flow base (frozen V4)",
+    "26-51": "flow relative change (frozen V4)",
+    "52-72": "packet base (new in V5)",
+    "73-81": "packet relative change (new in V5)"
+  },
+  "v4_prefix_invariant": {
+    "claim": "v5_input[:52] is byte-identical to the V4 input vector, in the V4 order, produced by the unmodified V4 code",
+    "verified_by": "src/verify_v5_packet_features.py check 14"
+  },
+  "base_features": {
+    "flow": [
+      "flow_count",
+      "log_flow_count",
+      "log_total_packets",
+      "log_total_bytes",
+      "window_packet_rate",
+      "window_byte_rate",
+      "syn_rate",
+      "ack_rate",
+      "rst_rate",
+      "fin_rate",
+      "psh_rate",
+      "urg_rate",
+      "mean_pkt_len",
+      "std_pkt_len",
+      "log_mean_flow_duration",
+      "log_mean_fwd_iat",
+      "log_mean_bwd_iat",
+      "fwd_packet_ratio",
+      "bwd_packet_ratio",
+      "fwd_byte_ratio",
+      "bwd_byte_ratio",
+      "mean_down_up_ratio",
+      "log_unique_dst_ports",
+      "unique_protocols",
+      "dst_port_entropy",
+      "protocol_entropy"
+    ],
+    "packet": [
+      "ttl_mean",
+      "ttl_std",
+      "ttl_min",
+      "ttl_max",
+      "log_ttl_unique_count",
+      "log_tcp_window_mean",
+      "log_tcp_window_std",
+      "log_tcp_window_max",
+      "tcp_window_zero_ratio",
+      "tcp_window_change_rate",
+      "log_frag_packet_count",
+      "frag_packet_ratio",
+      "ip_df_ratio",
+      "log_tcp_retrans_count",
+      "tcp_retrans_ratio",
+      "log_tcp_retrans_bytes",
+      "payload_len_p50",
+      "payload_len_p90",
+      "payload_len_max",
+      "payload_zero_ratio",
+      "payload_len_entropy"
+    ]
+  },
+  "relative_change_features": {
+    "flow": [
+      "flow_count_rel_change",
+      "log_flow_count_rel_change",
+      "log_total_packets_rel_change",
+      "log_total_bytes_rel_change",
+      "window_packet_rate_rel_change",
+      "window_byte_rate_rel_change",
+      "syn_rate_rel_change",
+      "ack_rate_rel_change",
+      "rst_rate_rel_change",
+      "fin_rate_rel_change",
+      "psh_rate_rel_change",
+      "urg_rate_rel_change",
+      "mean_pkt_len_rel_change",
+      "std_pkt_len_rel_change",
+      "log_mean_flow_duration_rel_change",
+      "log_mean_fwd_iat_rel_change",
+      "log_mean_bwd_iat_rel_change",
+      "fwd_packet_ratio_rel_change",
+      "bwd_packet_ratio_rel_change",
+      "fwd_byte_ratio_rel_change",
+      "bwd_byte_ratio_rel_change",
+      "mean_down_up_ratio_rel_change",
+      "log_unique_dst_ports_rel_change",
+      "unique_protocols_rel_change",
+      "dst_port_entropy_rel_change",
+      "protocol_entropy_rel_change"
+    ],
+    "packet": [
+      "ttl_mean_rel_change",
+      "ttl_std_rel_change",
+      "log_ttl_unique_count_rel_change",
+      "log_tcp_window_mean_rel_change",
+      "log_tcp_window_std_rel_change",
+      "log_tcp_retrans_count_rel_change",
+      "payload_len_p50_rel_change",
+      "payload_len_p90_rel_change",
+      "payload_len_entropy_rel_change"
+    ]
+  },
+  "counts": {
+    "flow_base": 26,
+    "flow_relative_change": 26,
+    "packet_base": 21,
+    "packet_relative_change": 9,
+    "total": 82
+  },
+  "packet_families": {
+    "ttl": [
+      "ttl_mean",
+      "ttl_std",
+      "ttl_min",
+      "ttl_max",
+      "log_ttl_unique_count"
+    ],
+    "tcp_window": [
+      "log_tcp_window_mean",
+      "log_tcp_window_std",
+      "log_tcp_window_max",
+      "tcp_window_zero_ratio",
+      "tcp_window_change_rate"
+    ],
+    "fragmentation": [
+      "log_frag_packet_count",
+      "frag_packet_ratio",
+      "ip_df_ratio"
+    ],
+    "retransmission": [
+      "log_tcp_retrans_count",
+      "tcp_retrans_ratio",
+      "log_tcp_retrans_bytes"
+    ],
+    "payload": [
+      "payload_len_p50",
+      "payload_len_p90",
+      "payload_len_max",
+      "payload_zero_ratio",
+      "payload_len_entropy"
+    ]
+  },
+  "window_semantics": {
+    "window_seconds": 10,
+    "interval": "[t, t+10) \u2014 left-closed, right-open",
+    "origin": "epoch-aligned multiples of 10 s: window_idx = floor(packet_epoch_seconds / 10) - win0",
+    "win0": "the bin of the capture's first packet, identical to the re-basing src/pcap_ingest_v4.py:reconstruct_flows applies, so the packet-window table and the flow-window table share an index",
+    "rounding": "floor, never round-half; no tolerance band",
+    "packet_ordering": "packets are processed in (timestamp_abs, packet_index) order, where packet_index is the CAPTURE-ORDER ordinal. Capture timestamps are not unique, and the session-state annotations (retransmission, TCP window change) depend on observation order, so a timestamp-only sort would leave the result dependent on how rows happened to be arranged. Within one timestamp the capture order is the best available statement of what the sensor saw first. This tie-break is what makes the training-side and PCAP-side routes produce bit-identical output across a storage round-trip.",
+    "row_assignment": "EACH PACKET is assigned to the window containing ITS OWN timestamp",
+    "row_assignment_difference_from_v4_flow_layer": "The V4 flow layer assigns a WHOLE FLOW \u2014 all of its statistics \u2014 to the window of its FIRST packet. The packet layer cannot do that: it would let packets that arrive after t+10 contribute to the state at t, which is the future-information leakage Part 19 forbids. The bin WIDTH, ORIGIN and BOUNDARY RULE are identical between the two layers; only the assignment unit differs (packet vs flow), and that difference is what makes the packet layer causal.",
+    "empty_windows": "produce NO row, identical to the V4 flow layer. The downstream 10-second contiguity gate (np.all(diffs == 1) on window_idx) rejects any sequence spanning such a gap.",
+    "first_window": "kept as-is; its relative-change row is forced to exactly 0.0",
+    "last_window": "kept as-is; no packet feature ever reads forward",
+    "timestamp_source": "the pcap per-packet capture timestamp (scapy pkt.time), i.e. the clock of the capture host at the capture point",
+    "timezone": {
+      "pcap_packet_clock": "true UTC epoch seconds",
+      "training_csv_clock": "CSE-CIC-IDS2018 CICFlowMeter CSV Timestamp is Atlantic local time (America/Halifax, UTC-4 on 2018-03-02) with the AM/PM marker dropped by the dataset authors",
+      "policy": "UNCHANGED from V4. The packet layer floors UTC epoch seconds, exactly as the V4 PCAP path already does; the training path's local-clock handling is not touched. No timezone conversion is introduced anywhere by V5.",
+      "consequence": "bin width and boundary rule are identical across paths, but the two clocks are not co-anchored. This matters only when aligning a PCAP window to a dataset window; it changes no feature VALUE."
+    }
+  },
+  "relative_change_semantics": {
+    "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)",
+    "epsilon": 1e-08,
+    "clipping": "clip(-10.0, +10.0) AFTER the division",
+    "previous_window": "the immediately preceding EXISTING ROW of the packet-window table \u2014 not necessarily t-10 s, because empty windows produce no row",
+    "first_row": "forced to exactly 0.0",
+    "non_finite": "replace([inf, -inf], NaN).fillna(0.0)",
+    "reset_scope": "one capture (PCAP path) / one source day (training path) \u2014 identical to V4",
+    "log_order": "computed on the ALREADY log-transformed base feature, identical to V4",
+    "identical_to_v4": true,
+    "v4_semantics_unchanged": "The 26 V4 relative-change features are computed by the untouched V4 code and are not re-derived, re-ordered or re-defined here.",
+    "selection_rule": "NOT every new base feature receives a relative change. 9 of 21 do. The ruling and reason for each of the 21 is in features[].relative_change_decision / relative_change_reason.",
+    "implementation": "src/packet_feature_builder.py:add_packet_relative_changes"
+  },
+  "normalisation_semantics": {
+    "class": "sklearn.preprocessing.StandardScaler",
+    "expected_input_dimension": 82,
+    "status": "NOT FITTED \u2014 a V5 scaler can only be fitted on a V5 training partition, and no V5 training partition exists (see docs/v5_packet_dataset_manifest.json). Every one of the 82 features is therefore declared 'normalised: true, scaler: pending' rather than being given a fabricated scaler.",
+    "v4_scaler_reuse": "FORBIDDEN. data/processed/multiday_benchmark_K5/input_scaler.pkl is a 52-dimensional frozen V4 artefact; it is read by V5 code only to verify its hash is unchanged, never to transform an 82-dimensional vector.",
+    "other_transforms": "none \u2014 no PCA, no whitening, no feature selection, identical to V4"
+  },
+  "features": [
+    {
+      "index": 0,
+      "name": "flow_count",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [],
+      "aggregation": "count",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "grouped.agg(flow_count=(\"Timestamp\", \"size\")) \u2014 number of CICFlowMeter flow rows whose Timestamp floors into the window",
+      "formula_pcap": "g.agg(flow_count=(\"window_idx\", \"size\")) \u2014 number of reconstructed flows whose FIRST packet falls in the window",
+      "unit": "flows per 10 s window",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [],
+      "parity": "APPROXIMATE",
+      "parity_note": "CICFlowMeter terminates flows on FIN/RST and a 120 s timeout; the PCAP path splits a 5-tuple only on a >120 s idle gap, so one CIC flow may map to a different number of reconstructed flows. Capture scope also differs (whole victim subnet vs the hosts actually captured).",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 1,
+      "name": "log_flow_count",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "flow_count"
+      ],
+      "aggregation": "derived",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(flow_count)",
+      "formula_pcap": "_safe_log1p(flow_count)",
+      "unit": "log1p(flows)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "flow_count"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "inherits flow_count",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 2,
+      "name": "log_total_packets",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Tot Fwd Pkts",
+        "Tot Bwd Pkts"
+      ],
+      "aggregation": "derived",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(sum over flows of (Tot Fwd Pkts + Tot Bwd Pkts))",
+      "formula_pcap": "_safe_log1p(sum over flows of tot_pkts), tot_pkts = packets attributed to the reconstructed flow",
+      "unit": "log1p(packets)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Tot Fwd Pkts",
+        "Tot Bwd Pkts"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "inherits the flow-segmentation and capture-scope difference",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 3,
+      "name": "log_total_bytes",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "TotLen Fwd Pkts",
+        "TotLen Bwd Pkts"
+      ],
+      "aggregation": "derived",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(sum over flows of (TotLen Fwd Pkts + TotLen Bwd Pkts))",
+      "formula_pcap": "_safe_log1p(sum over flows of total_bytes), total_bytes = sum of L4 payload lengths",
+      "unit": "log1p(bytes)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "TotLen Fwd Pkts",
+        "TotLen Bwd Pkts"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "CICFlowMeter TotLen counts packet lengths as its engine defines them; the PCAP path sums L4 payload bytes. Same concept (bytes in window), different byte accounting.",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 4,
+      "name": "window_packet_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "log_total_packets"
+      ],
+      "aggregation": "derived",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "states['total_packets'] / WINDOW_SECONDS (window totals, not CIC per-flow rate fields)",
+      "formula_pcap": "agg['total_packets'] / WINDOW_SECONDS",
+      "unit": "packets per second",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "inherits total_packets",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 5,
+      "name": "window_byte_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "log_total_bytes"
+      ],
+      "aggregation": "derived",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "states['total_bytes'] / WINDOW_SECONDS",
+      "formula_pcap": "agg['total_bytes'] / WINDOW_SECONDS",
+      "unit": "bytes per second",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_total_bytes"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "inherits total_bytes",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 6,
+      "name": "syn_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "SYN Flag Cnt",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: SYN Flag Cnt / (total_packets + 1e-8); then mean over flows in the window. In the CIC CSVs the \"* Flag Cnt\" columns are BOOLEAN (0/1).",
+      "formula_pcap": "per flow: int(any SYN in flow) / (tot_pkts + 1e-8); then mean over flows",
+      "unit": "flag-per-packet fraction, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "SYN Flag Cnt",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "Definition matches (binarised flag over flow packet count). Measured distributions still differ materially: the binarised definition is highly sensitive to flow length, and reconstructed flows are shorter than CICFlowMeter's.",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 7,
+      "name": "ack_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "ACK Flag Cnt",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: ACK Flag Cnt / (total_packets + 1e-8); mean over flows",
+      "formula_pcap": "per flow: int(any ACK) / (tot_pkts + 1e-8); mean over flows",
+      "unit": "flag-per-packet fraction, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "ACK Flag Cnt",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as syn_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 8,
+      "name": "rst_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "RST Flag Cnt",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: RST Flag Cnt / (total_packets + 1e-8); mean over flows",
+      "formula_pcap": "per flow: int(any RST) / (tot_pkts + 1e-8); mean over flows",
+      "unit": "flag-per-packet fraction, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "RST Flag Cnt",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as syn_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 9,
+      "name": "fin_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "FIN Flag Cnt",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: FIN Flag Cnt / (total_packets + 1e-8); mean over flows",
+      "formula_pcap": "per flow: int(any FIN) / (tot_pkts + 1e-8); mean over flows",
+      "unit": "flag-per-packet fraction, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "FIN Flag Cnt",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as syn_rate; measured divergence is largest here because flow-termination semantics differ",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 10,
+      "name": "psh_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "PSH Flag Cnt",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: PSH Flag Cnt / (total_packets + 1e-8); mean over flows",
+      "formula_pcap": "per flow: int(any PSH) / (tot_pkts + 1e-8); mean over flows",
+      "unit": "flag-per-packet fraction, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "PSH Flag Cnt",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as syn_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 11,
+      "name": "urg_rate",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "URG Flag Cnt",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: URG Flag Cnt / (total_packets + 1e-8); mean over flows",
+      "formula_pcap": "per flow: int(any URG) / (tot_pkts + 1e-8); mean over flows",
+      "unit": "flag-per-packet fraction, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "URG Flag Cnt",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as syn_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 12,
+      "name": "mean_pkt_len",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "mean over flows of the CIC per-flow column \"Pkt Len Mean\" (mean of a mean, not a pooled mean)",
+      "formula_pcap": "mean over flows of pkt_len_mean, where pkt_len_mean = mean L4 payload length of the flow",
+      "unit": "bytes",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [],
+      "parity": "APPROXIMATE",
+      "parity_note": "same mean-of-per-flow-mean structure; byte basis differs (CIC packet length vs L4 payload)",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 13,
+      "name": "std_pkt_len",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "mean over flows of the CIC per-flow column \"Pkt Len Std\" (mean of per-flow std, NOT a pooled std)",
+      "formula_pcap": "mean over flows of pkt_len_std = sample std (ddof=1) of the flow's L4 payload lengths",
+      "unit": "bytes",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [],
+      "parity": "APPROXIMATE",
+      "parity_note": "same structure; byte basis differs",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 14,
+      "name": "log_mean_flow_duration",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Flow Duration"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(mean over flows of \"Flow Duration\") \u2014 CICFlowMeter Flow Duration is in MICROSECONDS",
+      "formula_pcap": "_safe_log1p(mean over flows of flow_duration_us) \u2014 (last-first packet time) * 1e6, MICROSECONDS",
+      "unit": "log1p(microseconds)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Flow Duration"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "units aligned (\u00b5s); the value differs because flow lifetimes differ between engines",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 15,
+      "name": "log_mean_fwd_iat",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Fwd IAT Mean"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(mean over flows of \"Fwd IAT Mean\") \u2014 MICROSECONDS",
+      "formula_pcap": "_safe_log1p(mean over flows of fwd_iat_mean_us) \u2014 mean diff of forward packet times * 1e6",
+      "unit": "log1p(microseconds)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Fwd IAT Mean"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "units aligned; residual divergence measured",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 16,
+      "name": "log_mean_bwd_iat",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Bwd IAT Mean"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(mean over flows of \"Bwd IAT Mean\") \u2014 MICROSECONDS",
+      "formula_pcap": "_safe_log1p(mean over flows of bwd_iat_mean_us)",
+      "unit": "log1p(microseconds)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Bwd IAT Mean"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "units aligned",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 17,
+      "name": "fwd_packet_ratio",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Tot Fwd Pkts",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: safe_divide(Tot Fwd Pkts, total_packets); mean over flows",
+      "formula_pcap": "per flow: _safe_divide(tot_fwd_pkts, tot_pkts); mean over flows, forward = direction of the flow's FIRST packet",
+      "unit": "dimensionless fraction [0, 1]",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Tot Fwd Pkts",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "identical formula and identical initiator-direction convention; values differ because flow segmentation differs",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 18,
+      "name": "bwd_packet_ratio",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Tot Bwd Pkts",
+        "total_packets"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: safe_divide(Tot Bwd Pkts, total_packets); mean over flows",
+      "formula_pcap": "per flow: _safe_divide(tot_bwd_pkts, tot_pkts); mean over flows",
+      "unit": "dimensionless fraction [0, 1]",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Tot Bwd Pkts",
+        "total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as fwd_packet_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 19,
+      "name": "fwd_byte_ratio",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "TotLen Fwd Pkts",
+        "total_bytes"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: safe_divide(TotLen Fwd Pkts, total_bytes); mean over flows",
+      "formula_pcap": "per flow: _safe_divide(totlen_fwd, total_bytes); mean over flows",
+      "unit": "dimensionless fraction [0, 1]",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "TotLen Fwd Pkts",
+        "total_bytes"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as fwd_packet_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 20,
+      "name": "bwd_byte_ratio",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "TotLen Bwd Pkts",
+        "total_bytes"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "per flow: safe_divide(TotLen Bwd Pkts, total_bytes); mean over flows",
+      "formula_pcap": "per flow: _safe_divide(totlen_bwd, total_bytes); mean over flows",
+      "unit": "dimensionless fraction [0, 1]",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "TotLen Bwd Pkts",
+        "total_bytes"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "as fwd_packet_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 21,
+      "name": "mean_down_up_ratio",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Down/Up Ratio"
+      ],
+      "aggregation": "mean",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "mean over flows of the CIC column \"Down/Up Ratio\" (integer-valued in the training CSVs)",
+      "formula_pcap": "mean over flows of down_up_ratio = int(n_bwd // n_fwd), 0 when n_fwd == 0",
+      "unit": "dimensionless integer ratio, averaged over flows",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Down/Up Ratio"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "both integer-valued per flow; CIC's exact integer rule is not published",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 22,
+      "name": "log_unique_dst_ports",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Dst Port"
+      ],
+      "aggregation": "nunique",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "safe_log1p(nunique of \"Dst Port\" over the flows in the window)",
+      "formula_pcap": "_safe_log1p(nunique of dst_port over the flows in the window)",
+      "unit": "log1p(distinct ports)",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Dst Port"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "identical formula; strongly capture-scope dependent",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 23,
+      "name": "unique_protocols",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Protocol"
+      ],
+      "aggregation": "nunique",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "nunique of \"Protocol\" over the flows in the window",
+      "formula_pcap": "nunique of protocol over the flows in the window",
+      "unit": "distinct protocol numbers",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Protocol"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "identical formula; scope dependent",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 24,
+      "name": "dst_port_entropy",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Dst Port"
+      ],
+      "aggregation": "entropy",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "entropy_from_counts(Dst Port): Shannon base-2 over value_counts, p + 1e-12, 0.0 when <= 1 distinct value",
+      "formula_pcap": "_entropy_from_counts(dst_port): verbatim port of the same function",
+      "unit": "bits",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Dst Port"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "identical formula; scope dependent",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 25,
+      "name": "protocol_entropy",
+      "schema_origin": "v4",
+      "category": "base",
+      "feature_level": "flow",
+      "source_field": [
+        "Protocol"
+      ],
+      "aggregation": "entropy",
+      "aggregation_window": "10s, [t, t+10)",
+      "formula_training": "entropy_from_counts(Protocol)",
+      "formula_pcap": "_entropy_from_counts(protocol)",
+      "unit": "bits",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "non-finite -> NaN -> 0.0 (see transform_semantics.nan_inf_handling_state)",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "Protocol"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "identical formula; scope dependent",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 26,
+      "name": "flow_count_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "flow_count"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on flow_count",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on flow_count",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "flow_count"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of flow_count",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 27,
+      "name": "log_flow_count_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_flow_count"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_flow_count",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_flow_count",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_flow_count"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_flow_count",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 28,
+      "name": "log_total_packets_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_total_packets"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_total_packets",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_total_packets",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_total_packets"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_total_packets",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 29,
+      "name": "log_total_bytes_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_total_bytes"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_total_bytes",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_total_bytes",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_total_bytes"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_total_bytes",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 30,
+      "name": "window_packet_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "window_packet_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on window_packet_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on window_packet_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "window_packet_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of window_packet_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 31,
+      "name": "window_byte_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "window_byte_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on window_byte_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on window_byte_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "window_byte_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of window_byte_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 32,
+      "name": "syn_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "syn_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on syn_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on syn_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "syn_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of syn_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 33,
+      "name": "ack_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "ack_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on ack_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on ack_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "ack_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of ack_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 34,
+      "name": "rst_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "rst_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on rst_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on rst_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "rst_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of rst_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 35,
+      "name": "fin_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "fin_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on fin_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on fin_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "fin_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of fin_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 36,
+      "name": "psh_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "psh_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on psh_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on psh_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "psh_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of psh_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 37,
+      "name": "urg_rate_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "urg_rate"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on urg_rate",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on urg_rate",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "urg_rate"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of urg_rate",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 38,
+      "name": "mean_pkt_len_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "mean_pkt_len"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on mean_pkt_len",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on mean_pkt_len",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "mean_pkt_len"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of mean_pkt_len",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 39,
+      "name": "std_pkt_len_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "std_pkt_len"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on std_pkt_len",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on std_pkt_len",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "std_pkt_len"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of std_pkt_len",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 40,
+      "name": "log_mean_flow_duration_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_mean_flow_duration"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_mean_flow_duration",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_mean_flow_duration",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_mean_flow_duration"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_mean_flow_duration",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 41,
+      "name": "log_mean_fwd_iat_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_mean_fwd_iat"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_mean_fwd_iat",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_mean_fwd_iat",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_mean_fwd_iat"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_mean_fwd_iat",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 42,
+      "name": "log_mean_bwd_iat_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_mean_bwd_iat"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_mean_bwd_iat",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_mean_bwd_iat",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_mean_bwd_iat"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_mean_bwd_iat",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 43,
+      "name": "fwd_packet_ratio_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "fwd_packet_ratio"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on fwd_packet_ratio",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on fwd_packet_ratio",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "fwd_packet_ratio"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of fwd_packet_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 44,
+      "name": "bwd_packet_ratio_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "bwd_packet_ratio"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on bwd_packet_ratio",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on bwd_packet_ratio",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "bwd_packet_ratio"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of bwd_packet_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 45,
+      "name": "fwd_byte_ratio_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "fwd_byte_ratio"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on fwd_byte_ratio",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on fwd_byte_ratio",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "fwd_byte_ratio"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of fwd_byte_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 46,
+      "name": "bwd_byte_ratio_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "bwd_byte_ratio"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on bwd_byte_ratio",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on bwd_byte_ratio",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "bwd_byte_ratio"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of bwd_byte_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 47,
+      "name": "mean_down_up_ratio_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "mean_down_up_ratio"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on mean_down_up_ratio",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on mean_down_up_ratio",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "mean_down_up_ratio"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of mean_down_up_ratio",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 48,
+      "name": "log_unique_dst_ports_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "log_unique_dst_ports"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_unique_dst_ports",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_unique_dst_ports",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "log_unique_dst_ports"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of log_unique_dst_ports",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 49,
+      "name": "unique_protocols_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "unique_protocols"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on unique_protocols",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on unique_protocols",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "unique_protocols"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of unique_protocols",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 50,
+      "name": "dst_port_entropy_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "dst_port_entropy"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on dst_port_entropy",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on dst_port_entropy",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "dst_port_entropy"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of dst_port_entropy",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 51,
+      "name": "protocol_entropy_rel_change",
+      "schema_origin": "v4",
+      "category": "relative_change",
+      "feature_level": "flow",
+      "source_field": [
+        "protocol_entropy"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding window row",
+      "formula_training": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on protocol_entropy",
+      "formula_pcap": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on protocol_entropy",
+      "unit": "dimensionless ratio (signed, clipped to [-10, 10])",
+      "domain": "see docs/feature_contract_v4.json (frozen)",
+      "missing_value_rule": "first row 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "unchanged from V4",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a",
+      "relative_change_reason": "frozen V4 convention \u2014 all 26 base features have a relative change; NOT re-litigated by V5",
+      "depends_on": [
+        "protocol_entropy"
+      ],
+      "parity": "APPROXIMATE",
+      "parity_note": "transform is identical in both paths; inherits the parity of protocol_entropy",
+      "implementation": {
+        "training": "archive/create_network_states_v2.py",
+        "pcap": "src/pcap_ingest_v4.py"
+      },
+      "v5_modified": false
+    },
+    {
+      "index": 52,
+      "name": "ttl_mean",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "aggregation": "mean over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "float(ttl.mean()) over every IP packet whose timestamp falls in [t, t+10)",
+      "unit": "hops (remaining hop budget, 8-bit)",
+      "domain": "[0, 255]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 is only reachable if every packet carried TTL 0, which a forwarded packet cannot; in practice a 0 here means the window was empty and no row was emitted",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Denominator is a hop count that is never near zero in a non-empty window, so the ratio is numerically stable. A shift in mean hop distance between adjacent windows is exactly the 'new peer population' signal the world model should see as a transition.",
+      "depends_on": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "IPv4 TTL and IPv6 Hop Limit are POOLED. Both are 8-bit remaining-hop counters with identical semantics, range and decrement rule, so a pooled statistic is well defined. The choice is recorded because it is a semantic merge, not an implementation detail; IPv6 is 0.05% of packets in the available captures.",
+      "v5_modified": false
+    },
+    {
+      "index": 53,
+      "name": "ttl_std",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "aggregation": "sample standard deviation (ddof=1) over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "np.std(ttl, ddof=1) for n > 1, else 0.0",
+      "unit": "hops",
+      "domain": "[0, ~127]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "EXACTLY 0.0 for a constant-TTL window (all packets from one hop distance) and for a single-packet window. These two cases are not distinguishable from each other; packet_count is carried alongside so a consumer can separate them.",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Can have a zero denominator (constant-TTL window), where the ratio saturates the +/-10 clip. That saturation is retained deliberately: constant-TTL -> varied-TTL is a genuine regime change and the clipped value is a correct 'large jump' indicator, not a numerical accident. Same behaviour the frozen V4 contract already accepts for std_pkt_len.",
+      "depends_on": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "ddof=1 matches the V4 std_pkt_len convention.",
+      "v5_modified": false
+    },
+    {
+      "index": 54,
+      "name": "ttl_min",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "aggregation": "min over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "float(ttl.min()) over every IP packet whose timestamp falls in [t, t+10)",
+      "unit": "hops",
+      "domain": "[0, 255]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 only for an empty window (no row emitted)",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Extreme order statistic of a bounded 8-bit field. A single distant packet moves it, so its window-to-window ratio is noise-dominated; the informative content is its LEVEL, which the base feature already carries.",
+      "depends_on": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Order statistic: tracks the most distant observed source. Single-packet sensitive.",
+      "v5_modified": false
+    },
+    {
+      "index": 55,
+      "name": "ttl_max",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "aggregation": "max over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "float(ttl.max()) over every IP packet whose timestamp falls in [t, t+10)",
+      "unit": "hops",
+      "domain": "[0, 255]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 only for an empty window (no row emitted)",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Extreme order statistic of a bounded 8-bit field, and in practice pinned at the initial TTL of the nearest traffic source (64/128/255), so its window-to-window ratio is almost always 0 punctuated by single-packet artefacts. Its LEVEL is the informative part.",
+      "depends_on": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Order statistic: tracks the nearest / locally originated traffic.",
+      "v5_modified": false
+    },
+    {
+      "index": 56,
+      "name": "log_ttl_unique_count",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "aggregation": "log1p of the number of distinct TTL values in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(len(np.unique(ttl)))",
+      "unit": "log1p(distinct TTL values)",
+      "domain": "[0, log1p(256)] = [0, 5.549]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "log1p(1) = 0.693 for a constant-TTL window; a literal 0.0 means zero packets",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Diversity/volume-like and already log-compressed, so the relative change is a stable bounded quantity. A fan-out burst appears here before it appears in the mean.",
+      "depends_on": [
+        "IPv4.ttl",
+        "IPv6.hlim"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Diversity counterpart to ttl_mean. A surge in distinct TTLs indicates traffic arriving from many different hop distances in one window (scan-like fan-out, or spoofed sources).",
+      "v5_modified": false
+    },
+    {
+      "index": 57,
+      "name": "log_tcp_window_mean",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "TCP.window"
+      ],
+      "aggregation": "mean over TCP packets in the window, then log1p",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(win.mean()) where win = raw 16-bit TCP window of every TCP packet in [t, t+10)",
+      "unit": "log1p(bytes, unscaled header units)",
+      "domain": "[0, log1p(65535)] = [0, 11.09]",
+      "missing_value_rule": "no TCP packets in the window -> 0.0",
+      "zero_value_behaviour": "0.0 means EITHER no TCP traffic OR every advertised window was 0. Ambiguous by design, matching the V4 fillna(0.0) policy; tcp_window_zero_ratio separates the two cases.",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Flow-control state is inherently about change: the level alone cannot distinguish a steadily small window from a window that has just collapsed.",
+      "depends_on": [
+        "TCP.window"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "RAW header value: the TCP window-scale option is deliberately NOT applied, because the scale factor is only observable when the SYN handshake is inside the capture. Applying it to some connections and not others would make the feature inconsistent between windows.",
+      "v5_modified": false
+    },
+    {
+      "index": 58,
+      "name": "log_tcp_window_std",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "TCP.window"
+      ],
+      "aggregation": "sample standard deviation (ddof=1) over TCP packets, then log1p",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(np.std(win, ddof=1)) for n > 1, else _safe_log1p(0.0) = 0.0",
+      "unit": "log1p(bytes)",
+      "domain": "[0, ~10.9]",
+      "missing_value_rule": "no TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 for a constant-window window, a single-TCP-packet window, and a no-TCP window alike",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Log-compressed dispersion; the change captures the onset of heterogeneous peer behaviour.",
+      "depends_on": [
+        "TCP.window"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Dispersion of advertised receive windows \u2014 wide dispersion means many peers with different buffer states inside one 10 s bin.",
+      "v5_modified": false
+    },
+    {
+      "index": 59,
+      "name": "log_tcp_window_max",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "TCP.window"
+      ],
+      "aggregation": "max over TCP packets, then log1p",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(win.max()) over the raw window field of every TCP packet in [t, t+10)",
+      "unit": "log1p(bytes)",
+      "domain": "[0, 11.09]",
+      "missing_value_rule": "no TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 means no TCP packets or an all-zero-window window",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Extreme order statistic, in practice pinned at the largest advertising peer's constant value, so its relative change is ~0 with occasional single-packet spikes.",
+      "depends_on": [
+        "TCP.window"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Upper extent of advertised receive capacity.",
+      "v5_modified": false
+    },
+    {
+      "index": 60,
+      "name": "tcp_window_zero_ratio",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "TCP.window"
+      ],
+      "aggregation": "count(window == 0) / count(TCP packets), per window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_ratio(int((win == 0).sum()), n_tcp); returns exactly 0.0 when n_tcp == 0",
+      "unit": "dimensionless fraction",
+      "domain": "[0, 1]",
+      "missing_value_rule": "no TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 means no zero-window packets OR no TCP at all",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Bounded proportion that is exactly 0.0 in the large majority of windows. Its relative change is then 0/0 -> epsilon-driven clip saturation, which encodes the ARRIVAL of any zero-window packet as a constant +10 regardless of magnitude. The base ratio already conveys that arrival, with magnitude, and without the saturation artefact.",
+      "depends_on": [
+        "TCP.window"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Zero-window advertisements are explicit receiver flow-control stalls. Chosen over the raw tcp_window_zero_count because the count is confounded with window volume, which log_total_packets already carries.",
+      "v5_modified": false
+    },
+    {
+      "index": 61,
+      "name": "tcp_window_change_rate",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "TCP.window",
+        "ordered 5-tuple session"
+      ],
+      "aggregation": "count(window value differs from the same directional session's previous packet) / count(TCP packets that HAVE such a predecessor), per window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_ratio(n_win_changed, n_win_eligible) where a packet is 'eligible' iff it is TCP and not the first packet of its directional session (ordered 5-tuple, 120 s idle reset), and 'changed' iff its raw window value differs from that predecessor's",
+      "unit": "dimensionless fraction",
+      "domain": "[0, 1]",
+      "missing_value_rule": "no eligible TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 means every advertised window was steady, or there was no eligible TCP packet",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Already a first-order change quantity. Its relative change is a second difference of the window-size signal: unstable, hard to interpret, and not something the 10-window LSTM context needs pre-computed.",
+      "depends_on": [
+        "TCP.window",
+        "ordered 5-tuple session"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "EXACT DEFINITION, stated because 'change rate' is otherwise ambiguous: the denominator is TCP packets WITH a predecessor, NOT all TCP packets, so the first packet of every session is excluded from both numerator and denominator. A pair that straddles a window boundary is attributed to the LATER packet's window only \u2014 never to the earlier one \u2014 which keeps the feature causal.",
+      "v5_modified": false
+    },
+    {
+      "index": 62,
+      "name": "log_frag_packet_count",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "fragmentation",
+      "source_field": [
+        "IPv4.flags.MF",
+        "IPv4.frag",
+        "IPv6ExtHdrFragment.m",
+        "IPv6ExtHdrFragment.offset"
+      ],
+      "aggregation": "log1p of the number of fragmented IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(sum(is_fragment)) where is_fragment = (MF set) OR (fragment offset > 0)",
+      "unit": "log1p(packets)",
+      "domain": "[0, inf)",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 for an unfragmented window \u2014 which is EVERY window in every capture available to this project (see the limitation note)",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Structurally zero in every window of every capture available to this project. A relative change over an all-zero series is identically 0.0 and would add a dead dimension.",
+      "depends_on": [
+        "IPv4.flags.MF",
+        "IPv4.frag",
+        "IPv6ExtHdrFragment.m",
+        "IPv6ExtHdrFragment.offset"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Fragment recognition follows RFC 791 exactly, NOT 'any nonzero flag bit': the DF bit is nonzero on 96% of real packets and means the opposite of fragmentation. first fragment = MF set AND offset == 0; middle fragment = MF set AND offset > 0; last fragment = MF clear AND offset > 0; unfragmented = MF clear AND offset == 0. IPv6 routers never fragment, so IPv6 fragmentation is read only from the Fragment extension header (M flag and offset), and an IPv6 packet without that header is unfragmented by definition.",
+      "v5_modified": false
+    },
+    {
+      "index": 63,
+      "name": "frag_packet_ratio",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "fragmentation",
+      "source_field": [
+        "IPv4.flags.MF",
+        "IPv4.frag",
+        "IPv6ExtHdrFragment"
+      ],
+      "aggregation": "count(fragmented IP packets) / count(IP packets), per window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_ratio(n_frag, n_ip) \u2014 fragmented IP packets over all IP packets in [t, t+10)",
+      "unit": "dimensionless fraction",
+      "domain": "[0, 1]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 for an unfragmented window; identically 0.0 in all available captures",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Structurally zero in every window of every capture available to this project, exactly as log_frag_packet_count is. A relative change over an all-zero series is identically 0.0, so including it would add a second dead dimension rather than a second signal.",
+      "depends_on": [
+        "IPv4.flags.MF",
+        "IPv4.frag",
+        "IPv6ExtHdrFragment"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Scale-free companion to log_frag_packet_count: the count detects a fragmentation flood, the ratio detects a small but wholly fragmented conversation.",
+      "v5_modified": false
+    },
+    {
+      "index": 64,
+      "name": "ip_df_ratio",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "fragmentation",
+      "source_field": [
+        "IPv4.flags.DF"
+      ],
+      "aggregation": "count(IPv4 packets with DF set) / count(IPv4 packets), per window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_ratio(n_df, n_ip4) \u2014 the denominator is IPv4 packets ONLY",
+      "unit": "dimensionless fraction",
+      "domain": "[0, 1]",
+      "missing_value_rule": "no IPv4 packets in the window -> 0.0",
+      "zero_value_behaviour": "0.0 means no DF-marked packet, or no IPv4 packet at all",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Bounded proportion that sits near a near-constant level (0.96 +/- 0.09 on real traffic). Its relative change is a small-amplitude, near-zero-mean quantity dominated by the traffic mix rather than by any security-relevant transition.",
+      "depends_on": [
+        "IPv4.flags.DF"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "IPv6 is EXCLUDED from both numerator and denominator because IPv6 has no DF bit \u2014 routers may never fragment IPv6, so 'DF' is not a property an IPv6 packet can carry, and counting IPv6 as DF=0 would fabricate a value. This is the only fragmentation-family feature with real variance in the available captures (0.96 +/- 0.09 on real traffic).",
+      "v5_modified": false
+    },
+    {
+      "index": 65,
+      "name": "log_tcp_retrans_count",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "retransmission",
+      "source_field": [
+        "TCP.seq",
+        "TCP.flags.SYN",
+        "TCP.flags.FIN",
+        "payload_len",
+        "ordered 5-tuple session"
+      ],
+      "aggregation": "log1p of the number of sequence-space re-covering TCP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(sum(is_retransmission)); is_retransmission is True iff the packet is TCP, eff_len = payload_len + (1 if SYN) + (1 if FIN) > 0, the packet is not the first seq-bearing packet of its directional session, and seq + eff_len is at or below that session's running high-water mark under 32-bit modular comparison",
+      "unit": "log1p(packets)",
+      "domain": "[0, inf)",
+      "missing_value_rule": "no TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 means a clean window with no re-covered sequence space, or no TCP at all",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "The one retransmission feature that earns a relative change: retransmission is bursty, and the onset of a burst (a congestion or scan event) is a transition the model should see directly. Well populated in the real captures (1.4% of seq-bearing packets, present in 24% of windows), so this is not an all-zero series.",
+      "depends_on": [
+        "TCP.seq",
+        "TCP.flags.SYN",
+        "TCP.flags.FIN",
+        "payload_len",
+        "ordered 5-tuple session"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "eff_len > 0 is the load-bearing exclusion: zero-length packets (pure ACK, window update, bare RST, keepalive) are NEVER counted, so duplicate ACKs are not mistaken for retransmissions. SYN and FIN each consume one sequence number, so SYN and FIN retransmissions ARE detected. Partial/overlapping retransmissions count only when the segment is wholly re-covered \u2014 the conservative direction. MEASURED LIMITATION: a genuinely out-of-order packet is indistinguishable from a retransmission under any high-water-mark rule, so this feature measures 'sequence-space re-coverage' = retransmission + reordering, and is named and documented as such rather than being claimed as a pure retransmission count.",
+      "v5_modified": false
+    },
+    {
+      "index": 66,
+      "name": "tcp_retrans_ratio",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "retransmission",
+      "source_field": [
+        "TCP.seq",
+        "payload_len",
+        "TCP.flags"
+      ],
+      "aggregation": "count(retransmissions) / count(seq-bearing TCP packets), per window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_ratio(n_retrans, n_seq_bearing) where seq-bearing means eff_len > 0",
+      "unit": "dimensionless fraction",
+      "domain": "[0, 1]",
+      "missing_value_rule": "no seq-bearing TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 for a clean window or a window with no seq-bearing TCP packet",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Bounded proportion, zero in most windows -> the same 0/0 clip-saturation problem as tcp_window_zero_ratio, and near-collinear with the count's relative change when nonzero.",
+      "depends_on": [
+        "TCP.seq",
+        "payload_len",
+        "TCP.flags"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "The denominator is seq-bearing packets, NOT all TCP packets: dividing by a population that cannot be retransmitted by construction would make the ratio depend on the ACK/data mix instead of on retransmission behaviour.",
+      "v5_modified": false
+    },
+    {
+      "index": 67,
+      "name": "log_tcp_retrans_bytes",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "retransmission",
+      "source_field": [
+        "TCP.seq",
+        "payload_len"
+      ],
+      "aggregation": "log1p of the total retransmitted payload bytes in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_safe_log1p(sum(payload_len where is_retransmission))",
+      "unit": "log1p(bytes)",
+      "domain": "[0, inf)",
+      "missing_value_rule": "no TCP packets -> 0.0",
+      "zero_value_behaviour": "0.0 when nothing was retransmitted AND when only zero-payload SYN/FIN were retransmitted \u2014 a real and useful distinction from log_tcp_retrans_count, which is nonzero in the second case (control-plane retransmission with no data cost)",
+      "log_transformed": true,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Near-collinear with log_tcp_retrans_count's relative change, because both move together whenever a data retransmission burst starts. Only the count's version is kept.",
+      "depends_on": [
+        "TCP.seq",
+        "payload_len"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Separates cheap control retransmission from expensive bulk retransmission.",
+      "v5_modified": false
+    },
+    {
+      "index": 68,
+      "name": "payload_len_p50",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len (header arithmetic)"
+      ],
+      "aggregation": "50th percentile over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "np.percentile(payload_len, 50, method='linear')",
+      "unit": "bytes",
+      "domain": "[0, 65535]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 is COMMON and meaningful \u2014 it means at least half the packets in the window carried no payload (ACK-dominated traffic)",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Multiplicative shifts in typical message size are meaningful and the log-free byte scale makes the ratio directly interpretable.",
+      "depends_on": [
+        "payload_len (header arithmetic)"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Robust central tendency. Deliberately NOT a mean: V4's mean_pkt_len already carries a mean-of-flow-means of the same quantity, and a second mean would be near-collinear.",
+      "v5_modified": false
+    },
+    {
+      "index": 69,
+      "name": "payload_len_p90",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len"
+      ],
+      "aggregation": "90th percentile over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "np.percentile(payload_len, 90, method='linear')",
+      "unit": "bytes",
+      "domain": "[0, 65535]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 means over 90% of packets were payload-free",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Upper-tail shifts mark the start and end of bulk transfer, which is precisely a transition event.",
+      "depends_on": [
+        "payload_len"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Upper-tail shape: separates bulk transfer from control chatter independently of the median. Together with p50 this is the 'richer payload-size distribution' the problem statement asks for.",
+      "v5_modified": false
+    },
+    {
+      "index": 70,
+      "name": "payload_len_max",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len"
+      ],
+      "aggregation": "max over all IP packets in the window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "float(payload_len.max()) over every IP packet in [t, t+10)",
+      "unit": "bytes",
+      "domain": "[0, 65535]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 means no packet in the window carried any payload",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Extreme order statistic, usually pinned at the MTU or at a TSO segment size, so its relative change is ~0 punctuated by single-packet spikes.",
+      "depends_on": [
+        "payload_len"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "Can exceed the link MTU when the capture point sees TSO/LRO-coalesced segments (values up to 64240 are present in the real March-2 captures). That is a property of where the capture was taken, not a parsing error, and is left unclipped.",
+      "v5_modified": false
+    },
+    {
+      "index": 71,
+      "name": "payload_zero_ratio",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len"
+      ],
+      "aggregation": "count(payload_len == 0) / count(IP packets), per window",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "_ratio(int((payload_len == 0).sum()), n_ip)",
+      "unit": "dimensionless fraction",
+      "domain": "[0, 1]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "0.0 means every packet carried payload",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "excluded",
+      "relative_change_reason": "Bounded proportion whose level is the informative quantity; its relative change is a small bounded number that duplicates the level.",
+      "depends_on": [
+        "payload_len"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "payload_nonzero_ratio is EXCLUDED as exactly 1 - payload_zero_ratio: an affine duplicate carries no information a linear model or a network cannot already reach.",
+      "v5_modified": false
+    },
+    {
+      "index": 72,
+      "name": "payload_len_entropy",
+      "schema_origin": "v5",
+      "category": "base",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len"
+      ],
+      "aggregation": "Shannon entropy (base 2) of the empirical distribution of payload LENGTH VALUES",
+      "aggregation_window": "10s, [t, t+10), per-packet assignment",
+      "formula": "-sum(p * log2(p + 1e-12)) over value_counts(payload_len) / total; 0.0 when <= 1 distinct length. Identical formula to the V4 dst_port_entropy / protocol_entropy.",
+      "unit": "bits",
+      "domain": "[0, log2(n_packets)]",
+      "missing_value_rule": "the window does not exist \u2014 a window with no IP packets produces no row at all",
+      "zero_value_behaviour": "EXACTLY 0.0 when every packet in the window has the same payload length \u2014 the classic fixed-size beacon signature \u2014 and also for a single-packet window",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "included",
+      "relative_change_reason": "Consistent with the frozen V4 convention, which gives dst_port_entropy and protocol_entropy relative changes. An entropy collapse (traffic becoming uniformly sized, i.e. beacon-like) is a transition, not a level.",
+      "depends_on": [
+        "payload_len"
+      ],
+      "parity": "EXACT",
+      "parity_note": "single shared implementation (src/packet_feature_builder.py) used by both the training-side and the PCAP-side entry point; verified numerically across two independent invocation routes",
+      "implementation": {
+        "training": "src/packet_feature_builder.py",
+        "pcap": "src/packet_feature_builder.py"
+      },
+      "notes": "THIS IS A LENGTH-DISTRIBUTION ENTROPY, NOT BYTE-VALUE SHANNON ENTROPY. No payload byte is ever read by any part of this pipeline; the only input is the integer length from the IP/L4 headers. The two quantities are routinely confused and measure different things: byte-value entropy detects encryption/compression of content, length entropy detects regularity of message sizes.",
+      "v5_modified": false
+    },
+    {
+      "index": 73,
+      "name": "ttl_mean_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "ttl_mean"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on ttl_mean",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Denominator is a hop count that is never near zero in a non-empty window, so the ratio is numerically stable. A shift in mean hop distance between adjacent windows is exactly the 'new peer population' signal the world model should see as a transition.",
+      "depends_on": [
+        "ttl_mean"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 74,
+      "name": "ttl_std_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "ttl_std"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on ttl_std",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Can have a zero denominator (constant-TTL window), where the ratio saturates the +/-10 clip. That saturation is retained deliberately: constant-TTL -> varied-TTL is a genuine regime change and the clipped value is a correct 'large jump' indicator, not a numerical accident. Same behaviour the frozen V4 contract already accepts for std_pkt_len.",
+      "depends_on": [
+        "ttl_std"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 75,
+      "name": "log_ttl_unique_count_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "ttl",
+      "source_field": [
+        "log_ttl_unique_count"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_ttl_unique_count",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Diversity/volume-like and already log-compressed, so the relative change is a stable bounded quantity. A fan-out burst appears here before it appears in the mean.",
+      "depends_on": [
+        "log_ttl_unique_count"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 76,
+      "name": "log_tcp_window_mean_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "log_tcp_window_mean"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_tcp_window_mean",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Flow-control state is inherently about change: the level alone cannot distinguish a steadily small window from a window that has just collapsed.",
+      "depends_on": [
+        "log_tcp_window_mean"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 77,
+      "name": "log_tcp_window_std_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "tcp_window",
+      "source_field": [
+        "log_tcp_window_std"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_tcp_window_std",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Log-compressed dispersion; the change captures the onset of heterogeneous peer behaviour.",
+      "depends_on": [
+        "log_tcp_window_std"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 78,
+      "name": "log_tcp_retrans_count_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "retransmission",
+      "source_field": [
+        "log_tcp_retrans_count"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_tcp_retrans_count",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "The one retransmission feature that earns a relative change: retransmission is bursty, and the onset of a burst (a congestion or scan event) is a transition the model should see directly. Well populated in the real captures (1.4% of seq-bearing packets, present in 24% of windows), so this is not an all-zero series.",
+      "depends_on": [
+        "log_tcp_retrans_count"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 79,
+      "name": "payload_len_p50_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len_p50"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on payload_len_p50",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Multiplicative shifts in typical message size are meaningful and the log-free byte scale makes the ratio directly interpretable.",
+      "depends_on": [
+        "payload_len_p50"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 80,
+      "name": "payload_len_p90_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len_p90"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on payload_len_p90",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Upper-tail shifts mark the start and end of bulk transfer, which is precisely a transition event.",
+      "depends_on": [
+        "payload_len_p90"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    },
+    {
+      "index": 81,
+      "name": "payload_len_entropy_rel_change",
+      "schema_origin": "v5",
+      "category": "relative_change",
+      "feature_level": "packet",
+      "family": "payload",
+      "source_field": [
+        "payload_len_entropy"
+      ],
+      "aggregation": "none (cross-window difference)",
+      "aggregation_window": "10s vs the preceding EXISTING packet-window row",
+      "formula": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on payload_len_entropy",
+      "unit": "dimensionless signed ratio, clipped to [-10, 10]",
+      "domain": "[-10, 10]",
+      "missing_value_rule": "first row exactly 0.0; non-finite -> 0.0",
+      "zero_value_behaviour": "0.0 when the feature is unchanged between adjacent windows",
+      "log_transformed": false,
+      "normalised": true,
+      "relative_change_decision": "n/a (is itself a relative change)",
+      "relative_change_reason": "Consistent with the frozen V4 convention, which gives dst_port_entropy and protocol_entropy relative changes. An entropy collapse (traffic becoming uniformly sized, i.e. beacon-like) is a transition, not a level.",
+      "depends_on": [
+        "payload_len_entropy"
+      ],
+      "parity": "EXACT",
+      "parity_note": "same shared implementation as the base feature",
+      "implementation": {
+        "training": "src/packet_feature_builder.py:add_packet_relative_changes",
+        "pcap": "src/packet_feature_builder.py:add_packet_relative_changes"
+      },
+      "notes": "identical transform semantics to the 26 frozen V4 relative-change features",
+      "v5_modified": false
+    }
+  ],
+  "v4_reference": {
+    "schema": "docs/v4_feature_schema.json",
+    "contract": "docs/feature_contract_v4.json",
+    "dimension": 52,
+    "modified_by_v5": false
+  },
+  "schema_sha256": "5f52e2d0a7c65e651ba3e948a19c63af108e7b278dddf4e1a7f41b8b21ba6704"
+}

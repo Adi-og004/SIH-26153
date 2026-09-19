@@ -1,0 +1,18 @@
+metric,K1,K2,K3,K5,note
+persistence_accuracy,0.998074,0.99679,0.996148,0.995506,
+transition_fraction,0.001926,0.00321,0.003852,0.004494,
+transition_count,6.0,10.0,12.0,14.0,
+V4_F1,0.592,0.6739,0.6952,0.7523,
+LR_F1,0.3565,0.363,0.361,0.4067,
+persistence_F1,0.9985,0.9975,0.997,0.9966,
+V4_minus_persistence_F1,-0.4066,-0.3237,-0.3019,-0.2443,
+V4_transition_recall,0.6667,0.6,0.5,0.2857,recall on 0->1 transitions only
+LR_transition_recall,0.0,0.0,0.0,0.0,recall on 0->1 transitions only
+V4_onset_count,3.0,5.0,6.0,7.0,number of 0->1 transition windows at this horizon
+V4_onset_detected,2.0,3.0,3.0,2.0,
+V4_expected_onset_hits_at_base_rate,0.898,1.79,2.217,2.91,what V4's own positive rate would produce by chance
+V4_median_observed_lead_time_sec,120.0,120.0,115.0,105.0,"only 3 observable onsets, 2 of them preceded by an active episode — descriptive only"
+V4_warnings_before_clean_onsets,0.0,0.0,0.0,0.0,onsets whose 120 s lookback contains no attack window (n=1: ep3)
+fraction_of_V4_correct_windows_that_are_persistent,0.998951,0.998564,0.998135,0.999127,"window-count decomposition — F1 is not additively decomposable, so no F1 share is reported"
+fraction_of_V4_TP_in_AA_windows,0.997719,0.99717,0.997288,0.998401,
+fraction_of_V4_FN_reduction_K1_to_K5_in_mid_attack,,,,0.97861,reported at K=5 only; see v4_k1_to_k5_correction_decomposition.csv

@@ -1,0 +1,4 @@
+episode_id,onset,offset,windows,duration_sec,families,primary_family,cold_start_episode,test_day
+1,2018-02-14 02:01:20,2018-02-14 02:01:20,1,10,SSH-Bruteforce(1),SSH-Bruteforce,False,Feb14
+2,2018-02-14 02:01:50,2018-02-14 03:32:30,545,5450,SSH-Bruteforce(545),SSH-Bruteforce,False,Feb14
+3,2018-02-14 10:33:20,2018-02-14 12:10:30,584,5840,FTP-BruteForce(584),FTP-BruteForce,False,Feb14

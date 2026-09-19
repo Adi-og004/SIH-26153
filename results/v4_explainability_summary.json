@@ -1,0 +1,796 @@
+{
+  "analysis_name": "V4 explainability verification (Task 8)",
+  "generated_utc": "2026-09-19T05:56:47.433859Z",
+  "runtime_seconds": 534.534424,
+  "produced_by": "src/run_v4_explainability.py",
+  "contract": "docs/v4_explainability_contract.json",
+  "model_identity": {
+    "model_version": "V4",
+    "model_class": "LatentWorldModelV4",
+    "checkpoint_path": "models/latent_world_model_v4/latent_world_model_v4.pt",
+    "checkpoint_hash": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "checkpoint_hash_expected": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "feature_schema_path": "docs/v4_feature_schema.json",
+    "feature_schema_hash": "2b4f820ca1f193e47b3b9c1eae4163cd9b2643886665f5f5d83f876e3ee094c4",
+    "feature_order_hash": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "feature_order_hash_expected": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "scaler_path": "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+    "scaler_hash": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+    "scaler_hash_expected": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+    "input_shape": [
+      10,
+      52
+    ],
+    "parameter_count": 244027,
+    "torch_version": "2.14.0",
+    "manifest_path": "docs/v4_baseline_manifest.json",
+    "manifest_hash": "b2765c2489ccee3845e9dc43990b187d894237905087f3969ed2fae82613937e"
+  },
+  "attribution_method": {
+    "primary": "Integrated Gradients (captum.attr.IntegratedGradients)",
+    "captum_version": "0.9.0",
+    "approximation_method": "gausslegendre",
+    "n_steps": 1024,
+    "n_steps_rationale": "chosen from the measured convergence sweep in completeness_checks.csv (50/128/256/1024); 1024 is the first setting with worst-case mean relative completeness error below 1% at every evaluated horizon. Not chosen for appearance.",
+    "cross_check": "Feature Ablation (model-agnostic, gradient-free), results/v4_explainability/ablation_crosscheck.csv",
+    "rejected_methods": {
+      "attention": "V4 has no attention mechanism; no attention-based explanation is produced and no attribution is called 'attention'",
+      "shap": "src/shap_explainer.py is retained for the historical V3 artifacts only; it is not provenance-locked, targets a single transition step, reads temporal_benchmark_v2, and draws a random baseline without a seed"
+    },
+    "model_mode": "model.eval() -- both Dropout layers disabled",
+    "gradients": "enabled through the input; parameters never updated",
+    "device": "cpu",
+    "dtype": "float32 (identical to the inference path)"
+  },
+  "baseline": {
+    "primary": "zero vector in scaled feature space, shape (10, 52)",
+    "rationale": "The frozen StandardScaler subtracts the training-partition mean, so the zero vector IS the average training window held constant across all 10 history windows. It is label-free, uses no test data, and is exactly reproducible.",
+    "secondary_sensitivity_baseline": "mean of the 6568 fully-benign TRAINING sequences (A_binary_multistep_train all-zero); training labels only, never test labels",
+    "caveat": "A constant-over-time reference window is not itself a realisable capture. This is the standard IG reference-point compromise and is reported, not hidden.",
+    "not_selected_for_appearance": true
+  },
+  "horizons_explained": [
+    1,
+    3,
+    5
+  ],
+  "headline_horizon": 5,
+  "dashboard_artifacts": {
+    "note": "The dashboard displays and explains ONLY these horizons, using the frozen per-horizon validation thresholds. The attribution tensors below are the ones it renders, so the explanation shown is the one verified by this run.",
+    "attribution_tensors": {
+      "1": {
+        "path": "results/v4_explainability/attributions_k1.npy",
+        "sha256": "120372c77d874e5ee0c232e6501f525b29502c35e32233e174dc617485a10ad7",
+        "shape": [
+          3115,
+          10,
+          52
+        ],
+        "threshold": 0.45
+      },
+      "3": {
+        "path": "results/v4_explainability/attributions_k3.npy",
+        "sha256": "c0c55bbc5bcdd98d871534f826755a5ebdc467432bc9c04c93ec15633ab9008d",
+        "shape": [
+          3115,
+          10,
+          52
+        ],
+        "threshold": 0.65
+      },
+      "5": {
+        "path": "results/v4_explainability/attributions_k5.npy",
+        "sha256": "5db31661a3938f4d0c63840dac1aeea9b830342e5e2f5ffd6dbae79f873cbb6f",
+        "shape": [
+          3115,
+          10,
+          52
+        ],
+        "threshold": 0.72
+      }
+    },
+    "headline_horizon": 5,
+    "dataset": "data/processed/multiday_benchmark_K5",
+    "feature_importance_table": "results/v4_explainability/feature_importance.csv"
+  },
+  "test_set": {
+    "arrays": "data/processed/multiday_benchmark_K5",
+    "sequences": 3115,
+    "test_day": "2018-03-02 (Friday-02-03-2018, CSE-CIC-IDS2018)",
+    "X_test_sha256": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8"
+  },
+  "feature_name_integrity": true,
+  "reference_f1_reproduction": {
+    "computed": {
+      "1": 0.591967600404995,
+      "2": 0.673871582962492,
+      "3": 0.6951602765556254,
+      "5": 0.7522549609140108
+    },
+    "manifest": {
+      "1": 0.591967600404995,
+      "2": 0.673871582962492,
+      "3": 0.6951602765556254,
+      "5": 0.7522549609140108
+    },
+    "max_abs_delta": 0.0
+  },
+  "prediction_identity": {
+    "rows": 9345,
+    "horizons": [
+      1,
+      3,
+      5
+    ],
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0,
+    "tolerance": 1e-09,
+    "all_bit_exact": true,
+    "passed": true,
+    "batch_composition_sensitivity_k5": 1.4603137969970703e-06,
+    "batch_composition_label_flips_k5": 0,
+    "batch_composition_note": "Re-batching the SAME frozen model shifts LSTM reduction order by up to ~1.5e-06. The identity test is run on the identical tensor in the identical batch, so it is exact. Batch=1 inference still reproduces the frozen K=5 F1 digit-for-digit with zero label flips."
+  },
+  "completeness": {
+    "method": "gausslegendre",
+    "n_steps": 1024,
+    "baseline": "zero vector in scaled feature space",
+    "per_horizon": {
+      "1": {
+        "max_abs_error": 0.011766254901885986,
+        "mean_abs_error": 0.0005048289798607821,
+        "p99_abs_error": 0.005199851989746094,
+        "unconditioned_max_rel_error": 617.0758056640625,
+        "unconditioned_mean_rel_error": 0.22255498672221632,
+        "median_abs_denominator": 0.03579984977841377,
+        "n_wellposed": 1506,
+        "wellposed_mean_rel_error": 0.0021242378476197814,
+        "wellposed_p99_rel_error": 0.011603942792862658,
+        "wellposed_max_rel_error": 0.06373565644025803
+      },
+      "3": {
+        "max_abs_error": 0.011120855808258057,
+        "mean_abs_error": 0.0007140266305768182,
+        "p99_abs_error": 0.0053052067756652966,
+        "unconditioned_max_rel_error": 26.062246322631836,
+        "unconditioned_mean_rel_error": 0.042105882417838116,
+        "median_abs_denominator": 0.34782662987709045,
+        "n_wellposed": 1813,
+        "wellposed_mean_rel_error": 0.0019922947377034187,
+        "wellposed_p99_rel_error": 0.010818175636231853,
+        "wellposed_max_rel_error": 0.029275868088006973
+      },
+      "5": {
+        "max_abs_error": 0.016300737857818604,
+        "mean_abs_error": 0.0009255526346428335,
+        "p99_abs_error": 0.006381818056106569,
+        "unconditioned_max_rel_error": 1298.749267578125,
+        "unconditioned_mean_rel_error": 0.5233285744203388,
+        "median_abs_denominator": 0.5536995530128479,
+        "n_wellposed": 1873,
+        "wellposed_mean_rel_error": 0.0022904440184877213,
+        "wellposed_p99_rel_error": 0.011857254281640046,
+        "wellposed_max_rel_error": 0.0295872762799263
+      }
+    },
+    "acceptance_rule": "PRIMARY: the attributed output is a probability in [0, 1], so the completeness residual |sum(attr) - (F(x) - F(baseline))| is read on the probability scale -- mean AND p99 absolute error must be below 0.01 (one probability point) at every evaluated horizon. SECONDARY: mean relative error below 1% restricted to the well-posed subset |F(x) - F(baseline)| > 0.05.",
+    "why_unconditioned_relative_error_is_reported_but_not_used": "For a large share of test windows the model's prediction nearly equals its prediction at the baseline, so the completeness denominator is ~0 (1st-percentile |F(x)-F(baseline)| is ~1e-7 at K=1). Dividing a small absolute residual by that denominator produces ratios in the hundreds while the probability-scale error stays below 0.02. The unconditioned figures are recorded in full above and in completeness_checks.csv; they are a degenerate statistic, not a hidden failure.",
+    "passed": true
+  },
+  "top_features_k5": [
+    {
+      "rank": 1,
+      "feature": "rst_rate",
+      "mean_absolute_attribution": 0.3795287013053894,
+      "mean_signed_attribution": 0.3570914566516876
+    },
+    {
+      "rank": 2,
+      "feature": "dst_port_entropy",
+      "mean_absolute_attribution": 0.26543334126472473,
+      "mean_signed_attribution": 0.03743318095803261
+    },
+    {
+      "rank": 3,
+      "feature": "log_mean_flow_duration",
+      "mean_absolute_attribution": 0.24500364065170288,
+      "mean_signed_attribution": -0.0016142264939844608
+    },
+    {
+      "rank": 4,
+      "feature": "log_unique_dst_ports",
+      "mean_absolute_attribution": 0.2331232726573944,
+      "mean_signed_attribution": 0.19741077721118927
+    },
+    {
+      "rank": 5,
+      "feature": "log_mean_fwd_iat",
+      "mean_absolute_attribution": 0.19902557134628296,
+      "mean_signed_attribution": 0.1775328665971756
+    },
+    {
+      "rank": 6,
+      "feature": "mean_down_up_ratio",
+      "mean_absolute_attribution": 0.19348615407943726,
+      "mean_signed_attribution": -0.16348925232887268
+    },
+    {
+      "rank": 7,
+      "feature": "log_unique_dst_ports_rel_change",
+      "mean_absolute_attribution": 0.14433786273002625,
+      "mean_signed_attribution": 0.01618405058979988
+    },
+    {
+      "rank": 8,
+      "feature": "fin_rate_rel_change",
+      "mean_absolute_attribution": 0.14247219264507294,
+      "mean_signed_attribution": -0.005372165236622095
+    },
+    {
+      "rank": 9,
+      "feature": "ack_rate",
+      "mean_absolute_attribution": 0.13016444444656372,
+      "mean_signed_attribution": -0.1014161929488182
+    },
+    {
+      "rank": 10,
+      "feature": "flow_count",
+      "mean_absolute_attribution": 0.12884560227394104,
+      "mean_signed_attribution": 0.03756194934248924
+    }
+  ],
+  "temporal_importance_k5": [
+    {
+      "time_step": "t-9",
+      "mean_absolute_attribution": 0.41666802763938904,
+      "share_of_total_absolute": 0.09230412542819977,
+      "mean_signed_attribution": 0.05026790499687195
+    },
+    {
+      "time_step": "t-8",
+      "mean_absolute_attribution": 0.4551074504852295,
+      "share_of_total_absolute": 0.10081958025693893,
+      "mean_signed_attribution": 0.0503680594265461
+    },
+    {
+      "time_step": "t-7",
+      "mean_absolute_attribution": 0.4927550256252289,
+      "share_of_total_absolute": 0.10915961116552353,
+      "mean_signed_attribution": 0.04979854077100754
+    },
+    {
+      "time_step": "t-6",
+      "mean_absolute_attribution": 0.5236276984214783,
+      "share_of_total_absolute": 0.11599881201982498,
+      "mean_signed_attribution": 0.049281686544418335
+    },
+    {
+      "time_step": "t-5",
+      "mean_absolute_attribution": 0.5391607880592346,
+      "share_of_total_absolute": 0.11943984031677246,
+      "mean_signed_attribution": 0.04998213052749634
+    },
+    {
+      "time_step": "t-4",
+      "mean_absolute_attribution": 0.5368207097053528,
+      "share_of_total_absolute": 0.11892145127058029,
+      "mean_signed_attribution": 0.051180385053157806
+    },
+    {
+      "time_step": "t-3",
+      "mean_absolute_attribution": 0.5087568759918213,
+      "share_of_total_absolute": 0.11270449310541153,
+      "mean_signed_attribution": 0.042520493268966675
+    },
+    {
+      "time_step": "t-2",
+      "mean_absolute_attribution": 0.45594730973243713,
+      "share_of_total_absolute": 0.10100562870502472,
+      "mean_signed_attribution": 0.030601290985941887
+    },
+    {
+      "time_step": "t-1",
+      "mean_absolute_attribution": 0.3646112382411957,
+      "share_of_total_absolute": 0.0807720273733139,
+      "mean_signed_attribution": 0.015619332902133465
+    },
+    {
+      "time_step": "t",
+      "mean_absolute_attribution": 0.2206231653690338,
+      "share_of_total_absolute": 0.048874467611312866,
+      "mean_signed_attribution": 0.009815149940550327
+    }
+  ],
+  "horizon_top10": {
+    "1": [
+      "dst_port_entropy",
+      "log_mean_flow_duration",
+      "mean_down_up_ratio",
+      "log_unique_dst_ports",
+      "rst_rate",
+      "log_mean_fwd_iat",
+      "fwd_byte_ratio",
+      "log_unique_dst_ports_rel_change",
+      "flow_count",
+      "window_packet_rate"
+    ],
+    "3": [
+      "rst_rate",
+      "dst_port_entropy",
+      "log_mean_flow_duration",
+      "log_unique_dst_ports",
+      "mean_down_up_ratio",
+      "log_mean_fwd_iat",
+      "fin_rate_rel_change",
+      "fwd_byte_ratio",
+      "log_unique_dst_ports_rel_change",
+      "flow_count"
+    ],
+    "5": [
+      "rst_rate",
+      "dst_port_entropy",
+      "log_mean_flow_duration",
+      "log_unique_dst_ports",
+      "log_mean_fwd_iat",
+      "mean_down_up_ratio",
+      "log_unique_dst_ports_rel_change",
+      "fin_rate_rel_change",
+      "ack_rate",
+      "flow_count"
+    ]
+  },
+  "horizon_top10_overlap": {
+    "k1_vs_k5": 8,
+    "k3_vs_k5": 9,
+    "k1_vs_k3": 9
+  },
+  "ablation_crosscheck": {
+    "samples": 98,
+    "rows": 980,
+    "horizon": 5,
+    "top_attributed_sign_agreement": 0.8959183673469387,
+    "spearman_signed_attr_vs_delta_p": 0.8269276168478463,
+    "pearson_signed_attr_vs_delta_p": 0.5237639711724452,
+    "mean_abs_delta_top_attributed": 0.12422365768560027,
+    "mean_abs_delta_low_attributed_control": 0.01092809742204513,
+    "sensitivity_ratio": 11.367363676224672,
+    "interpretation": "Directional validation only. IG attributes along a path from the baseline; single-feature ablation is a discrete one-coordinate move. Exact agreement is not expected."
+  },
+  "repeatability": {
+    "rows": 768,
+    "horizons": [
+      1,
+      3,
+      5
+    ],
+    "prediction_max_abs_diff": 0.0,
+    "attribution_max_abs_diff": 0.0,
+    "all_attributions_bit_exact": true,
+    "all_top5_identical": true,
+    "all_full_rankings_identical": true,
+    "passed": true
+  },
+  "representative_cases": [
+    {
+      "label": "true_positive",
+      "sample_id": 2350,
+      "probability": 0.7562426328659058,
+      "actual_label": 1,
+      "predicted_label": 1,
+      "top_features": "rst_rate; log_unique_dst_ports; dst_port_entropy; ack_rate; log_mean_flow_duration",
+      "top_time_steps": "t-8; t-7; t-3"
+    },
+    {
+      "label": "true_negative",
+      "sample_id": 1390,
+      "probability": 0.00015806230658199638,
+      "actual_label": 0,
+      "predicted_label": 0,
+      "top_features": "unique_protocols; log_mean_fwd_iat; urg_rate_rel_change; mean_down_up_ratio_rel_change; dst_port_entropy",
+      "top_time_steps": "t-2; t-3; t-1"
+    },
+    {
+      "label": "false_positive",
+      "sample_id": 1615,
+      "probability": 0.7584307193756104,
+      "actual_label": 0,
+      "predicted_label": 1,
+      "top_features": "dst_port_entropy; log_unique_dst_ports; log_mean_flow_duration; urg_rate; ack_rate",
+      "top_time_steps": "t-3; t-4; t-5"
+    },
+    {
+      "label": "false_negative",
+      "sample_id": 2821,
+      "probability": 0.15513338148593903,
+      "actual_label": 1,
+      "predicted_label": 0,
+      "top_features": "log_mean_flow_duration; rst_rate; unique_protocols; log_mean_fwd_iat; flow_count",
+      "top_time_steps": "t-6; t-4; t-5"
+    },
+    {
+      "label": "near_threshold",
+      "sample_id": 629,
+      "probability": 0.7202286124229431,
+      "actual_label": 1,
+      "predicted_label": 1,
+      "top_features": "rst_rate; log_unique_dst_ports_rel_change; dst_port_entropy; log_mean_fwd_iat; mean_down_up_ratio",
+      "top_time_steps": "t-5; t-8; t-4"
+    },
+    {
+      "label": "high_confidence",
+      "sample_id": 2769,
+      "probability": 0.7961976528167725,
+      "actual_label": 1,
+      "predicted_label": 1,
+      "top_features": "rst_rate; log_mean_fwd_iat; log_unique_dst_ports_rel_change; log_total_packets; unique_protocols",
+      "top_time_steps": "t-4; t-3; t-8"
+    },
+    {
+      "label": "low_confidence",
+      "sample_id": 1956,
+      "probability": 2.6231107952412458e-08,
+      "actual_label": 0,
+      "predicted_label": 0,
+      "top_features": "log_mean_flow_duration; mean_down_up_ratio_rel_change; log_total_packets_rel_change; log_mean_fwd_iat; std_pkt_len",
+      "top_time_steps": "t-9; t-8; t-7"
+    }
+  ],
+  "attack_vs_benign_top_gaps": [
+    {
+      "feature": "rst_rate",
+      "attack_mean_signed": 0.43835121393203735,
+      "benign_mean_signed": 0.035362232476472855,
+      "difference": 0.4029889702796936
+    },
+    {
+      "feature": "log_mean_flow_duration",
+      "attack_mean_signed": 0.0855901762843132,
+      "benign_mean_signed": -0.12359802424907684,
+      "difference": 0.20918819308280945
+    },
+    {
+      "feature": "dst_port_entropy",
+      "attack_mean_signed": 0.03147311881184578,
+      "benign_mean_signed": 0.13293515145778656,
+      "difference": -0.10146203637123108
+    },
+    {
+      "feature": "log_total_packets",
+      "attack_mean_signed": 0.11437057703733444,
+      "benign_mean_signed": 0.027710771188139915,
+      "difference": 0.08665980398654938
+    },
+    {
+      "feature": "std_pkt_len",
+      "attack_mean_signed": 0.0036066414322704077,
+      "benign_mean_signed": -0.07887671142816544,
+      "difference": 0.08248335123062134
+    },
+    {
+      "feature": "ack_rate",
+      "attack_mean_signed": -0.10646947473287582,
+      "benign_mean_signed": -0.027873653918504715,
+      "difference": -0.07859581708908081
+    },
+    {
+      "feature": "flow_count",
+      "attack_mean_signed": 0.06824111938476562,
+      "benign_mean_signed": -0.0002146807819372043,
+      "difference": 0.06845580041408539
+    },
+    {
+      "feature": "fwd_byte_ratio",
+      "attack_mean_signed": -0.07795154303312302,
+      "benign_mean_signed": -0.022550785914063454,
+      "difference": -0.05540075898170471
+    },
+    {
+      "feature": "mean_down_up_ratio",
+      "attack_mean_signed": -0.12857888638973236,
+      "benign_mean_signed": -0.07996319234371185,
+      "difference": -0.04861569404602051
+    },
+    {
+      "feature": "psh_rate",
+      "attack_mean_signed": -0.0022251110058277845,
+      "benign_mean_signed": -0.048456981778144836,
+      "difference": 0.046231869608163834
+    }
+  ],
+  "error_explanations": [
+    {
+      "task4_case_id": "C01",
+      "error_type": "FP",
+      "taxonomy_category": "FP-D",
+      "sample_id": 1972,
+      "probability": 0.7611840963363647,
+      "top_feature_1": "log_mean_flow_duration",
+      "top_feature_2": "log_unique_dst_ports",
+      "top_feature_3": "log_total_packets"
+    },
+    {
+      "task4_case_id": "C02",
+      "error_type": "FP",
+      "taxonomy_category": "FP-C",
+      "sample_id": 1032,
+      "probability": 0.7625959515571594,
+      "top_feature_1": "rst_rate",
+      "top_feature_2": "log_unique_dst_ports",
+      "top_feature_3": "dst_port_entropy"
+    },
+    {
+      "task4_case_id": "C03",
+      "error_type": "FP",
+      "taxonomy_category": "FP-A",
+      "sample_id": 1579,
+      "probability": 0.7414840459823608,
+      "top_feature_1": "dst_port_entropy",
+      "top_feature_2": "log_unique_dst_ports",
+      "top_feature_3": "log_mean_flow_duration"
+    },
+    {
+      "task4_case_id": "C04",
+      "error_type": "FN",
+      "taxonomy_category": "FN-D",
+      "sample_id": 58,
+      "probability": 0.0247047021985054,
+      "top_feature_1": "rst_rate",
+      "top_feature_2": "unique_protocols",
+      "top_feature_3": "log_mean_fwd_iat"
+    },
+    {
+      "task4_case_id": "C05",
+      "error_type": "FN",
+      "taxonomy_category": "FN-E",
+      "sample_id": 776,
+      "probability": 0.6964225769042969,
+      "top_feature_1": "rst_rate",
+      "top_feature_2": "log_mean_fwd_iat",
+      "top_feature_3": "log_unique_dst_ports_rel_change"
+    },
+    {
+      "task4_case_id": "C06",
+      "error_type": "FN",
+      "taxonomy_category": "uncertain",
+      "sample_id": 2850,
+      "probability": 0.0001519137731520459,
+      "top_feature_1": "log_mean_fwd_iat",
+      "top_feature_2": "log_mean_flow_duration",
+      "top_feature_3": "log_unique_dst_ports_rel_change"
+    }
+  ],
+  "onset_explanations": {
+    "episodes": [
+      {
+        "episode_id": 2,
+        "attack_onset": "2018-03-02 03:54:50",
+        "case_type": "pre_onset_warning",
+        "probability": 0.7942986488342285,
+        "top_features": "rst_rate; log_unique_dst_ports; dst_port_entropy; log_mean_flow_duration; mean_down_up_ratio"
+      },
+      {
+        "episode_id": 3,
+        "attack_onset": "2018-03-02 10:13:20",
+        "case_type": "missed_onset",
+        "probability": 0.001600347924977541,
+        "top_features": "dst_port_entropy; log_unique_dst_ports; ack_rate; mean_down_up_ratio; psh_rate"
+      },
+      {
+        "episode_id": 4,
+        "attack_onset": "2018-03-02 12:13:30",
+        "case_type": "pre_onset_warning",
+        "probability": 0.7689840793609619,
+        "top_features": "rst_rate; log_unique_dst_ports; log_mean_fwd_iat; log_mean_flow_duration; dst_port_entropy"
+      }
+    ],
+    "warning_cases": 2,
+    "missed_onset_cases": 1
+  },
+  "sanity_checks": {
+    "randomization_test": {
+      "description": "Xavier (>=2-D) / uniform(-0.1, 0.1) (1-D) re-init of a deep copy of the model, three seeds; the production model is never touched",
+      "seeds": [
+        20260919,
+        7,
+        12345
+      ],
+      "samples": 32,
+      "per_seed": [
+        {
+          "seed": 20260919,
+          "mean_spearman_signed": 0.1950743831640058,
+          "mean_pearson_signed": -0.44238333884594433,
+          "mean_spearman_absolute": 0.31933535388030393,
+          "mean_top5_overlap_fraction": 0.35625,
+          "mean_spearman_absolute_vs_input_magnitude": 0.6075534327136347
+        },
+        {
+          "seed": 7,
+          "mean_spearman_signed": -0.06801203790659949,
+          "mean_pearson_signed": 0.38027587407444285,
+          "mean_spearman_absolute": 0.43168381285750873,
+          "mean_top5_overlap_fraction": 0.3,
+          "mean_spearman_absolute_vs_input_magnitude": 0.6898260199392423
+        },
+        {
+          "seed": 12345,
+          "mean_spearman_signed": 0.10140709041236232,
+          "mean_pearson_signed": 0.4619690504874495,
+          "mean_spearman_absolute": 0.33413194740886193,
+          "mean_top5_overlap_fraction": 0.24375,
+          "mean_spearman_absolute_vs_input_magnitude": 0.6888069160704542
+        }
+      ],
+      "mean_abs_spearman_signed_across_seeds": 0.1214978371609892,
+      "real_model_spearman_abs_attribution_vs_input_magnitude": 0.5949658982802131,
+      "confound_note": "Integrated Gradients attribution scales with the input, so |attribution| rank correlates ~0.6 with |x| for BOTH the real and the randomised model. The residual |attribution| overlap is therefore input-driven, not evidence of retained model structure. The signed attribution, which does depend on learned weights, is the discriminating statistic.",
+      "production_model_unchanged": true,
+      "acceptance_rule": "mean |spearman| of SIGNED attribution between the real and randomised models below 0.30, averaged over three seeds -- learned structure must be lost",
+      "passed": true
+    },
+    "perturbation_test": {
+      "description": "ablate top-5 attributed features vs 5 randomly chosen features ranked 27-52 by |attribution|",
+      "mean_abs_delta_top": 0.12422365768560027,
+      "mean_abs_delta_low": 0.01092809742204513,
+      "acceptance_rule": "mean |dP| for top-attributed features must exceed that of the low-attribution control",
+      "passed": true
+    },
+    "completeness_test": {
+      "acceptance_rule": "PRIMARY: the attributed output is a probability in [0, 1], so the completeness residual |sum(attr) - (F(x) - F(baseline))| is read on the probability scale -- mean AND p99 absolute error must be below 0.01 (one probability point) at every evaluated horizon. SECONDARY: mean relative error below 1% restricted to the well-posed subset |F(x) - F(baseline)| > 0.05.",
+      "per_horizon_mean_abs_error": {
+        "1": 0.0005048289798607821,
+        "3": 0.0007140266305768182,
+        "5": 0.0009255526346428335
+      },
+      "per_horizon_wellposed_mean_rel_error": {
+        "1": 0.0021242378476197814,
+        "3": 0.0019922947377034187,
+        "5": 0.0022904440184877213
+      },
+      "passed": true
+    },
+    "all_passed": true
+  },
+  "trajectory_max_target": {
+    "samples": 64,
+    "threshold": 0.69,
+    "argmax_distribution_k1_to_k5": [
+      5,
+      5,
+      7,
+      7,
+      40
+    ],
+    "exact_ties": 0,
+    "argmax_switches_on_path_rate": 0.4375,
+    "displayed_equals_attributed_all": true,
+    "documented_behaviour": "MAX is non-differentiable at ties. The explainer attributes the fixed horizon k* = argmax at the input, so the attributed function value equals the displayed max exactly. In 43.8% of sampled windows the argmax changes somewhere along the straight-line integration path, so the completeness reference is F_k*(baseline), not max(baseline). Recorded per sample in trajectory_max_explanations.csv."
+  },
+  "pcap_explanations": {
+    "input_source_field_present": true,
+    "n_pcaps_explained": 2,
+    "caveat": "The PCAP explanation uses the same V4 feature contract and transform chain, but flow-record production differences can affect the resulting values. Task 7 proved exact parity for the 26 base-feature aggregations, the 26 relative-change features, all transforms, the scaler interface and 10-second windowing; flow-record production remains APPROXIMATE. These values are NOT numerically equivalent to training features.",
+    "rows": [
+      {
+        "pcap": "demo_portscan.pcap",
+        "input_source": "pcap",
+        "n_sequences": 13,
+        "sample_id": 11,
+        "input_shape": "(10, 52)",
+        "horizon": 5,
+        "target_type": "horizon_probability",
+        "probability": 0.12510551512241364,
+        "probability_explained": 0.12510542571544647,
+        "prediction_identity_abs_diff": 0.0,
+        "prediction_identity_passed": true,
+        "threshold": 0.72,
+        "predicted_label": 0,
+        "actual_label": "unlabeled",
+        "completeness_abs_error": 0.008597701787948608,
+        "top_features": "log_mean_fwd_iat; rst_rate; dst_port_entropy; syn_rate; log_mean_bwd_iat",
+        "top_signed_attributions": "-1.489256; -0.453558; +1.103565; -0.625363; +0.698803",
+        "top_time_steps": "t-1; t; t-2",
+        "feature_contract": "docs/v4_feature_schema.json (52)"
+      },
+      {
+        "pcap": "demo_dos_flood.pcap",
+        "input_source": "pcap",
+        "n_sequences": 13,
+        "sample_id": 2,
+        "input_shape": "(10, 52)",
+        "horizon": 5,
+        "target_type": "horizon_probability",
+        "probability": 0.25366878509521484,
+        "probability_explained": 0.25366857647895813,
+        "prediction_identity_abs_diff": 0.0,
+        "prediction_identity_passed": true,
+        "threshold": 0.72,
+        "predicted_label": 0,
+        "actual_label": "unlabeled",
+        "completeness_abs_error": 0.0004169642925262451,
+        "top_features": "log_mean_flow_duration; syn_rate; log_mean_fwd_iat; log_mean_bwd_iat; unique_protocols",
+        "top_signed_attributions": "+3.754544; -2.045247; -1.924897; +1.317343; -0.558900",
+        "top_time_steps": "t; t-4; t-3",
+        "feature_contract": "docs/v4_feature_schema.json (52)"
+      }
+    ]
+  },
+  "contamination_audit": {
+    "method": "sys.addaudithook('open') recording of every file opened during the explanation run",
+    "project_files_opened": [
+      "docs/v4_baseline_manifest.json",
+      "models/latent_world_model_v4/latent_world_model_v4.pt",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt",
+      "docs/v4_feature_schema.json",
+      "data/processed/multiday_benchmark_K5/X_test.npy",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy",
+      "data/processed/multiday_benchmark_K5/test_metadata.csv",
+      "results/v4_explainability/feature_name_integrity.json",
+      "results/v4_explainability/prediction_identity.csv",
+      "data/processed/multiday_benchmark_K5/X_train.npy",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_train.npy",
+      "results/v4_explainability/completeness_checks.csv",
+      "results/v4_explainability/feature_importance.csv",
+      "results/v4_explainability/temporal_importance.csv",
+      "results/v4_explainability/attributions_k1.npy",
+      "results/v4_explainability/attributions_k3.npy",
+      "results/v4_explainability/attributions_k5.npy",
+      "results/v4_explainability/attribution_heatmap.csv",
+      "results/v4_explainability/horizon_feature_importance.csv",
+      "results/v4_explainability/ablation_crosscheck.csv",
+      "results/v4_explainability/repeatability.csv",
+      "results/v4_explainability/representative_explanations.csv",
+      "results/v4_explainability/attack_vs_benign.csv",
+      "results/error_analysis/representative_cases.csv",
+      "results/v4_explainability/error_explanations.csv",
+      "results/v4_explainability/onset_explanations.csv",
+      "results/v4_explainability/trajectory_max_explanations.csv",
+      "data/sample_pcap/demo_portscan.pcap",
+      "data/sample_pcap/demo_dos_flood.pcap",
+      "results/v4_explainability/pcap_explanations.csv",
+      "results/v4_explainability/figures/attribution_heatmap.png",
+      "results/v4_explainability/figures/feature_and_temporal_importance.png",
+      "results/v4_explainability/figures/horizon_comparison.png",
+      "results/v4_explainability/figures/representative_case_heatmaps.png"
+    ],
+    "forbidden_markers": [
+      "latent_world_model_v1",
+      "latent_world_model_v2",
+      "latent_world_model_v3",
+      "world_model_v2",
+      "temporal_benchmark_v2",
+      "rotated_v4",
+      "states_v3",
+      "network_states_v3"
+    ],
+    "forbidden_hits": [],
+    "passed": true
+  },
+  "known_limitations": [
+    "Attribution measures model sensitivity/contribution. It does NOT establish causality, attacker intent, attack stage, actual compromise, or root cause.",
+    "Integrated Gradients is a path-integral approximation; the residual completeness error is reported per sample in completeness_checks.csv and is not zero.",
+    "Attributions are baseline-relative. A different reference point yields different values; the baseline-sensitivity overlap is recorded in completeness_checks.csv.",
+    "The trajectory-max target is attributed at a fixed argmax; in 43.8% of sampled windows the argmax changes along the integration path.",
+    "PCAP explanations inherit the Task 7 finding: flow-record production is APPROXIMATE, so PCAP feature values are not numerically equivalent to training features.",
+    "The V4 checkpoint was trained on single-day temporal_benchmark_v2 arrays and evaluated on multiday_benchmark_K5 arrays scaled by a different StandardScaler (frozen-baseline known issue). Explanations inherit that out-of-distribution-normalisation regime.",
+    "Re-batching the same frozen model shifts LSTM reduction order by up to 1.5e-06; identity is therefore asserted on the identical tensor in the identical batch.",
+    "No K=4 reference threshold exists, so K=4 is not explained against a frozen threshold."
+  ],
+  "verification_results": {
+    "checkpoint_hash_matches_frozen_v4": true,
+    "model_class_is_v4": true,
+    "feature_schema_matches": true,
+    "scaler_matches": true,
+    "input_shape_10x52": true,
+    "prediction_identity": true,
+    "repeatability": true,
+    "attribution_shape": true,
+    "feature_naming": true,
+    "completeness": true,
+    "ablation_crosscheck_ran": true,
+    "no_v3_artifact_loaded": true,
+    "sanity_checks": true
+  },
+  "overall": "PASS"
+}

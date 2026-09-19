@@ -1,0 +1,5 @@
+episode_id,attack_onset,attack_offset,duration_sec,duration_windows,number_of_attack_windows,attack_type_if_available,observable_from_test_start,time_contiguous,notes
+1,2018-03-02 01:00:00,2018-03-02 03:54:10,10460,1046,1046,Bot(1046),False,True,already active at the first raw test window — no observable onset
+2,2018-03-02 03:54:50,2018-03-02 03:54:50,10,1,1,Bot(1),True,True,onset observable inside the test interval
+3,2018-03-02 10:13:20,2018-03-02 12:13:00,7190,719,719,Bot(719),True,True,onset observable inside the test interval
+4,2018-03-02 12:13:30,2018-03-02 12:59:50,2790,279,279,Bot(279),True,True,onset observable inside the test interval

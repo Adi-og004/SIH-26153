@@ -1,0 +1,178 @@
+{
+  "name": "13_multi_window_relative_change",
+  "description": "three consecutive windows with a rising then falling mean TTL \u2014 exercises the relative-change transform including the 0/0 case",
+  "derivation": "row 0 is forced to exactly 0.0. row 1 = (150-100)/(100+1e-8). row 2 = (50-150)/(150+1e-8). ttl_std is 0.0 in every window, so its relative change is (0-0)/(0+1e-8) = 0.0 exactly \u2014 NOT NaN.",
+  "packet_defaults": {
+    "timestamp_abs": 0.0,
+    "ip_version": 4,
+    "src_ip": "10.0.0.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 1000,
+    "dst_port": 80,
+    "protocol": 6,
+    "ttl": 64,
+    "ip_df": false,
+    "ip_mf": false,
+    "ip_frag_offset": 0,
+    "is_tcp": true,
+    "tcp_window": 1000,
+    "tcp_seq": 0,
+    "tcp_syn": false,
+    "tcp_fin": false,
+    "payload_len": 0
+  },
+  "packets": [
+    {
+      "timestamp_abs": 1.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 17,
+      "ttl": 100,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 10
+    },
+    {
+      "timestamp_abs": 2.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 17,
+      "ttl": 100,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 10
+    },
+    {
+      "timestamp_abs": 11.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 17,
+      "ttl": 150,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 10
+    },
+    {
+      "timestamp_abs": 12.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 17,
+      "ttl": 150,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 10
+    },
+    {
+      "timestamp_abs": 21.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 17,
+      "ttl": 50,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 10
+    },
+    {
+      "timestamp_abs": 22.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 17,
+      "ttl": 50,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": false,
+      "tcp_window": 1000,
+      "tcp_seq": 0,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 10
+    }
+  ],
+  "expected_windows": [
+    {
+      "window_idx": 0,
+      "packet_count": 2,
+      "features": {
+        "ttl_mean": 100.0,
+        "ttl_std": 0.0
+      },
+      "relative": {
+        "ttl_mean_rel_change": 0.0,
+        "ttl_std_rel_change": 0.0
+      }
+    },
+    {
+      "window_idx": 1,
+      "packet_count": 2,
+      "features": {
+        "ttl_mean": 150.0,
+        "ttl_std": 0.0
+      },
+      "relative": {
+        "ttl_mean_rel_change": 0.49999999995000005,
+        "ttl_std_rel_change": 0.0
+      }
+    },
+    {
+      "window_idx": 2,
+      "packet_count": 2,
+      "features": {
+        "ttl_mean": 50.0,
+        "ttl_std": 0.0
+      },
+      "relative": {
+        "ttl_mean_rel_change": -0.6666666666222222,
+        "ttl_std_rel_change": 0.0
+      }
+    }
+  ]
+}

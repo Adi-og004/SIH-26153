@@ -1,0 +1,19 @@
+{
+  "window_seconds": 10,
+  "training_binning": "df[\"Timestamp\"].dt.floor(\"10s\") in archive/create_network_states_v2.py",
+  "pcap_binning": "int(flow_start_epoch // 10) - win0 in src/pcap_ingest_v4.py",
+  "interval": "[t, t+10) \u2014 left-closed, right-open (floor semantics on both sides)",
+  "origin": "epoch-aligned multiples of 10 s in both paths (floor of an absolute timestamp)",
+  "row_assignment": "a flow belongs to the window of its START time (CIC Timestamp / first packet), and ALL of its statistics are attributed to that window",
+  "rounding": "floor, never round-half; no tolerance band",
+  "ordering": "groupby(..., sort=True) in training; groupby('window_idx', sort=True) in the PCAP path",
+  "empty_windows": "produce NO row in either path \u2014 the window simply does not exist. Downstream, the 10-second contiguity gate rejects any sequence spanning the gap (np.all(diffs == 10) in prepare_multiday_benchmark.py, mirrored by build_sequences in pcap_ingest_v4.py).",
+  "first_window": "kept as-is; its relative-change row is forced to 0.0",
+  "last_window": "kept as-is; sequences needing K future targets simply are not formed",
+  "timezone": {
+    "training": "naive local timestamps parsed from the CIC CSV Timestamp column; no tz conversion is applied anywhere in the training path",
+    "pcap": "absolute UTC epoch seconds from the capture",
+    "parity": "APPROXIMATE",
+    "note": "Both floor to 10 s multiples, so bin WIDTH and boundary RULE are identical, but the two paths are not anchored to the same clock. The CSE-CIC-IDS2018 CSV clock is Atlantic local with the AM/PM marker dropped, which cannot be reconciled with UTC epoch bins without an explicit offset. This matters only when aligning a PCAP window to a dataset window; it does not change any feature value."
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "name": "14_seq_wraparound",
+  "description": "a retransmission whose sequence number has wrapped past 2^32",
+  "derivation": "p1 seq=100 len=100 sets the high-water mark to 200. p2 seq=4294967200 len=50 ends at 4294967250. Under 32-bit MODULAR comparison that is 246 sequence numbers BEFORE 200, so it is already-transmitted space -> RETRANSMISSION. A naive unsigned comparison (4294967250 <= 200?) would be False and would miss it, which is exactly what this fixture guards against. retrans = 1 of 2 seq-bearing, 50 retransmitted bytes.",
+  "packet_defaults": {
+    "timestamp_abs": 0.0,
+    "ip_version": 4,
+    "src_ip": "10.0.0.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 1000,
+    "dst_port": 80,
+    "protocol": 6,
+    "ttl": 64,
+    "ip_df": false,
+    "ip_mf": false,
+    "ip_frag_offset": 0,
+    "is_tcp": true,
+    "tcp_window": 1000,
+    "tcp_seq": 0,
+    "tcp_syn": false,
+    "tcp_fin": false,
+    "payload_len": 0
+  },
+  "packets": [
+    {
+      "timestamp_abs": 0.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 100,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 0.1,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": false,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 4294967200,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 50
+    }
+  ],
+  "expected_windows": [
+    {
+      "window_idx": 0,
+      "packet_count": 2,
+      "features": {
+        "log_tcp_retrans_count": 0.6931471805599453,
+        "tcp_retrans_ratio": 0.5,
+        "log_tcp_retrans_bytes": 3.9318256327243257
+      }
+    }
+  ]
+}

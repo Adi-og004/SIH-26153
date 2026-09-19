@@ -1,0 +1,7 @@
+capture,path,kind,n_frames,n_ip_packets,n_non_ip_frames,n_ipv4,n_ipv6,n_tcp,n_fragments,capture_span_s,n_windows,feature_count,n_missing_total,n_non_finite_total,n_constant_features,sha256
+demo_portscan,data/sample_pcap/demo_portscan.pcap,synthetic demo,10190,10190,0,10190,0,10136,0,215.10799407958984,22,30,0,0,21,f33d28357ab804ba88cc94400291bf1b1ebf178121c8012f9c7c3b7adb036c6b
+demo_c2_beacon,data/sample_pcap/demo_c2_beacon.pcap,synthetic demo,1390,1390,0,1390,0,1336,0,217.99395513534546,22,30,0,0,22,0b0ecb906c5e5c71438e0610bba6cb31ab8435626e3d5cd68c3f138edd630bd3
+demo_lateral_movement,data/sample_pcap/demo_lateral_movement.pcap,synthetic demo,38406,38406,0,38406,0,38352,0,216.78397011756897,22,30,0,0,22,bb283f2e787a1d8460e87c6745ed4092d3fb10b904631fa8b8fa381b8c5a5b89
+demo_exfiltration,data/sample_pcap/demo_exfiltration.pcap,synthetic demo,10470,10470,0,10470,0,10416,0,210.5289270877838,22,30,0,0,18,fdec9c1874f0624e277134611f39053f5e12d00784d47a1b50bb23447bb06a6a
+demo_dos_flood,data/sample_pcap/demo_dos_flood.pcap,synthetic demo,5857,5857,0,5857,0,5803,0,218.69590020179749,22,30,0,0,21,0f5a71ee4836811881adb46a8b233d84e55f25f4422919d6520a0eccb9c4ccab
+march02_host_172.31.69.30,data/raw/march02/bot_pcaps/pcap/capEC2AMAZ-O4EL3NG-172.31.69.30,real capture,320039,303922,16117,303771,151,290886,0,31362.5020301342,3083,30,0,0,2,4e129df72cf04e3bc425d649bace9dddf214d25f1461de3b229aa86add0ab01b

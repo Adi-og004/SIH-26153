@@ -1,0 +1,529 @@
+{
+  "task": "Task 9 \u2014 packet-level feature families",
+  "schema_version": "v5",
+  "contract_version": "1.0.0",
+  "generated_at_utc": "2026-09-19T10:29:12+00:00",
+  "environment": {
+    "python": "3.14.7",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scikit_learn": "1.9.0",
+    "scapy": "2.7.0"
+  },
+  "schema_sha256": "5f52e2d0a7c65e651ba3e948a19c63af108e7b278dddf4e1a7f41b8b21ba6704",
+  "schema_hash_covers": [
+    "feature names",
+    "feature order",
+    "formulas",
+    "units",
+    "domains",
+    "windowing",
+    "transforms",
+    "missing-value policy",
+    "zero-value behaviour",
+    "relative-change definitions",
+    "normalisation declaration",
+    "the frozen V4 contract hash"
+  ],
+  "feature_count": {
+    "flow_base": 26,
+    "flow_relative_change": 26,
+    "packet_base": 21,
+    "packet_relative_change": 9,
+    "total": 82
+  },
+  "feature_order": [
+    "flow_count",
+    "log_flow_count",
+    "log_total_packets",
+    "log_total_bytes",
+    "window_packet_rate",
+    "window_byte_rate",
+    "syn_rate",
+    "ack_rate",
+    "rst_rate",
+    "fin_rate",
+    "psh_rate",
+    "urg_rate",
+    "mean_pkt_len",
+    "std_pkt_len",
+    "log_mean_flow_duration",
+    "log_mean_fwd_iat",
+    "log_mean_bwd_iat",
+    "fwd_packet_ratio",
+    "bwd_packet_ratio",
+    "fwd_byte_ratio",
+    "bwd_byte_ratio",
+    "mean_down_up_ratio",
+    "log_unique_dst_ports",
+    "unique_protocols",
+    "dst_port_entropy",
+    "protocol_entropy",
+    "flow_count_rel_change",
+    "log_flow_count_rel_change",
+    "log_total_packets_rel_change",
+    "log_total_bytes_rel_change",
+    "window_packet_rate_rel_change",
+    "window_byte_rate_rel_change",
+    "syn_rate_rel_change",
+    "ack_rate_rel_change",
+    "rst_rate_rel_change",
+    "fin_rate_rel_change",
+    "psh_rate_rel_change",
+    "urg_rate_rel_change",
+    "mean_pkt_len_rel_change",
+    "std_pkt_len_rel_change",
+    "log_mean_flow_duration_rel_change",
+    "log_mean_fwd_iat_rel_change",
+    "log_mean_bwd_iat_rel_change",
+    "fwd_packet_ratio_rel_change",
+    "bwd_packet_ratio_rel_change",
+    "fwd_byte_ratio_rel_change",
+    "bwd_byte_ratio_rel_change",
+    "mean_down_up_ratio_rel_change",
+    "log_unique_dst_ports_rel_change",
+    "unique_protocols_rel_change",
+    "dst_port_entropy_rel_change",
+    "protocol_entropy_rel_change",
+    "ttl_mean",
+    "ttl_std",
+    "ttl_min",
+    "ttl_max",
+    "log_ttl_unique_count",
+    "log_tcp_window_mean",
+    "log_tcp_window_std",
+    "log_tcp_window_max",
+    "tcp_window_zero_ratio",
+    "tcp_window_change_rate",
+    "log_frag_packet_count",
+    "frag_packet_ratio",
+    "ip_df_ratio",
+    "log_tcp_retrans_count",
+    "tcp_retrans_ratio",
+    "log_tcp_retrans_bytes",
+    "payload_len_p50",
+    "payload_len_p90",
+    "payload_len_max",
+    "payload_zero_ratio",
+    "payload_len_entropy",
+    "ttl_mean_rel_change",
+    "ttl_std_rel_change",
+    "log_ttl_unique_count_rel_change",
+    "log_tcp_window_mean_rel_change",
+    "log_tcp_window_std_rel_change",
+    "log_tcp_retrans_count_rel_change",
+    "payload_len_p50_rel_change",
+    "payload_len_p90_rel_change",
+    "payload_len_entropy_rel_change"
+  ],
+  "layout": {
+    "0-25": "flow base (frozen V4)",
+    "26-51": "flow relative change (frozen V4)",
+    "52-72": "packet base (new in V5)",
+    "73-81": "packet relative change (new in V5)"
+  },
+  "v4_prefix_invariant": {
+    "claim": "v5_input[:52] is byte-identical to the V4 input vector, in the V4 order, produced by the unmodified V4 code",
+    "verified_by": "src/verify_v5_packet_features.py check 14"
+  },
+  "feature_families": {
+    "ttl": {
+      "features": [
+        "ttl_mean",
+        "ttl_std",
+        "ttl_min",
+        "ttl_max",
+        "log_ttl_unique_count"
+      ],
+      "count": 5,
+      "implemented": true,
+      "fixture_verified": true,
+      "populated_on_real_traffic": true,
+      "constant_on_real_traffic": []
+    },
+    "tcp_window": {
+      "features": [
+        "log_tcp_window_mean",
+        "log_tcp_window_std",
+        "log_tcp_window_max",
+        "tcp_window_zero_ratio",
+        "tcp_window_change_rate"
+      ],
+      "count": 5,
+      "implemented": true,
+      "fixture_verified": true,
+      "populated_on_real_traffic": true,
+      "constant_on_real_traffic": []
+    },
+    "fragmentation": {
+      "features": [
+        "log_frag_packet_count",
+        "frag_packet_ratio",
+        "ip_df_ratio"
+      ],
+      "count": 3,
+      "implemented": true,
+      "fixture_verified": true,
+      "populated_on_real_traffic": true,
+      "constant_on_real_traffic": [
+        "frag_packet_ratio",
+        "log_frag_packet_count"
+      ],
+      "note": "Implemented per RFC 791 / RFC 8200 and verified against synthetic first / middle / last / IPv6-fragment-header fixtures. IDENTICALLY ZERO in every capture available to this project (0 fragments in 303,922 real IP packets), so two of its three features carry no variance here. Reported, not hidden, and not downgraded to a pass by pretending the data supports it."
+    },
+    "retransmission": {
+      "features": [
+        "log_tcp_retrans_count",
+        "tcp_retrans_ratio",
+        "log_tcp_retrans_bytes"
+      ],
+      "count": 3,
+      "implemented": true,
+      "fixture_verified": true,
+      "populated_on_real_traffic": true,
+      "constant_on_real_traffic": [],
+      "note": "Measures sequence-space re-coverage = retransmission + genuine reordering. The two are not separable without RTT and duplicate-ACK context. Zero-length packets are excluded, so duplicate ACKs are never counted."
+    },
+    "payload": {
+      "features": [
+        "payload_len_p50",
+        "payload_len_p90",
+        "payload_len_max",
+        "payload_zero_ratio",
+        "payload_len_entropy"
+      ],
+      "count": 5,
+      "implemented": true,
+      "fixture_verified": true,
+      "populated_on_real_traffic": true,
+      "constant_on_real_traffic": []
+    }
+  },
+  "formulas": {
+    "ttl_mean": "float(ttl.mean()) over every IP packet whose timestamp falls in [t, t+10)",
+    "ttl_std": "np.std(ttl, ddof=1) for n > 1, else 0.0",
+    "ttl_min": "float(ttl.min()) over every IP packet whose timestamp falls in [t, t+10)",
+    "ttl_max": "float(ttl.max()) over every IP packet whose timestamp falls in [t, t+10)",
+    "log_ttl_unique_count": "_safe_log1p(len(np.unique(ttl)))",
+    "log_tcp_window_mean": "_safe_log1p(win.mean()) where win = raw 16-bit TCP window of every TCP packet in [t, t+10)",
+    "log_tcp_window_std": "_safe_log1p(np.std(win, ddof=1)) for n > 1, else _safe_log1p(0.0) = 0.0",
+    "log_tcp_window_max": "_safe_log1p(win.max()) over the raw window field of every TCP packet in [t, t+10)",
+    "tcp_window_zero_ratio": "_ratio(int((win == 0).sum()), n_tcp); returns exactly 0.0 when n_tcp == 0",
+    "tcp_window_change_rate": "_ratio(n_win_changed, n_win_eligible) where a packet is 'eligible' iff it is TCP and not the first packet of its directional session (ordered 5-tuple, 120 s idle reset), and 'changed' iff its raw window value differs from that predecessor's",
+    "log_frag_packet_count": "_safe_log1p(sum(is_fragment)) where is_fragment = (MF set) OR (fragment offset > 0)",
+    "frag_packet_ratio": "_ratio(n_frag, n_ip) \u2014 fragmented IP packets over all IP packets in [t, t+10)",
+    "ip_df_ratio": "_ratio(n_df, n_ip4) \u2014 the denominator is IPv4 packets ONLY",
+    "log_tcp_retrans_count": "_safe_log1p(sum(is_retransmission)); is_retransmission is True iff the packet is TCP, eff_len = payload_len + (1 if SYN) + (1 if FIN) > 0, the packet is not the first seq-bearing packet of its directional session, and seq + eff_len is at or below that session's running high-water mark under 32-bit modular comparison",
+    "tcp_retrans_ratio": "_ratio(n_retrans, n_seq_bearing) where seq-bearing means eff_len > 0",
+    "log_tcp_retrans_bytes": "_safe_log1p(sum(payload_len where is_retransmission))",
+    "payload_len_p50": "np.percentile(payload_len, 50, method='linear')",
+    "payload_len_p90": "np.percentile(payload_len, 90, method='linear')",
+    "payload_len_max": "float(payload_len.max()) over every IP packet in [t, t+10)",
+    "payload_zero_ratio": "_ratio(int((payload_len == 0).sum()), n_ip)",
+    "payload_len_entropy": "-sum(p * log2(p + 1e-12)) over value_counts(payload_len) / total; 0.0 when <= 1 distinct length. Identical formula to the V4 dst_port_entropy / protocol_entropy.",
+    "ttl_mean_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on ttl_mean",
+    "ttl_std_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on ttl_std",
+    "log_ttl_unique_count_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_ttl_unique_count",
+    "log_tcp_window_mean_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_tcp_window_mean",
+    "log_tcp_window_std_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_tcp_window_std",
+    "log_tcp_retrans_count_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on log_tcp_retrans_count",
+    "payload_len_p50_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on payload_len_p50",
+    "payload_len_p90_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on payload_len_p90",
+    "payload_len_entropy_rel_change": "r_t = (s_t - s_{t-1}) / (|s_{t-1}| + 1e-8)  on payload_len_entropy"
+  },
+  "relative_change": {
+    "included": [
+      "ttl_mean",
+      "ttl_std",
+      "log_ttl_unique_count",
+      "log_tcp_window_mean",
+      "log_tcp_window_std",
+      "log_tcp_retrans_count",
+      "payload_len_p50",
+      "payload_len_p90",
+      "payload_len_entropy"
+    ],
+    "excluded": [
+      "ttl_min",
+      "ttl_max",
+      "log_tcp_window_max",
+      "tcp_window_zero_ratio",
+      "tcp_window_change_rate",
+      "log_frag_packet_count",
+      "frag_packet_ratio",
+      "ip_df_ratio",
+      "tcp_retrans_ratio",
+      "log_tcp_retrans_bytes",
+      "payload_len_max",
+      "payload_zero_ratio"
+    ],
+    "rule": "explicit per-feature ruling; see docs/v5_packet_feature_contract.json features[].relative_change_decision / relative_change_reason",
+    "semantics_identical_to_v4": true
+  },
+  "dataset_manifest": "docs/v5_packet_dataset_manifest.json",
+  "packet_parity": {
+    "status": "EXACT",
+    "comparisons": 180,
+    "bitwise_identical": 180,
+    "max_abs_diff": 0.0,
+    "basis": "one shared implementation (src/packet_feature_builder.py) for both the training-side and the PCAP-side entry point, verified numerically across two independent invocation routes (in-memory vs CSV round-trip + shuffle)",
+    "caveat": "This proves the two ROUTES agree and that no plumbing drift exists. It does not \u2014 and cannot \u2014 prove agreement with a second independent packet feature implementation, because no such implementation exists: the training data is flow CSVs with no packet fields at all."
+  },
+  "conformance": {
+    "status": "PASS",
+    "captures": [
+      {
+        "capture": "demo_portscan",
+        "path": "data/sample_pcap/demo_portscan.pcap",
+        "kind": "synthetic demo",
+        "n_frames": 10190,
+        "n_ip_packets": 10190,
+        "n_non_ip_frames": 0,
+        "n_ipv4": 10190,
+        "n_ipv6": 0,
+        "n_tcp": 10136,
+        "n_fragments": 0,
+        "capture_span_s": 215.10799407958984,
+        "n_windows": 22,
+        "feature_count": 30,
+        "n_missing_total": 0,
+        "n_non_finite_total": 0,
+        "n_constant_features": 21,
+        "sha256": "f33d28357ab804ba88cc94400291bf1b1ebf178121c8012f9c7c3b7adb036c6b"
+      },
+      {
+        "capture": "demo_c2_beacon",
+        "path": "data/sample_pcap/demo_c2_beacon.pcap",
+        "kind": "synthetic demo",
+        "n_frames": 1390,
+        "n_ip_packets": 1390,
+        "n_non_ip_frames": 0,
+        "n_ipv4": 1390,
+        "n_ipv6": 0,
+        "n_tcp": 1336,
+        "n_fragments": 0,
+        "capture_span_s": 217.99395513534546,
+        "n_windows": 22,
+        "feature_count": 30,
+        "n_missing_total": 0,
+        "n_non_finite_total": 0,
+        "n_constant_features": 22,
+        "sha256": "0b0ecb906c5e5c71438e0610bba6cb31ab8435626e3d5cd68c3f138edd630bd3"
+      },
+      {
+        "capture": "demo_lateral_movement",
+        "path": "data/sample_pcap/demo_lateral_movement.pcap",
+        "kind": "synthetic demo",
+        "n_frames": 38406,
+        "n_ip_packets": 38406,
+        "n_non_ip_frames": 0,
+        "n_ipv4": 38406,
+        "n_ipv6": 0,
+        "n_tcp": 38352,
+        "n_fragments": 0,
+        "capture_span_s": 216.78397011756897,
+        "n_windows": 22,
+        "feature_count": 30,
+        "n_missing_total": 0,
+        "n_non_finite_total": 0,
+        "n_constant_features": 22,
+        "sha256": "bb283f2e787a1d8460e87c6745ed4092d3fb10b904631fa8b8fa381b8c5a5b89"
+      },
+      {
+        "capture": "demo_exfiltration",
+        "path": "data/sample_pcap/demo_exfiltration.pcap",
+        "kind": "synthetic demo",
+        "n_frames": 10470,
+        "n_ip_packets": 10470,
+        "n_non_ip_frames": 0,
+        "n_ipv4": 10470,
+        "n_ipv6": 0,
+        "n_tcp": 10416,
+        "n_fragments": 0,
+        "capture_span_s": 210.5289270877838,
+        "n_windows": 22,
+        "feature_count": 30,
+        "n_missing_total": 0,
+        "n_non_finite_total": 0,
+        "n_constant_features": 18,
+        "sha256": "fdec9c1874f0624e277134611f39053f5e12d00784d47a1b50bb23447bb06a6a"
+      },
+      {
+        "capture": "demo_dos_flood",
+        "path": "data/sample_pcap/demo_dos_flood.pcap",
+        "kind": "synthetic demo",
+        "n_frames": 5857,
+        "n_ip_packets": 5857,
+        "n_non_ip_frames": 0,
+        "n_ipv4": 5857,
+        "n_ipv6": 0,
+        "n_tcp": 5803,
+        "n_fragments": 0,
+        "capture_span_s": 218.69590020179749,
+        "n_windows": 22,
+        "feature_count": 30,
+        "n_missing_total": 0,
+        "n_non_finite_total": 0,
+        "n_constant_features": 21,
+        "sha256": "0f5a71ee4836811881adb46a8b233d84e55f25f4422919d6520a0eccb9c4ccab"
+      },
+      {
+        "capture": "march02_host_172.31.69.30",
+        "path": "data/raw/march02/bot_pcaps/pcap/capEC2AMAZ-O4EL3NG-172.31.69.30",
+        "kind": "real capture",
+        "n_frames": 320039,
+        "n_ip_packets": 303922,
+        "n_non_ip_frames": 16117,
+        "n_ipv4": 303771,
+        "n_ipv6": 151,
+        "n_tcp": 290886,
+        "n_fragments": 0,
+        "capture_span_s": 31362.5020301342,
+        "n_windows": 3083,
+        "feature_count": 30,
+        "n_missing_total": 0,
+        "n_non_finite_total": 0,
+        "n_constant_features": 2,
+        "sha256": "4e129df72cf04e3bc425d649bace9dddf214d25f1461de3b229aa86add0ab01b"
+      }
+    ],
+    "total_missing_values": 0,
+    "total_non_finite_values": 0,
+    "constant_features_on_real_capture": [
+      "frag_packet_ratio",
+      "log_frag_packet_count"
+    ],
+    "note": "The five demo captures are synthetically generated and have constant TTL (64) and constant TCP window (8192), so several packet features are necessarily constant on them. That is a property of those files, not of the features \u2014 the real capture shows 67 distinct TTLs and 1,399 distinct window values. No capture here is used for training."
+  },
+  "leakage_status": "PASS",
+  "leakage_checks": [
+    {
+      "check": "packet_window_assignment",
+      "definition": "every packet contributes only to the window containing its own timestamp, [t, t+10)",
+      "result": "PASS"
+    },
+    {
+      "check": "prefix_truncation_invariance",
+      "definition": "rebuilding from a strict prefix of the capture leaves every already-completed window bit-identical \u2014 the decisive test that no future packet edits a past state",
+      "result": "PASS"
+    },
+    {
+      "check": "relative_change_backward_only",
+      "definition": "each relative change uses the immediately preceding EXISTING row and nothing else; first row forced to 0.0",
+      "result": "PASS"
+    },
+    {
+      "check": "flow_continuation_cannot_edit_the_past",
+      "definition": "packet features are assigned PER PACKET, not per flow, so a flow that continues past t+10 contributes to the later window only. This is the structural difference from the V4 flow lane, where a whole flow is attributed to the window of its first packet.",
+      "result": "PASS \u2014 by construction, and confirmed by prefix_truncation_invariance"
+    },
+    {
+      "check": "session_state_is_causal",
+      "definition": "annotate_packets is a single forward pass in timestamp order; every annotation is written once and never revised",
+      "result": "PASS \u2014 verified per packet by tests/test_v5_packet_features.py:test_annotations_depend_only_on_the_past"
+    }
+  ],
+  "v5_training_dataset_exists": false,
+  "v5_training_dataset_verdict": {
+    "train_val_days": [
+      "Thursday-15-02-2018",
+      "Wednesday-14-02-2018",
+      "Wednesday-28-02-2018"
+    ],
+    "train_val_pcap_hosts_on_disk": 0,
+    "test_day": [
+      "Friday-02-03-2018"
+    ],
+    "test_day_pcap_host_coverage_pct": 4.55,
+    "v5_training_dataset_constructible": false,
+    "reason": "The three TRAIN/VAL days (Wednesday-14-02-2018, Thursday-15-02-2018, Wednesday-28-02-2018) have ZERO packet captures on disk. Only the pre-computed CICFlowMeter flow CSVs were ever obtained for them, and a flow CSV cannot yield TTL, TCP window, IP fragment flags or TCP sequence numbers \u2014 those fields do not exist in it at any aggregation level. Even the TEST day (Friday-02-03-2018) has only 20 of 440 host captures on disk, so its packet coverage is a partial-scope subset rather than the whole monitored organisation the flow CSV aggregates.",
+    "options_considered": {
+      "A_reprocess_original_pcaps": {
+        "viable": false,
+        "detail": "There are no original PCAPs for the three train/val days to reprocess. For 02-03 the source archive is 41.7 GiB compressed / 54.7 GB uncompressed against ~49 GB free disk, and downloading it would still leave train and val empty."
+      },
+      "B_join_packet_features_where_pcap_exists": {
+        "viable": false,
+        "detail": "Would populate packet features on the TEST day only and leave them structurally missing on every TRAIN and VAL window. A model cannot learn a feature it never sees in training, and filling the gap with zeros or means would be exactly the unsupported imputation Part 17 forbids \u2014 it would also make the packet block a perfect test-set indicator, which is a leakage channel, not a feature."
+      },
+      "C_packet_features_for_pcap_demonstration_only": {
+        "viable": true,
+        "selected": true,
+        "detail": "The chosen option. The packet lane is fully built, contracted, tested and verified, and runs on real captures. It is used for PCAP-side analysis and conformance now; no V5 model is trained."
+      },
+      "D_retrain_the_flow_lane_from_pcap_for_all_four_days": {
+        "viable": false,
+        "detail": "Would require the full 440-host archive for all four days \u2014 three of which were never captured to disk at all \u2014 plus a re-derivation of the labels, and would change the flow features too, destroying the controlled V4-vs-V5 comparison Part 23 requires."
+      }
+    },
+    "what_would_unblock_it": [
+      "Packet captures for Wednesday-14-02-2018, Thursday-15-02-2018 and Wednesday-28-02-2018 at the monitored-organisation scope the flow CSVs cover.",
+      "Enough disk (~55 GB per day, or a batch extract-fold-delete loop) to process them.",
+      "A re-derivation of the 26 flow features from those same captures, so that flow and packet features share one capture scope instead of the current hybrid."
+    ]
+  },
+  "v5_model_trained": false,
+  "v5_model_reason": "Part 22 forbids training until a training, validation AND test set with populated packet features all exist. Train and val have zero packet captures, so the prerequisite fails and training was not attempted. No V5 checkpoint, config, scaler or prediction file was created.",
+  "v4_integrity_status": "PASS",
+  "v4_integrity": {
+    "artefacts": [
+      {
+        "path": "models/latent_world_model_v4/latent_world_model_v4.pt",
+        "expected_sha256": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+        "actual_sha256": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+        "unchanged": true
+      },
+      {
+        "path": "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+        "expected_sha256": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+        "actual_sha256": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+        "unchanged": true
+      },
+      {
+        "path": "docs/v4_feature_schema.json",
+        "expected_sha256": "2b4f820ca1f193e47b3b9c1eae4163cd9b2643886665f5f5d83f876e3ee094c4",
+        "actual_sha256": "2b4f820ca1f193e47b3b9c1eae4163cd9b2643886665f5f5d83f876e3ee094c4",
+        "unchanged": true
+      },
+      {
+        "path": "docs/v4_baseline_manifest.json",
+        "expected_sha256": "b2765c2489ccee3845e9dc43990b187d894237905087f3969ed2fae82613937e",
+        "actual_sha256": "b2765c2489ccee3845e9dc43990b187d894237905087f3969ed2fae82613937e",
+        "unchanged": true
+      }
+    ],
+    "status": "PASS"
+  },
+  "v4_unchanged": true,
+  "hybrid_representation": {
+    "flow_features": "APPROXIMATE relative to CICFlowMeter training semantics \u2014 the Task 7 finding is preserved unchanged, not re-litigated",
+    "packet_features": "DIRECT \u2014 computed from packet timestamps and header fields, with no flow-engine intermediary",
+    "claim_limit": "No claim of full numerical equivalence with CICFlowMeter is made anywhere. V5 is explicitly a hybrid representation."
+  },
+  "unsupported_features": [
+    {
+      "feature": "tcp_dup_ack_count",
+      "status": "NOT IMPLEMENTED",
+      "reason": "a defensible duplicate-ACK rule needs the ACK number plus SACK-option parsing; the parser does not read TCP options, so the rule would be approximate. Deferred rather than shipped weak."
+    },
+    {
+      "feature": "true retransmission vs reordering separation",
+      "status": "NOT SEPARABLE",
+      "reason": "requires RTT estimation and duplicate-ACK context. The shipped feature is documented as sequence-space re-coverage instead of being mislabelled a pure retransmission count."
+    },
+    {
+      "feature": "window-scale-adjusted TCP window",
+      "status": "NOT APPLIED",
+      "reason": "the scale factor is only observable when the SYN handshake is inside the capture, which is false for mid-capture connections. The raw header value is used consistently instead."
+    }
+  ],
+  "remaining_limitations": [
+    "The three TRAIN/VAL benchmark days have NO packet captures at all, so no V5 training dataset exists and no V5 model was trained.",
+    "IP fragmentation is identically zero in every capture available here, so log_frag_packet_count and frag_packet_ratio are implemented and fixture-verified but carry no variance in this data.",
+    "The retransmission family measures sequence-space re-coverage, which is retransmission plus genuine reordering; the two are not separable without RTT and duplicate-ACK context.",
+    "TCP window values are raw header units; the window-scale option is not applied.",
+    "The V4 flow lane remains APPROXIMATE relative to CICFlowMeter training semantics (Task 7 finding, unchanged). V5 is therefore a HYBRID: approximate flow features plus direct packet features."
+  ],
+  "completion_status": "V5 FEATURE PIPELINE COMPLETE \u2014 TRAINING DATASET NOT READY"
+}

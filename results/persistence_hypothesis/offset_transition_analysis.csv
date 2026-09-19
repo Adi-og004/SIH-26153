@@ -1,0 +1,49 @@
+model,horizon,episode_id,attack_offset,offset_observable,mean_probability_before_offset,mean_probability_after_offset,probability_drop,probability_10s_after_offset,time_until_below_threshold_sec,positive_predictions_after_offset,windows_after_offset,note
+persistence,1,1,2018-03-02 03:54:10,True,1.0,0.16666666666666666,0.8333333333333334,1.0,20.0,2.0,12,prediction continues through the attack tail
+persistence,1,2,2018-03-02 03:54:50,True,0.75,0.08333333333333333,0.6666666666666666,1.0,20.0,1.0,12,prediction continues through the attack tail
+persistence,1,3,2018-03-02 12:13:00,True,1.0,0.8333333333333334,0.16666666666666663,1.0,20.0,10.0,12,prediction continues through the attack tail
+persistence,1,4,2018-03-02 12:59:50,False,1.0,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+logistic_regression,1,1,2018-03-02 03:54:10,True,0.2534255904166666,0.02637244675,0.22705314366666662,0.044236917,10.0,0.0,12,prediction stops at the offset
+logistic_regression,1,2,2018-03-02 03:54:50,True,0.1539264085833333,0.021293901116666666,0.13263250746666666,0.031818084,10.0,0.0,12,prediction stops at the offset
+logistic_regression,1,3,2018-03-02 12:13:00,True,0.6491963991666666,0.19421235025000003,0.45498404891666655,0.26508293,10.0,0.0,12,prediction stops at the offset
+logistic_regression,1,4,2018-03-02 12:59:50,False,0.283458705,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+v4_world_model,1,1,2018-03-02 03:54:10,True,0.6131665408611298,0.48085420064550516,0.1323123402156246,0.5497324466705322,90.0,8.0,12,prediction continues through the attack tail
+v4_world_model,1,2,2018-03-02 03:54:50,True,0.6118913690249125,0.2682664924649008,0.34362487656001167,0.733709454536438,50.0,4.0,12,prediction continues through the attack tail
+v4_world_model,1,3,2018-03-02 12:13:00,True,0.46194760998090106,0.2061714766760064,0.2557761333048947,0.4983097314834595,60.0,5.0,12,prediction continues through the attack tail
+v4_world_model,1,4,2018-03-02 12:59:50,False,0.2787125789327547,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+persistence,2,1,2018-03-02 03:54:10,True,1.0,0.25,0.75,1.0,30.0,3.0,12,prediction continues through the attack tail
+persistence,2,2,2018-03-02 03:54:50,True,0.8333333333333334,0.08333333333333333,0.75,0.0,10.0,1.0,12,prediction continues through the attack tail
+persistence,2,3,2018-03-02 12:13:00,True,1.0,0.8333333333333334,0.16666666666666663,1.0,30.0,10.0,12,prediction continues through the attack tail
+persistence,2,4,2018-03-02 12:59:50,False,1.0,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+logistic_regression,2,1,2018-03-02 03:54:10,True,0.2906342591666667,0.03838726316666666,0.252246996,0.103743665,10.0,0.0,12,prediction stops at the offset
+logistic_regression,2,2,2018-03-02 03:54:50,True,0.17646336475,0.026169379941666664,0.15029398480833334,0.030816803,10.0,0.0,12,prediction stops at the offset
+logistic_regression,2,3,2018-03-02 12:13:00,True,0.6673841191666666,0.20608480899999995,0.4612993101666667,0.33708245,10.0,0.0,12,prediction stops at the offset
+logistic_regression,2,4,2018-03-02 12:59:50,False,0.31457150777777776,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+v4_world_model,2,1,2018-03-02 03:54:10,True,0.5924344509840012,0.5794567462677757,0.012977704716225502,0.6190027594566345,110.0,10.0,12,prediction continues through the attack tail
+v4_world_model,2,2,2018-03-02 03:54:50,True,0.6150953819354376,0.35080052000512296,0.2642948619303146,0.7259244322776794,70.0,6.0,12,prediction continues through the attack tail
+v4_world_model,2,3,2018-03-02 12:13:00,True,0.5136002947886785,0.3012897995989751,0.2123104951897034,0.5606058835983276,70.0,6.0,12,prediction continues through the attack tail
+v4_world_model,2,4,2018-03-02 12:59:50,False,0.4871252295043733,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+persistence,3,1,2018-03-02 03:54:10,True,1.0,0.3333333333333333,0.6666666666666667,1.0,40.0,4.0,12,prediction continues through the attack tail
+persistence,3,2,2018-03-02 03:54:50,True,0.9166666666666666,0.08333333333333333,0.8333333333333333,0.0,10.0,1.0,12,prediction continues through the attack tail
+persistence,3,3,2018-03-02 12:13:00,True,1.0,0.8333333333333334,0.16666666666666663,1.0,40.0,10.0,12,prediction continues through the attack tail
+persistence,3,4,2018-03-02 12:59:50,False,1.0,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+logistic_regression,3,1,2018-03-02 03:54:10,True,0.31965459083333336,0.053736025333333326,0.26591856550000004,0.18409029,10.0,0.0,12,prediction stops at the offset
+logistic_regression,3,2,2018-03-02 03:54:50,True,0.20780733225000003,0.02707379076666667,0.18073354148333337,0.009157587,10.0,0.0,12,prediction stops at the offset
+logistic_regression,3,3,2018-03-02 12:13:00,True,0.6199458283333333,0.2492629324166666,0.3706828959166667,0.80373937,20.0,1.0,12,prediction continues through the attack tail
+logistic_regression,3,4,2018-03-02 12:59:50,False,0.308339828,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+v4_world_model,3,1,2018-03-02 03:54:10,True,0.6945566087961197,0.6704690071443716,0.02408760165174806,0.7394205927848816,80.0,9.0,12,prediction continues through the attack tail
+v4_world_model,3,2,2018-03-02 03:54:50,True,0.7139906932910284,0.4256673832240381,0.2883233100669903,0.759944498538971,40.0,5.0,12,prediction continues through the attack tail
+v4_world_model,3,3,2018-03-02 12:13:00,True,0.5863719458381335,0.4030009042012052,0.18337104163692824,0.6126123666763306,10.0,5.0,12,prediction continues through the attack tail
+v4_world_model,3,4,2018-03-02 12:59:50,False,0.6860444128513337,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+persistence,5,1,2018-03-02 03:54:10,True,1.0,0.5,0.5,1.0,60.0,6.0,12,prediction continues through the attack tail
+persistence,5,2,2018-03-02 03:54:50,True,1.0,0.16666666666666666,0.8333333333333334,1.0,20.0,2.0,12,prediction continues through the attack tail
+persistence,5,3,2018-03-02 12:13:00,True,1.0,0.8333333333333334,0.16666666666666663,1.0,60.0,10.0,12,prediction continues through the attack tail
+persistence,5,4,2018-03-02 12:59:50,False,1.0,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+logistic_regression,5,1,2018-03-02 03:54:10,True,0.35722300250000005,0.08570525883333334,0.2715177436666667,0.23797567,10.0,0.0,12,prediction stops at the offset
+logistic_regression,5,2,2018-03-02 03:54:50,True,0.29936962716666665,0.034379065225000005,0.26499056194166665,0.059151098,10.0,0.0,12,prediction stops at the offset
+logistic_regression,5,3,2018-03-02 12:13:00,True,0.5255443383333334,0.3544791968333334,0.17106514149999996,0.83615285,40.0,3.0,12,prediction continues through the attack tail
+logistic_regression,5,4,2018-03-02 12:59:50,False,0.302792722,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows
+v4_world_model,5,1,2018-03-02 03:54:10,True,0.7621360967556635,0.7676767955223719,-0.005540698766708374,0.7625958919525146,,12.0,12,prediction continues through the attack tail
+v4_world_model,5,2,2018-03-02 03:54:50,True,0.7627184142669042,0.5961399877754351,0.16657842649146914,0.780080258846283,100.0,9.0,12,prediction continues through the attack tail
+v4_world_model,5,3,2018-03-02 12:13:00,True,0.5654410369073352,0.5585831624837283,0.006857874423606858,0.7486041188240051,30.0,8.0,12,prediction continues through the attack tail
+v4_world_model,5,4,2018-03-02 12:59:50,False,0.6931731415291628,,,,,,0,offset falls at the end of the evaluated day — no post-offset windows

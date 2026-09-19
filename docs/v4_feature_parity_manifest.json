@@ -1,0 +1,12 @@
+{
+  "purpose": "Links the frozen V4 baseline to the feature contract WITHOUT modifying docs/v4_baseline_manifest.json (its historical hashes stay valid).",
+  "generated_utc": "2026-09-19T04:56:51Z",
+  "v4_baseline_manifest": "docs/v4_baseline_manifest.json",
+  "v4_feature_order_sha256": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+  "v4_checkpoint_sha256": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+  "feature_contract": "docs/feature_contract_v4.json",
+  "feature_contract_sha256": "6ec22f95a7c1cf30b3915b0327120745d368bf2e7684c329f82beb7a4b9b6674",
+  "contract_matches_frozen_schema": true,
+  "parity_status": "APPROXIMATE_PARITY",
+  "parity_summary": "results/feature_parity_summary.json"
+}

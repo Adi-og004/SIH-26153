@@ -1,0 +1,3 @@
+episode_id,onset,offset,windows,duration_sec,families,primary_family,cold_start_episode,test_day
+1,2018-02-28 01:42:00,2018-02-28 02:39:50,348,3480,Infiltration(348),Infiltration,False,Feb28
+2,2018-02-28 10:50:00,2018-02-28 12:04:50,450,4500,Infiltration(450),Infiltration,False,Feb28

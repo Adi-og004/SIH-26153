@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "check": "packet_window_assignment",
+      "definition": "every packet contributes only to the window containing its own timestamp, [t, t+10)",
+      "result": "PASS"
+    },
+    {
+      "check": "prefix_truncation_invariance",
+      "definition": "rebuilding from a strict prefix of the capture leaves every already-completed window bit-identical \u2014 the decisive test that no future packet edits a past state",
+      "result": "PASS"
+    },
+    {
+      "check": "relative_change_backward_only",
+      "definition": "each relative change uses the immediately preceding EXISTING row and nothing else; first row forced to 0.0",
+      "result": "PASS"
+    },
+    {
+      "check": "flow_continuation_cannot_edit_the_past",
+      "definition": "packet features are assigned PER PACKET, not per flow, so a flow that continues past t+10 contributes to the later window only. This is the structural difference from the V4 flow lane, where a whole flow is attributed to the window of its first packet.",
+      "result": "PASS \u2014 by construction, and confirmed by prefix_truncation_invariance"
+    },
+    {
+      "check": "session_state_is_causal",
+      "definition": "annotate_packets is a single forward pass in timestamp order; every annotation is written once and never revised",
+      "result": "PASS \u2014 verified per packet by tests/test_v5_packet_features.py:test_annotations_depend_only_on_the_past"
+    }
+  ],
+  "captures": {
+    "demo_portscan": {
+      "n_packets": 10190,
+      "n_windows": 22,
+      "packets_inside_their_own_window": true,
+      "prefix_truncation_max_drift": 0.0,
+      "prefix_truncation_invariant": true,
+      "windows_compared": 21,
+      "relative_change_is_backward_only": true
+    },
+    "demo_c2_beacon": {
+      "n_packets": 1390,
+      "n_windows": 22,
+      "packets_inside_their_own_window": true,
+      "prefix_truncation_max_drift": 0.0,
+      "prefix_truncation_invariant": true,
+      "windows_compared": 21,
+      "relative_change_is_backward_only": true
+    },
+    "demo_lateral_movement": {
+      "n_packets": 38406,
+      "n_windows": 22,
+      "packets_inside_their_own_window": true,
+      "prefix_truncation_max_drift": 0.0,
+      "prefix_truncation_invariant": true,
+      "windows_compared": 21,
+      "relative_change_is_backward_only": true
+    },
+    "demo_exfiltration": {
+      "n_packets": 10470,
+      "n_windows": 22,
+      "packets_inside_their_own_window": true,
+      "prefix_truncation_max_drift": 0.0,
+      "prefix_truncation_invariant": true,
+      "windows_compared": 21,
+      "relative_change_is_backward_only": true
+    },
+    "demo_dos_flood": {
+      "n_packets": 5857,
+      "n_windows": 22,
+      "packets_inside_their_own_window": true,
+      "prefix_truncation_max_drift": 0.0,
+      "prefix_truncation_invariant": true,
+      "windows_compared": 21,
+      "relative_change_is_backward_only": true
+    },
+    "march02_host_172.31.69.30": {
+      "n_packets": 303922,
+      "n_windows": 3083,
+      "packets_inside_their_own_window": true,
+      "prefix_truncation_max_drift": 0.0,
+      "prefix_truncation_invariant": true,
+      "windows_compared": 3082,
+      "relative_change_is_backward_only": true
+    }
+  },
+  "overall": "PASS"
+}

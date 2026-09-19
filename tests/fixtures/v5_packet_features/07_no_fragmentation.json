@@ -1,0 +1,113 @@
+{
+  "name": "07_no_fragmentation",
+  "description": "four IPv4 packets, all DF-marked, none fragmented",
+  "derivation": "frag count = 0 -> log1p(0) = 0.0 exactly; frag ratio = 0/4 = 0.0; df ratio = 4/4 = 1.0",
+  "packet_defaults": {
+    "timestamp_abs": 0.0,
+    "ip_version": 4,
+    "src_ip": "10.0.0.1",
+    "dst_ip": "10.0.0.2",
+    "src_port": 1000,
+    "dst_port": 80,
+    "protocol": 6,
+    "ttl": 64,
+    "ip_df": false,
+    "ip_mf": false,
+    "ip_frag_offset": 0,
+    "is_tcp": true,
+    "tcp_window": 1000,
+    "tcp_seq": 0,
+    "tcp_syn": false,
+    "tcp_fin": false,
+    "payload_len": 0
+  },
+  "packets": [
+    {
+      "timestamp_abs": 0.0,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": true,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 1000,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 0.1,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": true,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 1100,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 0.2,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": true,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 1200,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    },
+    {
+      "timestamp_abs": 0.30000000000000004,
+      "ip_version": 4,
+      "src_ip": "10.0.0.1",
+      "dst_ip": "10.0.0.2",
+      "src_port": 1000,
+      "dst_port": 80,
+      "protocol": 6,
+      "ttl": 64,
+      "ip_df": true,
+      "ip_mf": false,
+      "ip_frag_offset": 0,
+      "is_tcp": true,
+      "tcp_window": 1000,
+      "tcp_seq": 1300,
+      "tcp_syn": false,
+      "tcp_fin": false,
+      "payload_len": 100
+    }
+  ],
+  "expected_windows": [
+    {
+      "window_idx": 0,
+      "packet_count": 4,
+      "features": {
+        "log_frag_packet_count": 0.0,
+        "frag_packet_ratio": 0.0,
+        "ip_df_ratio": 1.0
+      }
+    }
+  ]
+}

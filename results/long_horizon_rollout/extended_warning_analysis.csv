@@ -1,0 +1,33 @@
+horizon,region,episode_onset_index,onset_timestamp,warned,lead_time_seconds,score_at_first_warning,threshold,threshold_kind,threshold_source,n_onsets,n_warned,coverage_pct,mean_lead_seconds,median_lead_seconds,false_alarm_windows_per_hour
+1,reference_in_curriculum,1039,2018-03-02 03:54:50,True,10.0,0.6812137961387634,0.45,extended_horizon_exploratory,validation only,,,,,,
+1,reference_in_curriculum,2119,2018-03-02 10:13:20,False,0.0,,0.45,extended_horizon_exploratory,validation only,,,,,,
+1,reference_in_curriculum,2840,2018-03-02 12:13:30,True,10.0,0.5116169452667236,0.45,extended_horizon_exploratory,validation only,,,,,,
+1,reference_in_curriculum,-1,AGGREGATE,,,,0.45,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,10.0,10.0,6.356340288924558
+3,reference_in_curriculum,1039,2018-03-02 03:54:50,True,30.0,0.7548786401748657,0.68,extended_horizon_exploratory,validation only,,,,,,
+3,reference_in_curriculum,2119,2018-03-02 10:13:20,False,0.0,,0.68,extended_horizon_exploratory,validation only,,,,,,
+3,reference_in_curriculum,2840,2018-03-02 12:13:30,True,20.0,0.7228498458862305,0.68,extended_horizon_exploratory,validation only,,,,,,
+3,reference_in_curriculum,-1,AGGREGATE,,,,0.68,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,25.0,25.0,3.9293739967897268
+5,reference_in_curriculum,1039,2018-03-02 03:54:50,True,50.0,0.7661579847335815,0.6900000000000001,frozen_v4_reference_early_warning,validation only,,,,,,
+5,reference_in_curriculum,2119,2018-03-02 10:13:20,False,0.0,,0.6900000000000001,frozen_v4_reference_early_warning,validation only,,,,,,
+5,reference_in_curriculum,2840,2018-03-02 12:13:30,True,50.0,0.7285937070846558,0.6900000000000001,frozen_v4_reference_early_warning,validation only,,,,,,
+5,reference_in_curriculum,-1,AGGREGATE,,,,0.6900000000000001,frozen_v4_reference_early_warning,validation only,3.0,2.0,66.66666666666667,50.0,50.0,5.547351524879614
+6,extrapolative,1039,2018-03-02 03:54:50,True,60.0,0.7689423561096191,0.73,extended_horizon_exploratory,validation only,,,,,,
+6,extrapolative,2119,2018-03-02 10:13:20,False,0.0,,0.73,extended_horizon_exploratory,validation only,,,,,,
+6,extrapolative,2840,2018-03-02 12:13:30,True,60.0,0.7707349061965942,0.73,extended_horizon_exploratory,validation only,,,,,,
+6,extrapolative,-1,AGGREGATE,,,,0.73,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,60.0,60.0,5.085072231139646
+7,extrapolative,1039,2018-03-02 03:54:50,True,70.0,0.7893074750900269,0.73,extended_horizon_exploratory,validation only,,,,,,
+7,extrapolative,2119,2018-03-02 10:13:20,False,0.0,,0.73,extended_horizon_exploratory,validation only,,,,,,
+7,extrapolative,2840,2018-03-02 12:13:30,True,70.0,0.7915615439414978,0.73,extended_horizon_exploratory,validation only,,,,,,
+7,extrapolative,-1,AGGREGATE,,,,0.73,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,70.0,70.0,5.778491171749598
+8,extrapolative,1039,2018-03-02 03:54:50,True,80.0,0.8026667833328247,0.73,extended_horizon_exploratory,validation only,,,,,,
+8,extrapolative,2119,2018-03-02 10:13:20,False,0.0,,0.73,extended_horizon_exploratory,validation only,,,,,,
+8,extrapolative,2840,2018-03-02 12:13:30,True,80.0,0.796405553817749,0.73,extended_horizon_exploratory,validation only,,,,,,
+8,extrapolative,-1,AGGREGATE,,,,0.73,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,80.0,80.0,6.009630818619582
+9,extrapolative,1039,2018-03-02 03:54:50,True,90.0,0.8068073391914368,0.72,extended_horizon_exploratory,validation only,,,,,,
+9,extrapolative,2119,2018-03-02 10:13:20,False,0.0,,0.72,extended_horizon_exploratory,validation only,,,,,,
+9,extrapolative,2840,2018-03-02 12:13:30,True,90.0,0.789902925491333,0.72,extended_horizon_exploratory,validation only,,,,,,
+9,extrapolative,-1,AGGREGATE,,,,0.72,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,90.0,90.0,7.1653290529695015
+10,extrapolative,1039,2018-03-02 03:54:50,True,100.0,0.8077950477600098,0.73,extended_horizon_exploratory,validation only,,,,,,
+10,extrapolative,2119,2018-03-02 10:13:20,False,0.0,,0.73,extended_horizon_exploratory,validation only,,,,,,
+10,extrapolative,2840,2018-03-02 12:13:30,True,100.0,0.7821586728096008,0.73,extended_horizon_exploratory,validation only,,,,,,
+10,extrapolative,-1,AGGREGATE,,,,0.73,extended_horizon_exploratory,validation only,3.0,2.0,66.66666666666667,100.0,100.0,6.9341894060995175

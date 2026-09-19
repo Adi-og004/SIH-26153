@@ -1,0 +1,118 @@
+{
+  "comparison": "standardized_baseline_comparison",
+  "generated_utc": "2026-09-19T04:21:01Z",
+  "models_compared": [
+    "persistence",
+    "logistic_regression",
+    "v4_world_model"
+  ],
+  "repository_commit": "53c22227d368b82ff9e736206a92e85b6bed2514",
+  "repository_branch": "cicflowmeter-validation",
+  "v4_reference_commit": "2be30736872dd7bb072b2e5c4cf7e7fe62605af6",
+  "v4_reference_manifest": "docs/v4_baseline_manifest.json",
+  "v4_checkpoint": "models/latent_world_model_v4/latent_world_model_v4.pt",
+  "v4_checkpoint_sha256": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+  "lr_baseline_manifest": "docs/logistic_regression_baseline_manifest.json",
+  "lr_baseline_commit": "53c22227d368b82ff9e736206a92e85b6bed2514",
+  "lr_models": {
+    "1": "97401131d7eded447033bc32d36bfdfd2f684fae7853e643289cd50bde02d7b9",
+    "2": "66cc2de3cf990cf20bcc43f5bafbb5a48699095c4f888a9ff8bb8ba094b92388",
+    "3": "daab2bdc603fbe28dc3e2ae290bed0099d5540f47171652e6bc63975c8d9b7c6",
+    "4": "836eb5c769ba8cf8ec58e071c8bd889d9d186fbe78eb1d898d3aabfd4c1b6f38",
+    "5": "9ec0a2292dd4d20852add46ae8b7e4978092129fcdb8fa0bd772ff5e349dfc78",
+    "trajectory_direct_k2": "a79f08ede2b8864b2ed1e3d1f5b5de4a760d8a1bb70da4241894a5d9acaee7e5",
+    "trajectory_direct_k3": "380a90e50d647732ec1a9ee9066923138022b7c2519e3a2fb56b0cd4b5bdadff",
+    "trajectory_direct_k5": "0e8e74b6ae1159c7c686c1874291e68acbdc74801671c77763a4c05c27d3b94c"
+  },
+  "persistence_source": {
+    "implementation": "src/evaluate_baselines.py (label-persistence rule), reconstructed in src/run_standardized_comparison.py",
+    "rule": "y_hat(t+k) = A(t) for every k; trajectory score = A(t)",
+    "input": "observed attack_present at window t, read from data/processed/states_v2/<day>_states_v2.csv at (metadata timestamp - 10s)",
+    "trained_parameters": 0,
+    "incompatible_artifacts_excluded": [
+      "archive/train_persistence_baseline.py and models/world_model/persistence_baseline/* \u2014 state REGRESSION persistence (MAE/RMSE/R2, 19 features, old temporal_benchmark); not an attack-label forecaster and not on this benchmark"
+    ]
+  },
+  "benchmark_data_source": "data/processed/multiday_benchmark_K5",
+  "benchmark_arrays_sha256": {
+    "X_val.npy": "083478c02131e568731923761b4df1595cfbdc25d28afd78583613c30e8d8b9f",
+    "X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+    "A_binary_multistep_val.npy": "db34c8c5503208a2e5689c533b046ea2fb6f4a8ee60fabd23532a17b18f9192b",
+    "A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+    "test_metadata.csv": "113ee16157975ed14672aa105f9e093d6fe73b28d1c39499b50fce737f1edf0a",
+    "val_metadata.csv": "d7483541ea8ac46fe59220bb401efee3f0562d6bbbbf3a6859429256668814f4"
+  },
+  "feature_schema": "data/processed/multiday_benchmark_K5/input_feature_names.txt",
+  "feature_schema_sha256": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+  "input_scaler": "data/processed/multiday_benchmark_K5/input_scaler.pkl",
+  "input_scaler_sha256": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+  "test_day": "2018-03-02 (Friday-02-03-2018) \u2014 held out, 3115 sequences",
+  "split_policy": "chronological held-out day; train days Feb-14/Feb-15/Feb-28 each split chronologically 85% train / 15% validation (VAL_RATIO=0.15); Mar-2 entirely held out",
+  "threshold_policy": {
+    "persistence": "none \u2014 deterministic rule, no tunable threshold",
+    "logistic_regression": "validation-only F1 argmax over np.arange(0.01, 0.99, 0.01), frozen in Task 2",
+    "v4_world_model": "validation-only F1 argmax over the same grid, frozen in Task 1",
+    "test_labels_used": false,
+    "common_threshold_forced": false,
+    "rationale": "each model keeps its own legitimate validation-derived threshold; data, targets, test set and metric definitions are identical"
+  },
+  "horizons": {
+    "point_forecast": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "point_forecast_excluded": [
+      4
+    ],
+    "point_forecast_exclusion_reason": "the frozen V4 reference has no K=4 result; LR K=4 is reported separately as point_forecast_secondary_lr_only",
+    "trajectory_event_max": [
+      2,
+      3,
+      5
+    ]
+  },
+  "target_definition": {
+    "k1": "A_binary_multistep[:, 0] = attack_present at t+1",
+    "k2": "A_binary_multistep[:, 1] = attack_present at t+2",
+    "k3": "A_binary_multistep[:, 2] = attack_present at t+3",
+    "k4": "A_binary_multistep[:, 3] = attack_present at t+4",
+    "k5": "A_binary_multistep[:, 4] = attack_present at t+5"
+  },
+  "metric_definitions": {
+    "precision/recall/f1": "sklearn binary, zero_division=0, at the model's frozen threshold",
+    "roc_auc": "sklearn roc_auc_score on the raw score (threshold independent); for persistence the score is binary, so the curve is degenerate",
+    "fpr": "fp / (fp + tn)",
+    "trajectory_target": "max(A(t+1) .. A(t+K))",
+    "trajectory_score_v4": "max over rollout probabilities probs[:, 1:K+1] of one model",
+    "trajectory_score_lr": "max over K independently trained horizon-specific models",
+    "trajectory_score_persistence": "A(t) \u2014 the rule is horizon-independent"
+  },
+  "evaluation_substrate": {
+    "all_models_same_test_examples": true,
+    "all_models_same_targets": true,
+    "identical_horizon_alignment": true,
+    "test_sequences": 3115
+  },
+  "outputs": {
+    "comparison_csv": "results/standardized_baseline_comparison.csv",
+    "comparison_csv_sha256": "d8db7c6d9fb604b140c7291b4062d91b8fa3eff982e5ceb7b51ab5cd72709ad7",
+    "delta_csv": "results/persistence_hypothesis_analysis.csv",
+    "delta_csv_sha256": "365ad40ee1a8841538a8ccf2a8328d18731456b73e6dfe98b427e1ebe3a6d9da",
+    "verification_json": "results/comparison_verification.json",
+    "verification_json_sha256": "f362cfd5f0081391546c3c12848ed73b041a496e5d11e723f6b9deac2fa0f5b2",
+    "figures": [
+      "results/figures/f1_vs_horizon.png",
+      "results/figures/precision_vs_horizon.png",
+      "results/figures/recall_vs_horizon.png",
+      "results/figures/roc_auc_vs_horizon.png",
+      "results/figures/trajectory_event_f1.png"
+    ]
+  },
+  "verification_overall": "PASS",
+  "v4_provenance_caveat": "The V4 checkpoint was trained on data/processed/temporal_benchmark_v2/multistep_K5 (single-day Feb-28, scaler n=2384) while the frozen reference evaluation feeds it multiday_benchmark_K5 arrays scaled by a different StandardScaler (n=8575). This comparison uses the frozen V4 reference exactly as defined; the caveat is preserved, not repaired. See docs/V4_REFERENCE_BASELINE.md section 12.",
+  "reproduction_command": "python src/run_standardized_comparison.py",
+  "models_modified": false,
+  "models_retrained": false
+}

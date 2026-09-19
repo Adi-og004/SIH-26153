@@ -28,7 +28,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import streamlit as st
 import torch
-import torch.nn as nn
 
 # Canonical PCAP -> V4 inference pipeline (single source of truth for
 # the "Live PCAP Ingestion" page). streamlit runs this file from src/,
@@ -38,7 +37,16 @@ import pcap_ingest_v4 as pcap_v4
 # Reused so an uploaded PCAP's results can drive every page (MITRE
 # mapping + feature attribution), not just the ingestion page itself.
 from mitre_mapper import MITREMapper
-from shap_explainer import FeatureExplainer
+
+# The provenance-locked V4 attribution path (Task 8). This is the ONLY
+# sanctioned explainer for V4: it refuses to construct unless the
+# checkpoint, input scaler and feature order all hash-match
+# docs/v4_baseline_manifest.json. src/shap_explainer.py is deliberately
+# NOT imported here -- it is unlocked, attributes a single transition
+# step, and draws an unseeded random baseline, so the explanation it
+# produces is neither repeatable nor guaranteed to match the displayed
+# prediction. See docs/V4_EXPLAINABILITY.md.
+from v4_explainer import V4Explainer
 
 
 # =============================================================
@@ -112,148 +120,70 @@ st.markdown("""
 # PATHS
 # =============================================================
 
-DATA_DIR = Path("data/processed/temporal_benchmark_v2")
+# The FROZEN V4 reference benchmark -- the same arrays the reference
+# evaluation and the Task 8 explainability run consume. The dashboard
+# previously read data/processed/temporal_benchmark_v2 (the older
+# single-day split) while calling itself V4; that made the displayed
+# prediction a different quantity from the verified one.
+DATA_DIR = Path("data/processed/multiday_benchmark_K5")
 MODEL_DIR = Path("models/latent_world_model_v4")
 MITRE_DIR = MODEL_DIR / "mitre_mapping"
-SHAP_DIR = MODEL_DIR / "shap_analysis"
+# Verified Task 8 attribution artifacts. Replaces MODEL_DIR /
+# "shap_analysis", which was produced by the unlocked legacy explainer.
+XAI_DIR = Path("results/v4_explainability")
 ROLLOUT_DIR = MODEL_DIR / "k_step_rollout"
 
+# The horizons the dashboard may display. Exactly the horizons Task 8
+# verified end to end; each has a frozen validation threshold and a
+# stored, hash-pinned attribution tensor.
+VERIFIED_HORIZONS = [1, 3, 5]
+DEFAULT_HORIZON = 5
+
 
 # =============================================================
-# V4 MODEL DEFINITION (Gated Residual + LayerNorm)
+# V4 MODEL
 # =============================================================
-
-class LatentWorldModelV4(nn.Module):
-
-    def __init__(
-        self, input_size, hidden_size,
-        latent_size, output_size,
-        num_layers, dropout
-    ):
-        super().__init__()
-        self.encoder_lstm = nn.LSTM(
-            input_size=input_size,
-            hidden_size=hidden_size,
-            num_layers=num_layers,
-            batch_first=True,
-            dropout=(
-                dropout if num_layers > 1
-                else 0.0
-            )
-        )
-        self.encoder_norm = nn.LayerNorm(hidden_size)
-        self.encoder_fc = nn.Linear(
-            hidden_size, latent_size
-        )
-
-        # Gated residual transition (V4)
-        self.transition_mlp = nn.Sequential(
-            nn.Linear(latent_size, latent_size * 4),
-            nn.ReLU(),
-            nn.Linear(latent_size * 4, latent_size)
-        )
-        self.gate_fc = nn.Linear(
-            latent_size, latent_size
-        )
-        self.transition_norm = nn.LayerNorm(
-            latent_size
-        )
-
-        self.decoder_fc1 = nn.Linear(latent_size, 64)
-        self.decoder_activation = nn.ReLU()
-        self.decoder_fc2 = nn.Linear(64, output_size)
-        self.attack_head = nn.Sequential(
-            nn.Linear(latent_size, 32),
-            nn.ReLU(),
-            nn.Dropout(0.10),
-            nn.Linear(32, 1)
-        )
-
-    def encode(self, x):
-        output, _ = self.encoder_lstm(x)
-        last_hidden = output[:, -1, :]
-        last_hidden = self.encoder_norm(last_hidden)
-        return self.encoder_fc(last_hidden)
-
-    def transition_step(self, z):
-        candidate = self.transition_mlp(z)
-        gate = torch.sigmoid(self.gate_fc(z))
-        z_next = gate * candidate + (1 - gate) * z
-        return self.transition_norm(z_next)
-
-    def decode(self, z):
-        h = self.decoder_fc1(z)
-        h = self.decoder_activation(h)
-        return self.decoder_fc2(h)
-
-    def predict_attack(self, z):
-        return self.attack_head(z).squeeze(-1)
-
-    def k_step_rollout(self, x, k):
-        """Recursive K-step rollout. Returns (traj_z, traj_probs,
-        traj_states), each of length k + 1. Index 0 is Z_0
-        (nowcast); index i is the predicted state at t+i, with the
-        predicted latent fed back into the transition each step."""
-        z_current = self.encode(x)
-        traj_z = [z_current]
-        traj_probs = [torch.sigmoid(self.predict_attack(z_current))]
-        traj_states = [self.decode(z_current)]
-        for _ in range(k):
-            z_current = self.transition_step(z_current)
-            traj_probs.append(torch.sigmoid(self.predict_attack(z_current)))
-            traj_z.append(z_current)
-            traj_states.append(self.decode(z_current))
-        return traj_z, traj_probs, traj_states
-
-    def forward(self, x):
-        z = self.encode(x)
-        z_next = self.transition_step(z)
-        return self.decode(z_next), z_next, \
-            self.predict_attack(z_next), z
-
+#
+# The architecture is NOT redefined here. A second copy of the class
+# in the dashboard is a contamination vector: it can drift from the
+# trained architecture while still loading the state dict, and it
+# makes "which class produced this number?" unanswerable. The model
+# comes from the canonical loader in src/pcap_ingest_v4.py, reached
+# through V4Explainer, which hash-verifies the checkpoint against
+# docs/v4_baseline_manifest.json before returning it.
 
 # =============================================================
 # FEATURE NAMES
 # =============================================================
 
-INPUT_FEATURES = [
-    "flow_count", "log_flow_count",
-    "log_total_packets", "log_total_bytes",
-    "window_packet_rate", "window_byte_rate",
-    "syn_rate", "ack_rate", "rst_rate", "fin_rate",
-    "psh_rate", "urg_rate",
-    "mean_pkt_len", "std_pkt_len",
-    "log_mean_flow_duration",
-    "log_mean_fwd_iat", "log_mean_bwd_iat",
-    "fwd_packet_ratio", "bwd_packet_ratio",
-    "fwd_byte_ratio", "bwd_byte_ratio",
-    "mean_down_up_ratio",
-    "log_unique_dst_ports", "unique_protocols",
-    "dst_port_entropy", "protocol_entropy",
-    "flow_count_rel_change",
-    "log_flow_count_rel_change",
-    "log_total_packets_rel_change",
-    "log_total_bytes_rel_change",
-    "window_packet_rate_rel_change",
-    "window_byte_rate_rel_change",
-    "syn_rate_rel_change", "ack_rate_rel_change",
-    "rst_rate_rel_change", "fin_rate_rel_change",
-    "psh_rate_rel_change", "urg_rate_rel_change",
-    "mean_pkt_len_rel_change",
-    "std_pkt_len_rel_change",
-    "log_mean_flow_duration_rel_change",
-    "log_mean_fwd_iat_rel_change",
-    "log_mean_bwd_iat_rel_change",
-    "fwd_packet_ratio_rel_change",
-    "bwd_packet_ratio_rel_change",
-    "fwd_byte_ratio_rel_change",
-    "bwd_byte_ratio_rel_change",
-    "mean_down_up_ratio_rel_change",
-    "log_unique_dst_ports_rel_change",
-    "unique_protocols_rel_change",
-    "dst_port_entropy_rel_change",
-    "protocol_entropy_rel_change",
-]
+# Feature names are READ FROM THE FROZEN SCHEMA, never retyped here.
+# Attribution column i must carry schema name i (Part 22); a second
+# hand-maintained copy of the list can drift silently and mislabel
+# every attribution on the page.
+def _load_canonical_feature_names() -> list:
+    names = [
+        ln.strip()
+        for ln in (DATA_DIR / "input_feature_names.txt")
+        .read_text().splitlines()
+        if ln.strip()
+    ]
+    schema_path = Path("docs/v4_feature_schema.json")
+    if schema_path.exists():
+        schema = json.loads(schema_path.read_text())
+        schema_names = [f["name"] for f in schema["features"]]
+        if schema_names != names:
+            raise RuntimeError(
+                "docs/v4_feature_schema.json and "
+                f"{DATA_DIR}/input_feature_names.txt disagree -- "
+                "refusing to label attributions with an ambiguous "
+                "feature order"
+            )
+    if len(names) != 52:
+        raise RuntimeError(f"expected 52 feature names, got {len(names)}")
+    return names
+
+
+INPUT_FEATURES = _load_canonical_feature_names()
 
 
 # =============================================================
@@ -291,68 +221,102 @@ def load_test_data():
 
 
 @st.cache_data
-def load_mitre_mappings():
+def load_mitre_mappings(expected_rows: int):
+    """Rule-based ATT&CK mappings, one row per benchmark window.
+
+    The table is addressed POSITIONALLY (row i describes window i),
+    so it is only valid for the dataset it was generated against. If
+    the row count does not match the active benchmark, it is refused:
+    rendering a stale row next to window i would attach the wrong
+    ATT&CK interpretation to a prediction, which is worse than
+    showing none.
+    """
     csv_path = MITRE_DIR / "mitre_summary.csv"
-    if csv_path.exists():
-        return pd.read_csv(csv_path)
+    if not csv_path.exists():
+        return None
+    df = pd.read_csv(csv_path)
+    if len(df) != expected_rows:
+        return None
+    return df
+
+
+@st.cache_data
+def load_xai_summary():
+    """The Task 8 run summary. Carries the hashes the displayed
+    attribution tensors are pinned to."""
+    path = Path("results/v4_explainability_summary.json")
+    if path.exists():
+        return json.loads(path.read_text())
     return None
 
 
 @st.cache_data
-def load_feature_importance():
-    csv_path = SHAP_DIR / "feature_importance.csv"
-    if csv_path.exists():
-        return pd.read_csv(csv_path)
-    return None
+def load_feature_importance(horizon: int):
+    """Global feature importance from the VERIFIED run, for one
+    horizon. Columns are renamed to the names the pages render."""
+    csv_path = XAI_DIR / "horizon_feature_importance.csv"
+    if not csv_path.exists():
+        return None
+    df = pd.read_csv(csv_path)
+    df = df[df["horizon"] == horizon].copy()
+    if df.empty:
+        return None
+    df = df.rename(
+        columns={
+            "mean_absolute_attribution": "mean_abs_attribution",
+            "mean_signed_attribution": "mean_signed_attribution",
+        }
+    )
+    return df.sort_values(
+        "mean_abs_attribution", ascending=False
+    ).reset_index(drop=True)
 
 
 @st.cache_data
-def load_attributions():
-    npy_path = SHAP_DIR / "attributions.npy"
-    if npy_path.exists():
-        return np.load(npy_path)
-    return None
+def load_attributions(horizon: int):
+    """Per-window attribution tensor (N, 10, 52) for one horizon,
+    produced by the verified Task 8 run.
 
-
-@st.cache_data
-def load_window_explanations():
-    csv_path = SHAP_DIR / "window_explanations.csv"
-    if csv_path.exists():
-        return pd.read_csv(csv_path)
-    return None
-
-
-@st.cache_data
-def load_baseline_data():
-    """Benign training windows -- used only as the Integrated
-    Gradients baseline when explaining an uploaded PCAP. Unrelated
-    to the PCAP's own (unlabeled) data."""
-    X_train = np.load(DATA_DIR / "X_train.npy")
-    train_meta = pd.read_csv(DATA_DIR / "train_metadata.csv")
-    benign_mask = train_meta["attack_present"].values == 0
-    return X_train[benign_mask]
+    The file is hash-pinned in results/v4_explainability_summary.json.
+    If the hash does not match, the tensor is REFUSED rather than
+    displayed: an attribution from an unidentified run must never be
+    shown next to a prediction.
+    """
+    npy_path = XAI_DIR / f"attributions_k{horizon}.npy"
+    if not npy_path.exists():
+        return None
+    summary = load_xai_summary()
+    if summary is not None:
+        pinned = (
+            summary.get("dashboard_artifacts", {})
+            .get("attribution_tensors", {})
+            .get(str(horizon), {})
+        )
+        expected = pinned.get("sha256")
+        if expected:
+            import hashlib
+            h = hashlib.sha256()
+            with open(npy_path, "rb") as fh:
+                for chunk in iter(lambda: fh.read(1 << 20), b""):
+                    h.update(chunk)
+            if h.hexdigest() != expected:
+                return None
+    return np.load(npy_path)
 
 
 @st.cache_resource
 def load_model():
-    checkpoint = torch.load(
-        MODEL_DIR / "latent_world_model_v4.pt",
-        map_location="cpu",
-        weights_only=False,
-    )
-    model = LatentWorldModelV4(
-        input_size=checkpoint["input_size"],
-        hidden_size=checkpoint["hidden_size"],
-        latent_size=checkpoint["latent_size"],
-        output_size=checkpoint["output_size"],
-        num_layers=checkpoint["num_layers"],
-        dropout=0.20,
-    )
-    model.load_state_dict(
-        checkpoint["model_state_dict"]
-    )
-    model.eval()
-    return model, checkpoint
+    """The frozen V4 model, reached through the provenance-locked
+    explainer.
+
+    V4Explainer hash-verifies the checkpoint, the input scaler and the
+    feature order against docs/v4_baseline_manifest.json and raises
+    before returning anything if any of them has drifted. The SAME
+    instance serves the displayed prediction and the explanation, so
+    the two cannot diverge.
+    """
+    explainer = V4Explainer(device="cpu")
+    return explainer.model, explainer.checkpoint, explainer
 
 
 # =============================================================
@@ -384,15 +348,34 @@ with st.sidebar:
     st.divider()
 
     st.markdown("### Model Performance")
-    model, ckpt = load_model()
+    model, ckpt, explainer = load_model()
     col1, col2 = st.columns(2)
     col1.metric("F1 Score",
                 f"{ckpt['test_attack_f1']:.3f}")
     col2.metric("ROC-AUC",
                 f"{ckpt['test_roc_auc']:.3f}")
 
-    st.metric("Threshold",
-              f"{ckpt['selected_threshold']:.2f}")
+    st.caption(
+        f"checkpoint `{explainer.provenance.checkpoint_hash[:12]}…` "
+        f"hash-verified against the frozen baseline manifest"
+    )
+
+    st.divider()
+
+    st.markdown("### Forecast Horizon")
+    horizon = st.radio(
+        "Forecast horizon",
+        VERIFIED_HORIZONS,
+        index=VERIFIED_HORIZONS.index(DEFAULT_HORIZON),
+        format_func=lambda k: f"t+{k}  ({10 * k}s ahead)",
+        label_visibility="collapsed",
+    )
+    threshold = explainer.horizon_thresholds[horizon]
+    st.metric(f"Frozen threshold (K={horizon})", f"{threshold:.2f}")
+    st.caption(
+        "Validation-selected and frozen; test labels were not used "
+        "to choose it."
+    )
 
     st.divider()
 
@@ -438,20 +421,18 @@ with st.sidebar:
 # =============================================================
 
 X_test, test_meta = load_test_data()
-mitre_df = load_mitre_mappings()
-importance_df = load_feature_importance()
-attributions = load_attributions()
-explanations_df = load_window_explanations()
+mitre_df = load_mitre_mappings(len(test_meta))
+importance_df = load_feature_importance(horizon)
+attributions = load_attributions(horizon)
 
-# Compute attack probabilities
-with torch.no_grad():
-    X_t = torch.tensor(X_test, dtype=torch.float32)
-    z = model.encode(X_t)
-    z_next = model.transition_step(z)
-    logits = model.predict_attack(z_next)
-    probs = torch.sigmoid(logits).numpy()
+# Attack probabilities for the SELECTED horizon, from the same
+# explainer instance that produces the attributions below. The
+# displayed number and the explained number are therefore the same
+# computation on the same tensor -- the property Task 8 Part 20
+# tests (max |P - P_explained| = 0.0, bit-exact).
+rollout_probs = explainer.predict_rollout(X_test, K=max(VERIFIED_HORIZONS))
+probs = rollout_probs[:, horizon]
 
-threshold = ckpt["selected_threshold"]
 n_windows = len(test_meta)
 n_alerts = (probs >= threshold).sum()
 n_attacks_gt = test_meta["attack_present"].sum()
@@ -674,8 +655,14 @@ elif page == "🗺️ MITRE ATT&CK Timeline":
             )
         else:
             st.error(
-                "MITRE mapping data not found. "
-                "Run `python src/mitre_mapper.py` first."
+                "Rule-based ATT&CK mappings are unavailable for the "
+                "active benchmark. The stored table "
+                "(`models/latent_world_model_v4/mitre_mapping/"
+                "mitre_summary.csv`) was generated against a "
+                "different window set, and its rows are addressed "
+                "positionally, so it cannot be aligned to this "
+                "dataset. Regenerate it with "
+                "`python src/mitre_mapper.py`."
             )
         st.stop()
 
@@ -945,9 +932,17 @@ elif page == "🔍 Feature Attribution":
 
     st.markdown("# 🔍 Feature Attribution")
     st.markdown(
-        "> *Why does the model predict an attack? "
-        "Integrated Gradients reveals which network "
-        "telemetry features drive each prediction.*"
+        "> *Which parts of the observed 10 x 52 network history "
+        "contributed to this future-threat prediction?*"
+    )
+    st.caption(
+        f"Integrated Gradients attribution for **P(t+{horizon})** on "
+        f"the frozen V4 checkpoint "
+        f"`{explainer.provenance.checkpoint_hash[:12]}…`, computed "
+        f"from the same inference tensor as the displayed "
+        f"probability. Attribution describes model "
+        f"sensitivity/contribution — it does not establish "
+        f"causality, attacker intent, or attack stage."
     )
 
     if importance_active is None:
@@ -960,7 +955,7 @@ elif page == "🔍 Feature Attribution":
         else:
             st.error(
                 "Attribution data not found. "
-                "Run `python src/shap_explainer.py` first."
+                "Run `python src/run_v4_explainability.py` first."
             )
         st.stop()
 
@@ -968,6 +963,13 @@ elif page == "🔍 Feature Attribution":
         st.info(
             f"📡 Showing your uploaded PCAP: "
             f"**{pcap_data['filename']}**"
+        )
+        st.warning(
+            "**PCAP caveat.** This explanation uses the same V4 "
+            "feature contract and transform chain as the training "
+            "path, but flow-record production differs, so the "
+            "resulting feature values are approximate. They are NOT "
+            "numerically equivalent to training features."
         )
 
     st.divider()
@@ -1008,6 +1010,16 @@ elif page == "🔍 Feature Attribution":
     st.divider()
 
     # Attribution heatmap
+    if attributions_active is None:
+        st.warning(
+            "Per-window attribution tensor unavailable: the stored "
+            "tensor is missing, or its SHA256 does not match the hash "
+            "pinned in results/v4_explainability_summary.json. It is "
+            "withheld rather than displayed — an attribution whose "
+            "originating run cannot be identified must not be shown "
+            "next to a prediction. Re-run "
+            "`python src/run_v4_explainability.py`."
+        )
     if attributions_active is not None:
         st.markdown(
             "### 🌡️ Attribution Heatmap Over Time"
@@ -1241,7 +1253,14 @@ elif page == "📊 Window Inspector":
         row = mitre_active.iloc[selected_idx]
 
         st.divider()
-        st.markdown("### 🗺️ MITRE ATT&CK Assessment")
+        st.markdown("### 🗺️ ATT&CK INTERPRETATION (rule-based)")
+        st.caption(
+            "Rule-based ATT&CK-consistent interpretation, produced by "
+            "src/mitre_mapper.py from raw feature values. It is a "
+            "SEPARATE evidence layer: it is not derived from the "
+            "model attribution below, and the attribution is not "
+            "derived from it."
+        )
 
         mc1, mc2, mc3 = st.columns(3)
         mc1.metric(
@@ -1276,7 +1295,15 @@ elif page == "📊 Window Inspector":
             and selected_idx < attributions_active.shape[0]):
 
         st.divider()
-        st.markdown("### 🔍 Feature Attribution")
+        st.markdown("### 🔍 MODEL ATTRIBUTION")
+        st.caption(
+            f"Integrated Gradients on the frozen V4 checkpoint for "
+            f"the displayed P(t+{horizon}) — the same computation "
+            f"that produced the probability above. Attribution "
+            f"describes this model's sensitivity on this input; it "
+            f"does not establish causality, attacker intent, attack "
+            f"stage, or actual compromise."
+        )
 
         attr = attributions_active[selected_idx, -1, :]
         vals = X_active[selected_idx, -1, :]
@@ -1291,9 +1318,12 @@ elif page == "📊 Window Inspector":
                 "Feature": INPUT_FEATURES[idx],
                 "Value (σ)": float(vals[idx]),
                 "Attribution": float(attr[idx]),
+                # Descriptive, not diagnostic: an attribution's sign
+                # says which way the feature moved THIS model's
+                # output, not whether traffic is malicious.
                 "Direction": (
-                    "↑ Attack" if attr[idx] > 0
-                    else "↓ Benign"
+                    "↑ increased P" if attr[idx] > 0
+                    else "↓ decreased P"
                 ),
             })
 
@@ -1724,12 +1754,21 @@ elif page == "📡 Live PCAP Ingestion":
                     )
                 traj_pcap = roll_pcap["probs"]          # (N, K+1)
                 nowcast_pcap = traj_pcap[:, 0]
-                # Alert horizon = peak probability across t+0..t+K.
-                probs_pcap = traj_pcap.max(axis=1)
+                # The displayed probability is P(t+k) at the SELECTED
+                # horizon -- the same scalar the explainer attributes
+                # below. It was previously max(t+0..t+K), a different
+                # quantity from the one being explained, which is the
+                # mismatch Task 8 Part 1 forbids.
+                probs_pcap = traj_pcap[:, horizon]
 
+                # FROZEN validation threshold for this horizon, read
+                # from the baseline manifest -- never from the PCAP,
+                # and no longer the checkpoint-embedded 0.05, which
+                # was selected during training on the older
+                # single-day split and is not the reference threshold.
                 pcap_threshold = float(
-                    ckpt["selected_threshold"]
-                )  # FROZEN — from checkpoint, never from PCAP
+                    explainer.horizon_thresholds[horizon]
+                )
                 alerts_pcap = (
                     probs_pcap >= pcap_threshold
                 )
@@ -1801,10 +1840,22 @@ elif page == "📡 Live PCAP Ingestion":
                         for m in pcap_mappings
                     ])
 
-                # --- Feature attribution (Integrated Gradients).
-                # Baseline is drawn from benign BENCHMARK training
-                # windows -- the baseline is orthogonal to the
-                # PCAP's own (unlabeled) traffic. ---
+                # --- Feature attribution (Integrated Gradients,
+                # provenance-locked V4 explainer).
+                #
+                # Same explainer instance, same checkpoint and same
+                # horizon as the probability displayed above, so the
+                # explanation describes the number on screen. The
+                # baseline is the zero vector in scaled feature space
+                # (the training-partition mean under the frozen
+                # StandardScaler) -- deterministic, label-free, and
+                # independent of the uploaded PCAP.
+                #
+                # PCAP CAVEAT: the same V4 feature contract and
+                # transform chain are used, but flow-record
+                # production differs from the training path, so these
+                # feature values are approximate and are NOT
+                # numerically equivalent to training features. ---
                 pcap_importance_df = None
                 pcap_attributions = None
                 try:
@@ -1812,22 +1863,38 @@ elif page == "📡 Live PCAP Ingestion":
                         "🔍 Computing feature attribution "
                         "(Integrated Gradients)..."
                     ):
-                        baseline_data = load_baseline_data()
-                        pcap_explainer = FeatureExplainer(
-                            model=model,
-                            baseline_data=baseline_data,
-                            device="cpu",
+                        r = explainer.attribute(X_pcap, horizon)
+                        pcap_attributions = r["attributions"]
+                        _abs = np.abs(pcap_attributions).sum(axis=1)
+                        _sgn = pcap_attributions.sum(axis=1)
+                        pcap_importance_df = pd.DataFrame(
+                            {
+                                "feature_index": np.arange(
+                                    len(INPUT_FEATURES)
+                                ),
+                                "feature": INPUT_FEATURES,
+                                "horizon": horizon,
+                                "mean_abs_attribution": _abs.mean(axis=0),
+                                "mean_signed_attribution": _sgn.mean(axis=0),
+                            }
+                        ).sort_values(
+                            "mean_abs_attribution", ascending=False
+                        ).reset_index(drop=True)
+
+                        # Part 20 identity test, live: the attributed
+                        # value must equal the displayed probability.
+                        _ident = explainer.check_prediction_identity(
+                            X_pcap, horizon
                         )
-                        pcap_attributions = (
-                            pcap_explainer.explain_windows(
-                                X_pcap, max_windows=len(X_pcap)
+                        if not _ident["passed"]:
+                            pcap_attributions = None
+                            pcap_importance_df = None
+                            st.error(
+                                "⚠️ Explanation withheld: the "
+                                "attributed prediction did not match "
+                                "the displayed prediction "
+                                f"(max diff {_ident['max_abs_diff']:.2e})."
                             )
-                        )
-                        pcap_importance_df = (
-                            pcap_explainer.get_feature_importance(
-                                pcap_attributions
-                            )
-                        )
                 except Exception as exc:
                     st.warning(
                         f"⚠️ Feature attribution failed: {exc}"
