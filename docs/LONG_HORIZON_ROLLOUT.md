@@ -1,4 +1,12 @@
 # Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
+# Long-Horizon Rollout and Latent Stability
 
 **Task 10.** An inference-only diagnostic: how far can the frozen V4 learned transition be rolled forward before its latent state or its threat predictions stop carrying useful information?
 
