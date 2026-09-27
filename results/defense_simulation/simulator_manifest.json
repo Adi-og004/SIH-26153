@@ -1,0 +1,279 @@
+{
+  "task": "Task 18 / S4 \u2014 defend-now model-based simulator",
+  "layer_version": "v4-defense-sim-1.0",
+  "generated_utc": "2026-09-26T12:09:10Z",
+  "runtime_seconds": 37.51,
+  "headline_disclaimer": [
+    "MODEL-BASED WHAT-IF PROJECTION",
+    "This simulator does not estimate causal real-world effectiveness. It applies a defined state perturbation and rolls the frozen World Model forward."
+  ],
+  "what_this_is": "a MODEL-BASED COUNTERFACTUAL PROJECTION: a defined perturbation is applied to the current observed state and the FROZEN V4 model is rolled forward. The three quantities OBSERVED, NO-ACTION FORECAST and DEFEND-NOW COUNTERFACTUAL are kept distinct throughout.",
+  "what_this_is_not": [
+    "not a causal estimate \u2014 V4 was never shown an intervention, never given an action variable, and never trained on (action, outcome) pairs, so it cannot have learned intervention effects",
+    "not a real firewall or network action \u2014 nothing here touches a socket, device or configuration",
+    "not a proven operational effect and not guaranteed mitigation",
+    "not an automated defensive command"
+  ],
+  "substrate": {
+    "source": "results/v4_screening_mvp/ (Task 10, frozen)",
+    "n_sequences_total": 3115,
+    "n_sequences_swept": 445,
+    "sweep_rule": "fixed stride 7, no randomness, no label involvement",
+    "alert_threshold": 0.69,
+    "default_strength": 0.25
+  },
+  "scope": {
+    "timesteps_modified": "the FINAL timestep only (the current state)",
+    "why": "the defender acts NOW; earlier timesteps are OBSERVED HISTORY and rewriting them would fabricate a past that did not happen",
+    "cells_written_per_sequence": 52,
+    "rows_preserved_verbatim": "base rows 0..8 and relative-change rows 0..8, copied from the observed tensor",
+    "relative_change_row_0": "PRESERVED, never regenerated \u2014 these are sliding windows, so row 0 was computed against the window before the sequence begins and is not recomputable from inside it",
+    "consequence": "projected changes are modest by construction: the V4 encoder is an LSTM over ten windows, so one perturbed window has limited leverage. This is a property of the model being probed, reported rather than tuned away."
+  },
+  "measured_feature_identities": {
+    "log_flow_count == log1p(flow_count)": 1.2254490044938393e-07,
+    "window_packet_rate == expm1(log_total_packets)/10 (relative)": 2.349763299404068e-07,
+    "window_byte_rate == expm1(log_total_bytes)/10 (relative)": 7.18491640948571e-07,
+    "fwd_packet_ratio + bwd_packet_ratio == 1": 1.8887943209477953e-08,
+    "dst_port_entropy <= log2(unique_dst_ports) violations": 0,
+    "fwd_byte_ratio + bwd_byte_ratio mean (NOT constrained)": 0.6627888861141227
+  },
+  "zero_strength_sanity": {
+    "RATE_LIMIT": {
+      "max_abs_difference": 1.7881393433449855e-06,
+      "alert_disagreements": 0,
+      "n_sequences": 445
+    },
+    "RESTRICT_EGRESS": {
+      "max_abs_difference": 1.7881393433449855e-06,
+      "alert_disagreements": 0,
+      "n_sequences": 445
+    }
+  },
+  "baseline_identity_check": {
+    "max_abs_difference_vs_screening_predictions": 1.4901161193847656e-06,
+    "alert_disagreements": 0,
+    "note": "the no-action forecast is the frozen stored forecast; the residual is the documented CPU-vs-MPS device gap"
+  },
+  "results_per_intervention": {
+    "RATE_LIMIT": {
+      "n_scenarios": 445,
+      "strength": 0.25,
+      "mean_max_future_projected_change": -0.004323643230179179,
+      "median_max_future_projected_change": -6.391770511982031e-06,
+      "n_less_elevated": 247,
+      "n_more_elevated": 159,
+      "n_unchanged": 39,
+      "n_crossing_frozen_threshold": 6,
+      "n_reliability_changed": 4,
+      "n_became_unreliable": 0,
+      "n_attack_path_status_changed": 24
+    },
+    "RESTRICT_EGRESS": {
+      "n_scenarios": 445,
+      "strength": 0.25,
+      "mean_max_future_projected_change": -0.004863543405291693,
+      "median_max_future_projected_change": -3.7542772588494683e-06,
+      "n_less_elevated": 239,
+      "n_more_elevated": 171,
+      "n_unchanged": 35,
+      "n_crossing_frozen_threshold": 9,
+      "n_reliability_changed": 5,
+      "n_became_unreliable": 0,
+      "n_attack_path_status_changed": 33
+    }
+  },
+  "strength_sweep": [
+    {
+      "intervention": "RATE_LIMIT",
+      "simulated_strength": 0.0,
+      "n_sequences": 445,
+      "median_max_probability": 0.5836422443389893,
+      "p95_max_probability": 0.7738543033599853,
+      "global_max_probability": 0.7944108247756958,
+      "mean_projected_change_k5": 2.0319438304764604e-08,
+      "n_crossing_threshold": 0,
+      "n_crossing_to_below_threshold": 0,
+      "n_crossing_to_above_threshold": 0,
+      "n_more_elevated": 3,
+      "n_less_elevated": 0,
+      "n_unchanged": 442,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RATE_LIMIT",
+      "simulated_strength": 0.1,
+      "n_sequences": 445,
+      "median_max_probability": 0.5713041424751282,
+      "p95_max_probability": 0.7742031574249267,
+      "global_max_probability": 0.7951624989509583,
+      "mean_projected_change_k5": -0.0010660213973448893,
+      "n_crossing_threshold": 0,
+      "n_crossing_to_below_threshold": 0,
+      "n_crossing_to_above_threshold": 0,
+      "n_more_elevated": 153,
+      "n_less_elevated": 241,
+      "n_unchanged": 51,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RATE_LIMIT",
+      "simulated_strength": 0.25,
+      "n_sequences": 445,
+      "median_max_probability": 0.5593728423118591,
+      "p95_max_probability": 0.7749312162399292,
+      "global_max_probability": 0.7964341044425964,
+      "mean_projected_change_k5": -0.002547015067668083,
+      "n_crossing_threshold": 6,
+      "n_crossing_to_below_threshold": 5,
+      "n_crossing_to_above_threshold": 1,
+      "n_more_elevated": 159,
+      "n_less_elevated": 247,
+      "n_unchanged": 39,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RATE_LIMIT",
+      "simulated_strength": 0.5,
+      "n_sequences": 445,
+      "median_max_probability": 0.5239436626434326,
+      "p95_max_probability": 0.776345407962799,
+      "global_max_probability": 0.7990214824676514,
+      "mean_projected_change_k5": -0.004564570968594604,
+      "n_crossing_threshold": 11,
+      "n_crossing_to_below_threshold": 7,
+      "n_crossing_to_above_threshold": 4,
+      "n_more_elevated": 169,
+      "n_less_elevated": 250,
+      "n_unchanged": 26,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RESTRICT_EGRESS",
+      "simulated_strength": 0.0,
+      "n_sequences": 445,
+      "median_max_probability": 0.5836422443389893,
+      "p95_max_probability": 0.7738543033599853,
+      "global_max_probability": 0.7944108247756958,
+      "mean_projected_change_k5": 2.0319438304764604e-08,
+      "n_crossing_threshold": 0,
+      "n_crossing_to_below_threshold": 0,
+      "n_crossing_to_above_threshold": 0,
+      "n_more_elevated": 3,
+      "n_less_elevated": 0,
+      "n_unchanged": 442,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RESTRICT_EGRESS",
+      "simulated_strength": 0.1,
+      "n_sequences": 445,
+      "median_max_probability": 0.5585523843765259,
+      "p95_max_probability": 0.7744810223579407,
+      "global_max_probability": 0.7952379584312439,
+      "mean_projected_change_k5": -0.0008672107514551929,
+      "n_crossing_threshold": 4,
+      "n_crossing_to_below_threshold": 2,
+      "n_crossing_to_above_threshold": 2,
+      "n_more_elevated": 167,
+      "n_less_elevated": 232,
+      "n_unchanged": 46,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RESTRICT_EGRESS",
+      "simulated_strength": 0.25,
+      "n_sequences": 445,
+      "median_max_probability": 0.5267026424407959,
+      "p95_max_probability": 0.7750554561614991,
+      "global_max_probability": 0.7965693473815918,
+      "mean_projected_change_k5": -0.001887178422842728,
+      "n_crossing_threshold": 9,
+      "n_crossing_to_below_threshold": 5,
+      "n_crossing_to_above_threshold": 4,
+      "n_more_elevated": 171,
+      "n_less_elevated": 239,
+      "n_unchanged": 35,
+      "alert_threshold": 0.69
+    },
+    {
+      "intervention": "RESTRICT_EGRESS",
+      "simulated_strength": 0.5,
+      "n_sequences": 445,
+      "median_max_probability": 0.47398680448532104,
+      "p95_max_probability": 0.7767710566520691,
+      "global_max_probability": 0.7991354465484619,
+      "mean_projected_change_k5": -0.0027811959715388673,
+      "n_crossing_threshold": 13,
+      "n_crossing_to_below_threshold": 9,
+      "n_crossing_to_above_threshold": 4,
+      "n_more_elevated": 176,
+      "n_less_elevated": 245,
+      "n_unchanged": 24,
+      "alert_threshold": 0.69
+    }
+  ],
+  "headline_finding": {
+    "direction_is_mixed": "The frozen model's response to a volume-reduction perturbation is HETEROGENEOUS IN SIGN. At strength 0.50 the RATE_LIMIT intervention projects a LOWER max-future probability for the majority of swept sequences and a HIGHER one for a substantial minority, with a median change near zero. Both directions are reported.",
+    "magnitude_is_small": "Median projected change is ~0 because only the FINAL timestep is perturbed and the V4 encoder is an LSTM over ten windows. A one-window intervention has limited leverage on the encoding. This is a property of the model being probed.",
+    "interpretation": "This is the expected behaviour of a model that never learned interventions. It is why the output is presented as a what-if projection and never as a defense effect. A counterfactual that raises the projected probability is NOT evidence that defending is harmful \u2014 it is evidence that the model's response to this perturbation is not a causal quantity."
+  },
+  "outputs": {
+    "intervention_definitions.json": "every intervention, its exact transformation, and every unchanged feature with its reason",
+    "scenarios.csv": "890 no-action vs defend-now scenarios",
+    "trajectory_comparison.csv": "5340 per-horizon rows",
+    "defense_strength_sweep.csv": "8 descriptive rows",
+    "examples.csv": "6 real demo examples",
+    "simulator_manifest.json": "this file",
+    "validation.json": "validation gates + frozen hashes"
+  },
+  "limitations": [
+    "The model was never trained on interventions, so NO output of this simulator is a causal effect. It shows how the frozen model's forecast responds to a state perturbation, nothing more.",
+    "Only the final timestep is perturbed, because earlier timesteps are observed history. Projected changes are correspondingly small, and a longer-acting intervention is NOT simulated.",
+    "The projected change is mixed in sign across sequences. A 'lower' projection must not be read as mitigation, and a 'higher' projection must not be read as defending making things worse.",
+    "Interventions modify only features whose transformation follows from the frozen contract. Plausible real consequences that the contract cannot determine (e.g. a block raising rst_rate, a rate limit raising inter-arrival time) are deliberately NOT modelled, so the perturbation is incomplete by design.",
+    "RESTRICT_EGRESS assumes blocked destinations carry a proportional share of window volume. That is a first-order assumption, not a measured property.",
+    "0 of 890 counterfactual states were assessed UNRELIABLE by Task 15, meaning the perturbation moved the input outside the reference distribution. Those projections are disclosed, not suppressed.",
+    "The simulator inherits the V4 checkpoint's documented train/eval scaler mismatch."
+  ],
+  "frozen_artifact_integrity": {
+    "n_artifacts": 16,
+    "all_unchanged": true,
+    "before": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    },
+    "after": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    }
+  }
+}

@@ -1,0 +1,673 @@
+{
+  "name": "V4 Screening MVP replay substrate (Mar-2 held-out, frozen V4)",
+  "built_on_utc": "2026-09-25T19:17:25Z",
+  "builder_script": "src/build_v4_screening_mvp.py",
+  "status": "FROZEN \u2014 reproduction/packaging only; no training, no refitting, no retuning",
+  "git_head": "b14eabcc1ef12b34ec45b58c3bbfdf2114614efd",
+  "environment": {
+    "python": "3.14.7",
+    "torch": "2.14.0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "device_used": "mps",
+    "platform": "darwin"
+  },
+  "frozen_inputs_sha256": {
+    "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+    "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+    "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+    "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+    "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+    "data/processed/multiday_benchmark_K5/X_val.npy": "083478c02131e568731923761b4df1595cfbdc25d28afd78583613c30e8d8b9f",
+    "data/processed/multiday_benchmark_K5/A_binary_multistep_val.npy": "db34c8c5503208a2e5689c533b046ea2fb6f4a8ee60fabd23532a17b18f9192b",
+    "data/processed/multiday_benchmark_K5/X_train.npy": "24139069b9c1f35fdd8a5183d7fcf37fb82a3721bc4f6760be2fbbc0918f7065",
+    "data/processed/multiday_benchmark_K5/A_binary_multistep_train.npy": "40f23948ed70a88a7c8fb46a7a33563e97d5c9e60491e9b4d147beb473c867cd",
+    "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+    "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+    "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+    "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+    "data/processed/multiday_benchmark_K5/test_metadata.csv": "113ee16157975ed14672aa105f9e093d6fe73b28d1c39499b50fce737f1edf0a",
+    "data/processed/multiday_benchmark_K5/train_metadata.csv": "dd6c2c07b7f791a94d207627a54e0fb7e4858c23a78807d35da4a7e8d69cf565",
+    "data/processed/multiday_benchmark_K5/val_metadata.csv": "d7483541ea8ac46fe59220bb401efee3f0562d6bbbbf3a6859429256668814f4",
+    "docs/v4_baseline_manifest.json": "b2765c2489ccee3845e9dc43990b187d894237905087f3969ed2fae82613937e",
+    "data/processed/states_v2/Friday-02-03-2018_TrafficForML_CICFlowMeter_states_v2.csv": "ce101327abfe64fe8f7175a961f72a60cb56bda6e5216a023077800a33cd20b5",
+    "data/processed/states_v2/Thursday-15-02-2018_TrafficForML_CICFlowMeter_states_v2.csv": "bfd835c85f06d9c3009ac9505516cd7287b04a25933239a52e5393db65ac4728",
+    "data/processed/states_v2/Wednesday-14-02-2018_TrafficForML_CICFlowMeter_states_v2.csv": "2743f80a8697c09cd1e2c4495d7babfab97545e1d9d0ddcd6576ab0f9a64481b",
+    "data/processed/states_v2/Wednesday-28-02-2018_TrafficForML_CICFlowMeter_states_v2.csv": "dae0573df4e8b23b56f23a1b8c80d39c2d1a9e894f6f792acf3638466474b247"
+  },
+  "frozen_inputs_unmodified": true,
+  "v4_configuration": {
+    "input_shape": [
+      10,
+      52
+    ],
+    "feature_dimension": 52,
+    "sequence_length": 10,
+    "encoder": "2-layer LSTM (52\u2192128)",
+    "latent_dimension": 32,
+    "transition": "gated residual latent transition + LayerNorm",
+    "decoder_output": 26,
+    "max_k": 5,
+    "parameter_count": 244027
+  },
+  "split": {
+    "train_days": [
+      "Thursday-15-02-2018",
+      "Wednesday-14-02-2018",
+      "Wednesday-28-02-2018"
+    ],
+    "train_sequences": 8441,
+    "validation_days": [
+      "Thursday-15-02-2018",
+      "Wednesday-14-02-2018",
+      "Wednesday-28-02-2018"
+    ],
+    "validation_sequences": 1473,
+    "test_day": [
+      "Friday-02-03-2018"
+    ],
+    "test_sequences": 3115,
+    "scaler_fit_windows": 8575,
+    "scaler_fit_partition_per_day": {
+      "Wednesday-14-02-2018": {
+        "total_windows": 3255,
+        "train_windows": 2766,
+        "validation_windows": 489
+      },
+      "Thursday-15-02-2018": {
+        "total_windows": 3429,
+        "train_windows": 2914,
+        "validation_windows": 515
+      },
+      "Wednesday-28-02-2018": {
+        "total_windows": 3406,
+        "train_windows": 2895,
+        "validation_windows": 511
+      }
+    },
+    "mar2_windows_total": 3143,
+    "mar2_in_any_fit": false,
+    "separation_reproducible": true
+  },
+  "timestamp_semantics": {
+    "metadata_timestamp": "window_start of the t+1 TARGET window (src/prepare_multiday_benchmark.py: timestamps[end_idx])",
+    "observed_window_end": "target_t1_timestamp - 10s  (= time t, last of the 10 input windows)",
+    "observed_window_start": "target_t1_timestamp - 100s (= first input window)",
+    "window_seconds": 10
+  },
+  "contiguity": {
+    "rule": "a block of 10 input + 5 target windows is accepted only if all 14 consecutive gaps equal exactly 10s",
+    "sequences_internally_contiguous": 3115,
+    "raw_mar2_windows": 3143,
+    "candidate_blocks": 3129,
+    "rejected_blocks": 14,
+    "rejected_blocks_expected_from_gaps": 14,
+    "raw_capture_gaps": [
+      {
+        "after_timestamp": "2018-03-02T05:30:10.000000",
+        "next_timestamp": "2018-03-02T08:46:30.000000",
+        "gap_seconds": 11780
+      }
+    ],
+    "note": "The single ~3h14m gap is a real discontinuity in the raw CSE-CIC-IDS2018 Mar-2 capture, not a pipeline defect. No sequence spans it; consecutive sequence ids jump across it exactly once."
+  },
+  "alert_rule": {
+    "score": "max(P(t+1) \u2026 P(t+5))",
+    "threshold": 0.69,
+    "threshold_source": "frozen validation-selected K=5 trajectory-MAX threshold (docs/v4_baseline_manifest.json threshold.per_horizon_trajectory_max['5'])",
+    "threshold_changed": false,
+    "per_horizon_point_thresholds": {
+      "1": 0.45,
+      "2": 0.54,
+      "3": 0.65,
+      "5": 0.72
+    },
+    "trajectory_max_thresholds": {
+      "2": 0.51,
+      "3": 0.68,
+      "5": 0.69
+    },
+    "n_alerts": 1434,
+    "pct_alerts": 46.03531300160514
+  },
+  "outputs": {
+    "screening_X.npy": {
+      "sha256": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "shape": [
+        3115,
+        10,
+        52
+      ],
+      "identical_to": "data/processed/multiday_benchmark_K5/X_test.npy"
+    },
+    "feature_names.txt": {
+      "sha256": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "n_features": 52
+    },
+    "screening_metadata.csv": {
+      "rows": 3115,
+      "columns": [
+        "sequence_id",
+        "source_day",
+        "observed_window_start",
+        "observed_window_end",
+        "target_t1_timestamp",
+        "target_t2_timestamp",
+        "target_t3_timestamp",
+        "target_t4_timestamp",
+        "target_t5_timestamp",
+        "label_t1",
+        "attack_ratio_t1",
+        "label_t2",
+        "attack_ratio_t2",
+        "label_t3",
+        "attack_ratio_t3",
+        "label_t4",
+        "attack_ratio_t4",
+        "label_t5",
+        "attack_ratio_t5",
+        "dominant_attack_t1",
+        "trajectory_label_k5"
+      ]
+    },
+    "screening_predictions.csv": {
+      "rows": 3115,
+      "columns": [
+        "sequence_id",
+        "target_t1_timestamp",
+        "observed_window_end",
+        "observed_window_start",
+        "nowcast_probability_t0",
+        "prob_t1",
+        "prob_t2",
+        "prob_t3",
+        "prob_t4",
+        "prob_t5",
+        "max_forecast_probability",
+        "mean_forecast_probability",
+        "argmax_horizon",
+        "alert_threshold",
+        "alert_threshold_source",
+        "alert",
+        "alert_label",
+        "alert_point_t1",
+        "alert_point_t2",
+        "alert_point_t3",
+        "alert_point_t4",
+        "alert_point_t5",
+        "observed_state_ref",
+        "latent_norm_t0",
+        "latent_norm_t5",
+        "label_t1",
+        "label_t2",
+        "label_t3",
+        "label_t4",
+        "label_t5",
+        "trajectory_label_k5"
+      ]
+    },
+    "event_timeline.csv": {
+      "rows": 3115,
+      "regions": {
+        "benign": 1074,
+        "attack_active_at_start_no_observable_onset": 1036,
+        "attack_active": 992,
+        "pre_attack": 10,
+        "documented_attack_onset": 3
+      },
+      "use": "UI context only \u2014 never model input, never threshold selection"
+    }
+  },
+  "forecast_behaviour": {
+    "per_horizon": {
+      "t0_nowcast": {
+        "min": 1.7989241030136327e-07,
+        "median": 0.05926148220896721,
+        "mean": 0.24701435490955087,
+        "p95": 0.6739038705825805,
+        "max": 0.7795455455780029,
+        "n_at_or_above_threshold": 87,
+        "pct_at_or_above_threshold": 2.792937399678973,
+        "nonfinite": 0
+      },
+      "t+1": {
+        "min": 1.961481466139503e-08,
+        "median": 0.03580022603273392,
+        "mean": 0.2294725483262967,
+        "p95": 0.6763183534145355,
+        "max": 0.7957384586334229,
+        "n_at_or_above_threshold": 107,
+        "pct_at_or_above_threshold": 3.434991974317817,
+        "nonfinite": 0
+      },
+      "t+2": {
+        "min": 1.1039554159708587e-08,
+        "median": 0.16331052780151367,
+        "mean": 0.2908686520968625,
+        "p95": 0.7021362602710723,
+        "max": 0.7971915006637573,
+        "n_at_or_above_threshold": 225,
+        "pct_at_or_above_threshold": 7.223113964686998,
+        "nonfinite": 0
+      },
+      "t+3": {
+        "min": 1.342204214438425e-08,
+        "median": 0.3478264808654785,
+        "mean": 0.35288443921068013,
+        "p95": 0.7476720392704009,
+        "max": 0.7857348918914795,
+        "n_at_or_above_threshold": 917,
+        "pct_at_or_above_threshold": 29.43820224719101,
+        "nonfinite": 0
+      },
+      "t+4": {
+        "min": 1.595123322317704e-08,
+        "median": 0.4813416302204132,
+        "mean": 0.3827383415345414,
+        "p95": 0.7607877612113952,
+        "max": 0.7810935378074646,
+        "n_at_or_above_threshold": 1272,
+        "pct_at_or_above_threshold": 40.834670947030496,
+        "nonfinite": 0
+      },
+      "t+5": {
+        "min": 2.623100847642945e-08,
+        "median": 0.5537196397781372,
+        "mean": 0.3994353173415546,
+        "p95": 0.7713078200817107,
+        "max": 0.7961976528167725,
+        "n_at_or_above_threshold": 1419,
+        "pct_at_or_above_threshold": 45.553772070626,
+        "nonfinite": 0
+      }
+    },
+    "rollout_stability": {
+      "mean_abs_prob_delta_per_transition": 0.04795279329522962,
+      "max_abs_prob_delta_per_transition": 0.4890016280114651,
+      "fraction_monotone_non_decreasing": 0.539967897271268,
+      "mean_latent_l2_norm_by_horizon": [
+        5.724187351144262,
+        6.376076087165145,
+        6.373282530999734,
+        6.367263561088939,
+        6.3615239654712,
+        6.35220987702093
+      ],
+      "latent_norm_drift_t1_to_t5": 0.02386621014421486,
+      "nonfinite_count": 0,
+      "probabilities_in_bounds": true
+    },
+    "determinism_rerun_max_delta": 0.0,
+    "cross_device_max_delta": 1.996755599975586e-06
+  },
+  "reproduced_metrics": {
+    "future_prediction": {
+      "k=1": {
+        "f1": 0.591967600404995,
+        "precision": 0.9409871244635193,
+        "recall": 0.43180699162973907,
+        "roc_auc": 0.8558010432393837,
+        "fpr": 0.0507380073800738,
+        "tp": 877,
+        "fp": 55,
+        "tn": 1029,
+        "fn": 1154,
+        "pos_samples": 2031
+      },
+      "k=2": {
+        "f1": 0.673871582962492,
+        "precision": 0.9506726457399103,
+        "recall": 0.5219103889709503,
+        "roc_auc": 0.8774389036357129,
+        "fpr": 0.0507380073800738,
+        "tp": 1060,
+        "fp": 55,
+        "tn": 1029,
+        "fn": 971,
+        "pos_samples": 2031
+      },
+      "k=3": {
+        "f1": 0.6951602765556254,
+        "precision": 0.9609035621198957,
+        "recall": 0.5445593303791236,
+        "roc_auc": 0.8893420433465782,
+        "fpr": 0.04151291512915129,
+        "tp": 1106,
+        "fp": 45,
+        "tn": 1039,
+        "fn": 925,
+        "pos_samples": 2031
+      },
+      "k=5": {
+        "f1": 0.7522549609140108,
+        "precision": 0.9660231660231661,
+        "recall": 0.6159527326440177,
+        "roc_auc": 0.8876532746125098,
+        "fpr": 0.04059040590405904,
+        "tp": 1251,
+        "fp": 44,
+        "tn": 1040,
+        "fn": 780,
+        "pos_samples": 2031
+      }
+    },
+    "trajectory": {
+      "max_k=2": {
+        "f1": 0.7127003699136868,
+        "precision": 0.9553719008264463,
+        "recall": 0.5683382497541789,
+        "roc_auc": 0.8779881696633638,
+        "fpr": 0.04995374653098982,
+        "tp": 1156,
+        "fp": 54,
+        "tn": 1027,
+        "fn": 878,
+        "pos_samples": 2034
+      },
+      "max_k=3": {
+        "f1": 0.6370516617308325,
+        "precision": 0.9660678642714571,
+        "recall": 0.47520864015709374,
+        "roc_auc": 0.8904168977806681,
+        "fpr": 0.03153988868274583,
+        "tp": 968,
+        "fp": 34,
+        "tn": 1044,
+        "fn": 1069,
+        "pos_samples": 2037
+      },
+      "max_k=5": {
+        "f1": 0.7979274611398963,
+        "precision": 0.9665271966527197,
+        "recall": 0.6794117647058824,
+        "roc_auc": 0.8928704970360237,
+        "fpr": 0.044651162790697675,
+        "tp": 1386,
+        "fp": 48,
+        "tn": 1027,
+        "fn": 654,
+        "pos_samples": 2040
+      },
+      "mean_k=2": {
+        "f1": 0.6294349540078844,
+        "precision": 0.9485148514851485,
+        "recall": 0.47099311701081614,
+        "roc_auc": 0.8747399663627673,
+        "fpr": 0.04810360777058279,
+        "tp": 958,
+        "fp": 52,
+        "tn": 1029,
+        "fn": 1076,
+        "pos_samples": 2034
+      },
+      "mean_k=3": {
+        "f1": 0.642578125,
+        "precision": 0.9536231884057971,
+        "recall": 0.4845360824742268,
+        "roc_auc": 0.883189746644407,
+        "fpr": 0.04452690166975881,
+        "tp": 987,
+        "fp": 48,
+        "tn": 1030,
+        "fn": 1050,
+        "pos_samples": 2037
+      },
+      "mean_k=5": {
+        "f1": 0.6438579341805148,
+        "precision": 0.9601554907677357,
+        "recall": 0.4843137254901961,
+        "roc_auc": 0.8866479708162336,
+        "fpr": 0.03813953488372093,
+        "tp": 988,
+        "fp": 41,
+        "tn": 1034,
+        "fn": 1052,
+        "pos_samples": 2040
+      }
+    },
+    "persistence_baseline": {
+      "t+1": {
+        "f1": 0.9985228951255539,
+        "precision": 0.9985228951255539,
+        "recall": 0.9985228951255539,
+        "roc_auc": 0.9978776837251386,
+        "fpr": 0.0027675276752767526,
+        "tp": 2028,
+        "fp": 3,
+        "tn": 1081,
+        "fn": 3,
+        "pos_samples": 2031
+      },
+      "t+2": {
+        "f1": 0.9975381585425899,
+        "precision": 0.9975381585425899,
+        "recall": 0.9975381585425899,
+        "roc_auc": 0.9964628062085642,
+        "fpr": 0.004612546125461255,
+        "tp": 2026,
+        "fp": 5,
+        "tn": 1079,
+        "fn": 5,
+        "pos_samples": 2031
+      },
+      "t+3": {
+        "f1": 0.9970457902511078,
+        "precision": 0.9970457902511078,
+        "recall": 0.9970457902511078,
+        "roc_auc": 0.9957553674502772,
+        "fpr": 0.005535055350553505,
+        "tp": 2025,
+        "fp": 6,
+        "tn": 1078,
+        "fn": 6,
+        "pos_samples": 2031
+      },
+      "t+5": {
+        "f1": 0.9965534219596258,
+        "precision": 0.9965534219596258,
+        "recall": 0.9965534219596258,
+        "roc_auc": 0.9950479286919901,
+        "fpr": 0.006457564575645757,
+        "tp": 2024,
+        "fp": 7,
+        "tn": 1077,
+        "fn": 7,
+        "pos_samples": 2031
+      },
+      "traj_max_k=2": {
+        "f1": 0.9977859778597786,
+        "precision": 0.9985228951255539,
+        "recall": 0.9970501474926253,
+        "roc_auc": 0.9971374696760076,
+        "fpr": 0.0027752081406105457,
+        "tp": 2028,
+        "fp": 3,
+        "tn": 1078,
+        "fn": 6,
+        "pos_samples": 2034
+      },
+      "traj_max_k=3": {
+        "f1": 0.9975417895771878,
+        "precision": 0.999015263417036,
+        "recall": 0.9960726558664703,
+        "roc_auc": 0.9971086841484484,
+        "fpr": 0.0018552875695732839,
+        "tp": 2029,
+        "fp": 2,
+        "tn": 1076,
+        "fn": 8,
+        "pos_samples": 2037
+      },
+      "traj_max_k=5": {
+        "f1": 0.9972979611888971,
+        "precision": 0.999507631708518,
+        "recall": 0.9950980392156863,
+        "roc_auc": 0.9970839033287734,
+        "fpr": 0.0009302325581395349,
+        "tp": 2030,
+        "fp": 1,
+        "tn": 1074,
+        "fn": 10,
+        "pos_samples": 2040
+      }
+    }
+  },
+  "early_warning": {
+    "threshold": 0.69,
+    "active_at_first_window": true,
+    "evaluable_onsets": 3,
+    "warned": 2,
+    "missed": 1,
+    "coverage_pct": 66.66666666666667,
+    "mean_lead_s": 50.0,
+    "median_lead_s": 50.0,
+    "episodes": [
+      {
+        "onset_index": 1039,
+        "onset_timestamp": "2018-03-02 03:54:50",
+        "warned": true,
+        "lead_time_seconds": 50,
+        "first_alert_index": 1034
+      },
+      {
+        "onset_index": 2119,
+        "onset_timestamp": "2018-03-02 10:13:20",
+        "warned": false,
+        "lead_time_seconds": 0,
+        "first_alert_index": null
+      },
+      {
+        "onset_index": 2840,
+        "onset_timestamp": "2018-03-02 12:13:30",
+        "warned": true,
+        "lead_time_seconds": 50,
+        "first_alert_index": 2835
+      }
+    ],
+    "pre_attack_windows": 15,
+    "pre_attack_alerting_windows": 10,
+    "false_positive_windows_per_hour": 5.547351524879614,
+    "strict_pre_attack_variant": {
+      "rule": "search only windows benign at BOTH the observation time t and the target t+1; windows inside an already-active attack are not creditable as pre-attack warnings",
+      "warned": 2,
+      "missed": 1,
+      "coverage_pct": 66.66666666666667,
+      "mean_lead_s": 15.0,
+      "median_lead_s": 15.0,
+      "episodes": [
+        {
+          "onset_index": 1039,
+          "onset_timestamp": "2018-03-02 03:54:50",
+          "eligible_pre_attack_windows": 2,
+          "warned": true,
+          "lead_time_seconds": 20,
+          "first_alert_index": 1037
+        },
+        {
+          "onset_index": 2119,
+          "onset_timestamp": "2018-03-02 10:13:20",
+          "eligible_pre_attack_windows": 5,
+          "warned": false,
+          "lead_time_seconds": 0,
+          "first_alert_index": null
+        },
+        {
+          "onset_index": 2840,
+          "onset_timestamp": "2018-03-02 12:13:30",
+          "eligible_pre_attack_windows": 1,
+          "warned": true,
+          "lead_time_seconds": 10,
+          "first_alert_index": 2839
+        }
+      ],
+      "note": "Coverage is identical to the reference (2/3); only lead time shortens. The reference 50.0 s figure is reproduced exactly and retained above \u2014 this variant is reported alongside it, not in place of it."
+    },
+    "caveat": "Small sample: 3 observable onsets on a single held-out day. Coverage and lead time are indicative, not statistically established."
+  },
+  "explainability": {
+    "sequence_id": 2341,
+    "horizon": 5,
+    "attribution_shape": [
+      1,
+      10,
+      52
+    ],
+    "explained_probability": 0.778526246547699,
+    "baseline_probability": 2.0414498067111708e-05,
+    "completeness_rel_error": 0.032053813338279724,
+    "top_features": [
+      {
+        "feature": "window_packet_rate",
+        "index": 4,
+        "signed_attribution": 0.45911768078804016,
+        "direction": "increases_threat"
+      },
+      {
+        "feature": "window_byte_rate",
+        "index": 5,
+        "signed_attribution": -0.4578830897808075,
+        "direction": "decreases_threat"
+      },
+      {
+        "feature": "log_mean_flow_duration",
+        "index": 14,
+        "signed_attribution": 0.21451525390148163,
+        "direction": "increases_threat"
+      },
+      {
+        "feature": "log_total_packets",
+        "index": 2,
+        "signed_attribution": 0.18985670804977417,
+        "direction": "increases_threat"
+      },
+      {
+        "feature": "rst_rate",
+        "index": 8,
+        "signed_attribution": 0.1740267276763916,
+        "direction": "increases_threat"
+      }
+    ],
+    "temporal_signed_attribution": [
+      0.012614920735359192,
+      0.02920132502913475,
+      0.08728595077991486,
+      0.1419849991798401,
+      0.08188596367835999,
+      0.21698516607284546,
+      0.1146542876958847,
+      0.11279397457838058,
+      0.02770962379872799,
+      -0.02165626548230648
+    ],
+    "prediction_identity_max_abs_delta": 1.1920928955078125e-07
+  },
+  "mitre": {
+    "sequence_id": 2341,
+    "model_injected": "frozen V4 checkpoint (encode/transition_step/predict_attack)",
+    "threshold_used": 0.69,
+    "rule_library_size": 10,
+    "feature_order_matches_v4_contract": true,
+    "mapping": {
+      "attack_probability": 0.7971915006637573,
+      "window_index": 2341,
+      "timestamp": "2018-03-02 10:50:20",
+      "tactic_id": "TA0043",
+      "tactic_name": "Reconnaissance",
+      "technique_id": "T1018",
+      "technique_name": "Remote System Discovery",
+      "confidence": "high",
+      "triggering_features": [
+        "dst_port_entropy",
+        "log_flow_count"
+      ],
+      "feature_values": {
+        "dst_port_entropy": 1.4537198543548584,
+        "log_flow_count": 0.516402006149292
+      },
+      "temporal_phase": "late",
+      "windows_since_first_alert": 2341,
+      "analyst_explanation": "ALERT [HIGH]: Reconnaissance [T1018: Remote System Discovery] \u2014 Attack probability 80% at 2018-03-02 10:50:20 (phase: late). Triggered by: dst_port_entropy, log_flow_count."
+    }
+  },
+  "discrepancies": []
+}

@@ -1,0 +1,362 @@
+{
+  "task": "Task 16 / S2 \u2014 ATT&CK-consistent attack path + time-to-progression",
+  "layer_version": "attack-path-1.0",
+  "generated_utc": "2026-09-26T08:38:55Z",
+  "runtime_seconds": 28.06,
+  "what_this_is": "an ATT&CK-consistent progression hypothesis produced by composing the FROZEN V4 rollout with the EXISTING rule-based MITREMapper",
+  "what_this_is_not": [
+    "not a learned attack-path prediction",
+    "not a guaranteed time until an attacker progresses",
+    "not a claim that V4 predicts ATT&CK labels",
+    "not a claim of attacker intent or causality",
+    "not a universally correct kill chain"
+  ],
+  "substrate": {
+    "source": "results/v4_screening_mvp/ (Task 10, frozen)",
+    "n_sequences": 3115,
+    "alert_threshold": 0.69,
+    "threshold_source": "frozen validation-selected K=5 trajectory-MAX threshold (docs/v4_baseline_manifest.json threshold.per_horizon_trajectory_max['5'])",
+    "mapper_threshold_note": "the mapper is constructed with the FROZEN trajectory-MAX alert threshold (0.69). No per-horizon threshold was invented: the frozen per-horizon point thresholds cover k=1,2,3,5 only (k=4 has none by design), so interpolating one for k=4 would have meant inventing a threshold. A single frozen value is used at every horizon instead.",
+    "current_stage_gate_note": "the CURRENT stage is gated on the NOWCAST probability (nowcast_probability_t0), because the current stage is a statement about now. The existing MITRE ATT&CK Timeline page gates on max-forecast instead; that difference is deliberate and is why most sequences report a current stage of 'No Alert' while the forecast is elevated."
+  },
+  "reconstruction_procedure": {
+    "row_0_current": "NOT reconstructed \u2014 the observed 52-D vector screening_X[seq][-1] verbatim, exactly what src/mitre_mapper.py reads today",
+    "rows_1_to_5_base": "decoded_states[k] verbatim (see decoder_space_identity)",
+    "rows_1_to_5_rel_change": [
+      "inverse-transform the base trajectory to RAW units with the frozen input_scaler base columns (z * scale + mean); the chain's k=0 element is the OBSERVED last window, so t+1's change is measured against reality",
+      "apply the frozen contract formula (x_k - x_{k-1}) / (|x_{k-1}| + 1e-8), clipped to [-10, 10]",
+      "forward-transform with the frozen input_scaler rel-change columns ((rel - mean) / scale)"
+    ],
+    "new_transform_introduced": false,
+    "scalers_refit": false
+  },
+  "decoder_space_identity": {
+    "target_scaler_equals_input_scaler_base_columns": true,
+    "consequence": "the V4 decoder's 26-D output is ALREADY in the mapper's base-feature z-units; no transform is applied to the base half",
+    "verified_at_runtime_by": "attack_path_predictor.load_scalers()"
+  },
+  "frozen_formula_check": {
+    "source_of_truth": "src/feature_contract.py::reference_relative_change",
+    "epsilon": 1e-08,
+    "clip": 10.0,
+    "formula": "(x_t - x_{t-1}) / (|x_{t-1}| + 1e-8), clipped to [-10, 10]",
+    "max_abs_delta_vs_contract": 0.0,
+    "new_transform_introduced": false
+  },
+  "progression_graph": {
+    "nature": "project-specific ANALYTICAL ORDERING for forward visualisation. NOT a claim that intrusions follow this order, and NOT a universal kill chain.",
+    "nodes": [
+      "Reconnaissance",
+      "Initial Access",
+      "Execution",
+      "Lateral Movement",
+      "Command and Control",
+      "Exfiltration",
+      "Impact"
+    ],
+    "node_source": "exactly the tactics src/mitre_mapper.py can emit; no tactic was added",
+    "excluded_nodes": {
+      "NONE / No Alert": "no tactic semantics \u2014 cannot be an endpoint",
+      "UNKNOWN / Insufficient Evidence": "no tactic semantics \u2014 cannot be an endpoint"
+    },
+    "edge_admission_test": {
+      "i_ordering": "B is ATT&CK-consistent as a stage following A, read through the SHIPPED RULE's meaning for each tactic",
+      "ii_distinguishability": "the two rules key on materially different telemetry, so B-after-A is an observable signature change, not a relabelling"
+    },
+    "n_edges": 12,
+    "edges": [
+      {
+        "from": "Reconnaissance",
+        "to": "Initial Access",
+        "justification": "RECON_PORT_SCAN / RECON_HOST_DISCOVERY key on port breadth and port entropy; INITIAL_ACCESS_INFILTRATION keys on flow count with SYN+FIN completion. Enumeration preceding connection completion against a discovered service is the canonical ATT&CK ordering, and the two signatures differ (breadth vs. handshake completion)."
+      },
+      {
+        "from": "Reconnaissance",
+        "to": "Lateral Movement",
+        "justification": "LATERAL_MOVEMENT_SPREAD requires log_flow_count>0.5 AND log_unique_dst_ports>0.3 AND log_total_packets>0.3 \u2014 strictly more than the recon rules, which need no packet volume. Internal enumeration hardening into volumetric remote-service use is a real observable escalation, not a relabelling."
+      },
+      {
+        "from": "Initial Access",
+        "to": "Execution",
+        "justification": "EXECUTION_PAYLOAD_DELIVERY keys on packet volume with PSH (data push), which is a different signature from the SYN/FIN handshake activity of the infiltration rule. Foothold then payload is the canonical ordering."
+      },
+      {
+        "from": "Initial Access",
+        "to": "Command and Control",
+        "justification": "A channel established directly after access. C2_BEACONING / C2_ENCRYPTED_CHANNEL key on LOW packet-size variance and low protocol entropy \u2014 the opposite direction from the initial-access rule's volume/flag criteria, so the transition is clearly observable."
+      },
+      {
+        "from": "Execution",
+        "to": "Command and Control",
+        "justification": "Payload delivery followed by channel establishment. Execution keys on high volume + PSH, C2 on low variance + download ratio."
+      },
+      {
+        "from": "Execution",
+        "to": "Lateral Movement",
+        "justification": "Post-execution spread. Execution needs volume + PSH; lateral additionally needs port breadth, so lateral is a strict escalation."
+      },
+      {
+        "from": "Execution",
+        "to": "Impact",
+        "justification": "IMPACT_RESOURCE_EXHAUSTION requires window_packet_rate>1.0 AND syn_rate>0.5 \u2014 by far the most extreme thresholds in the library. Execution escalating to a volumetric denial-of-service effect is ATT&CK-consistent and the signature is unambiguous."
+      },
+      {
+        "from": "Lateral Movement",
+        "to": "Command and Control",
+        "justification": "Spread followed by channel consolidation; opposite telemetry directions (breadth/volume vs. uniform low-variance flows)."
+      },
+      {
+        "from": "Lateral Movement",
+        "to": "Exfiltration",
+        "justification": "Collection across reached hosts leaving the network. Lateral keys on flow/port breadth, exfil on byte volume with LARGE mean packet length \u2014 volume-in-bytes rather than spread-in-flows."
+      },
+      {
+        "from": "Command and Control",
+        "to": "Exfiltration",
+        "justification": "The canonical ATT&CK ordering: an established channel then carries data out. C2 keys on small uniform packets, exfil on large packets and high byte rate, so the shift is directly observable."
+      },
+      {
+        "from": "Command and Control",
+        "to": "Impact",
+        "justification": "Tasking over an established channel producing a destructive or volumetric effect."
+      },
+      {
+        "from": "Exfiltration",
+        "to": "Impact",
+        "justification": "Data theft followed by a destructive or disruptive effect."
+      }
+    ],
+    "rejected_edges": [
+      {
+        "edge": "Reconnaissance -> Execution",
+        "reason": "REJECTED \u2014 skips access entirely. Scanning telemetry cannot support a jump to payload execution."
+      },
+      {
+        "edge": "Reconnaissance -> Command and Control",
+        "reason": "REJECTED \u2014 a C2 channel implies a foothold this graph has not seen."
+      },
+      {
+        "edge": "Reconnaissance -> Exfiltration",
+        "reason": "REJECTED \u2014 implies collection with no observed access or channel."
+      },
+      {
+        "edge": "Reconnaissance -> Impact",
+        "reason": "REJECTED \u2014 the two signatures are both SYN-heavy, so recon->impact would frequently be a threshold artefact rather than an escalation. Fails the DISTINGUISHABILITY test."
+      },
+      {
+        "edge": "Initial Access -> Lateral Movement",
+        "reason": "REJECTED \u2014 this project's semantics require an execution foothold before volumetric internal spread is a defensible reading."
+      },
+      {
+        "edge": "Initial Access -> Exfiltration",
+        "reason": "REJECTED \u2014 implies collection before any execution or channel."
+      },
+      {
+        "edge": "Initial Access -> Impact",
+        "reason": "REJECTED \u2014 both rules read flow count and SYN rate, so the transition risks being a pure threshold crossing on the same signature. Fails DISTINGUISHABILITY."
+      },
+      {
+        "edge": "Execution -> Exfiltration",
+        "reason": "REJECTED \u2014 conservative: exfiltration is only visualised once a channel (C2) or a spread (Lateral Movement) has been observed."
+      },
+      {
+        "edge": "Lateral Movement -> Impact",
+        "reason": "REJECTED \u2014 conservative. Lateral and impact both key on volume; the escalation is only visualised via C2."
+      },
+      {
+        "edge": "Exfiltration -> Command and Control",
+        "reason": "REJECTED \u2014 backward relative to the analytical ordering."
+      },
+      {
+        "edge": "any -> Reconnaissance",
+        "reason": "REJECTED for every source \u2014 Reconnaissance is a graph SOURCE only. Re-scanning happens in real intrusions, but visualising a backward edge would let two noisy horizons oscillate as a fake progression."
+      },
+      {
+        "edge": "any -> Initial Access except Reconnaissance",
+        "reason": "REJECTED \u2014 Initial Access is reachable only from Reconnaissance."
+      },
+      {
+        "edge": "NONE / UNKNOWN as endpoints",
+        "reason": "REJECTED \u2014 neither carries tactic semantics, so no progression is claimed into or out of them. A sequence whose current stage is NONE or UNKNOWN yields NO FORWARD PROGRESSION IDENTIFIED or PROGRESSION AMBIGUOUS, never an invented stage."
+      }
+    ],
+    "terminal_stages": [
+      "Impact"
+    ],
+    "acyclic": true
+  },
+  "time_to_progression": {
+    "name": "estimated model-based time-to-progression",
+    "formula": "time_to_progression = k * 10 seconds",
+    "why_10s": "each V4 rollout step advances the world model by exactly one 10-second feature window, the frozen WINDOW_SECONDS of the V4 ingestion contract",
+    "k_definition": "the FIRST predicted horizon k in 1..5 at which the candidate next stage is produced by the existing rule library and is reachable from the current stage by an admitted graph edge",
+    "range": "10 s to 50 s, or undefined when no progression is identified",
+    "is_not": [
+      "NOT a guaranteed time until an attacker progresses",
+      "NOT a survival-analysis estimate",
+      "NOT calibrated against observed progression times",
+      "NOT valid beyond 50 s \u2014 the V4 rollout is frozen at K=5"
+    ],
+    "suppressed_when": "the Task-15 reliability status is UNRELIABLE; the panel then shows the warning instead of a bare precise-looking number"
+  },
+  "confidence_criteria": {
+    "nature": "deterministic three-level label. NOT a probability of stage correctness, NOT calibrated, NOT fitted.",
+    "inputs": [
+      "persistence: length of the CONSECUTIVE run of future horizons, starting at the horizon where the candidate stage first appears, that carry the SAME tactic AND the SAME technique",
+      "rule_confidence: the existing MITREMapper confidence for the first horizon of that run (low|medium|high)",
+      "threat_stability: whether the frozen V4 threat probability stays at or above the FROZEN alert threshold across the whole run"
+    ],
+    "HIGH": "persistence >= 2 AND rule_confidence == 'high' AND threat_stability is True",
+    "MEDIUM": "persistence >= 2 (any rule_confidence), OR (persistence == 1 AND rule_confidence == 'high' AND threat_stability is True)",
+    "LOW": "everything else \u2014 a single weakly-supported horizon",
+    "no_tuning": "the only numeric input is the frozen alert threshold read from screening_predictions.csv. No threshold was chosen, swept, or tuned on any label."
+  },
+  "rule_library_summary": {
+    "source": "src/mitre_mapper.py (UNMODIFIED)",
+    "n_rules": 10,
+    "tactics": [
+      "Reconnaissance",
+      "Initial Access",
+      "Execution",
+      "Command and Control",
+      "Lateral Movement",
+      "Exfiltration",
+      "Impact"
+    ],
+    "operators_used": [
+      "<",
+      ">"
+    ]
+  },
+  "results": {
+    "n_sequences": 3115,
+    "status_counts": {
+      "PROGRESSION_AMBIGUOUS": 1127,
+      "NO_FORWARD_PROGRESSION_IDENTIFIED": 1681,
+      "FORWARD_PROGRESSION_IDENTIFIED": 307
+    },
+    "time_to_progression_distribution": {
+      "no_progression_identified": 2808,
+      "10s": 23,
+      "20s": 12,
+      "30s": 25,
+      "40s": 74,
+      "50s": 173
+    },
+    "n_progression_events": 339,
+    "progression_confidence_counts": {
+      "LOW": 98,
+      "MEDIUM": 191,
+      "HIGH": 50
+    },
+    "ambiguity_kind_counts": {
+      "no_admitted_edge_from_anchor_stage": 653,
+      "single_stage_persists_no_transition": 474
+    },
+    "edges_exercised": [
+      {
+        "from": "Initial Access",
+        "to": "Execution",
+        "n": 143
+      },
+      {
+        "from": "Reconnaissance",
+        "to": "Initial Access",
+        "n": 142
+      },
+      {
+        "from": "Lateral Movement",
+        "to": "Exfiltration",
+        "n": 16
+      },
+      {
+        "from": "Reconnaissance",
+        "to": "Lateral Movement",
+        "n": 16
+      },
+      {
+        "from": "Execution",
+        "to": "Lateral Movement",
+        "n": 10
+      },
+      {
+        "from": "Initial Access",
+        "to": "Command and Control",
+        "n": 8
+      },
+      {
+        "from": "Execution",
+        "to": "Command and Control",
+        "n": 3
+      },
+      {
+        "from": "Lateral Movement",
+        "to": "Command and Control",
+        "n": 1
+      }
+    ],
+    "reliability_status_counts": {
+      "CAUTION": 264,
+      "RELIABLE": 2840,
+      "UNRELIABLE": 11
+    }
+  },
+  "outputs": {
+    "predictor_metadata.json": "full machine-readable layer + rule library + graph description",
+    "per_sequence_paths.csv": "3115 rows \u2014 one per replay sequence",
+    "progression_events.csv": "339 rows \u2014 one per admitted transition",
+    "time_to_progression.csv": "distribution over no-progression / 10 / 20 / 30 / 40 / 50 s",
+    "retrospective_context.csv": "3 documented onset episodes + region x status cross-tab (DESCRIPTIVE ONLY)",
+    "example_cases.csv": "real A / B / C examples, selected from model+rule output only",
+    "attack_path_manifest.json": "this file",
+    "validation.json": "18 validation gates + frozen hashes"
+  },
+  "limitations": [
+    "The progression graph is an analytical ordering for visualisation, not a model of attacker behaviour.",
+    "Stages inherit every limitation of the rule library, including single-check firing and hand-chosen z-score thresholds.",
+    "Future stages are read off a DECODED prediction; decoder reconstruction error at k=5 is inherited, not corrected.",
+    "The rel-change half of a future rule-space vector is reconstructed from the decoded base trajectory. It is faithful to the frozen formula but is a prediction of a derivative, so it is noisier than the base half. No shipped rule currently reads it.",
+    "Only 3 documented onset episodes exist in the replay substrate, so no general attack-stage accuracy can be claimed.",
+    "No stage label exists for this dataset, so no precision / recall / F1 over stages is computed or computable."
+  ],
+  "frozen_artifact_integrity": {
+    "n_artifacts": 16,
+    "all_unchanged": true,
+    "before": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    },
+    "after": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    }
+  }
+}

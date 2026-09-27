@@ -4,7 +4,7 @@ DEMO PCAP GENERATOR
 =============================================================
 
 Synthesizes 5 self-contained demo captures for the Streamlit
-"Live PCAP Ingestion" page: ~220s each, first half benign
+"📥 Data Input" page (Upload PCAP source): ~220s each, first half benign
 baseline traffic, second half a distinct MITRE-mappable attack
 pattern. Well past the 100s (10 x 10s windows) the pipeline
 needs for one sequence, so every file yields pure-benign,

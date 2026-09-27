@@ -1,0 +1,9 @@
+{
+  "n_windows": 611,
+  "n_packets": 54626,
+  "mean_absZ_OLD": 7.912599004168493,
+  "mean_absZ_NEW": 3.3661229010773233,
+  "n_feat_z_lt2_OLD": 7,
+  "n_feat_z_lt2_NEW": 10,
+  "NEW_matches_REF_count": 26
+}

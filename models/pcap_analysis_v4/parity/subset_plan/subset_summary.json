@@ -1,0 +1,91 @@
+[
+  {
+    "target": 25,
+    "hosts": 25,
+    "compressed_GB": 1.59,
+    "extracted_GB": 2.13,
+    "byte_share_pct": 3.9,
+    "subnet_hosts": {
+      "172.31.64": 4,
+      "172.31.65": 3,
+      "172.31.66": 3,
+      "172.31.67": 3,
+      "172.31.68": 1,
+      "172.31.69": 11
+    },
+    "probes": {
+      "capEC2AMAZ-O4EL3NG": 19,
+      "capWIN-J6GMIG1DQE5": 3,
+      "capDESKTOP-AN3U28N": 3
+    },
+    "victims_incl": 11
+  },
+  {
+    "target": 50,
+    "hosts": 50,
+    "compressed_GB": 5.32,
+    "extracted_GB": 6.51,
+    "byte_share_pct": 11.9,
+    "subnet_hosts": {
+      "172.31.64": 9,
+      "172.31.65": 9,
+      "172.31.66": 9,
+      "172.31.67": 9,
+      "172.31.68": 2,
+      "172.31.69": 12
+    },
+    "probes": {
+      "capEC2AMAZ-O4EL3NG": 29,
+      "capPC1": 9,
+      "capDESKTOP-AN3U28N": 9,
+      "capWIN-J6GMIG1DQE5": 3
+    },
+    "victims_incl": 11
+  },
+  {
+    "target": 100,
+    "hosts": 100,
+    "compressed_GB": 11.11,
+    "extracted_GB": 13.52,
+    "byte_share_pct": 24.7,
+    "subnet_hosts": {
+      "172.31.64": 21,
+      "172.31.65": 21,
+      "172.31.66": 20,
+      "172.31.67": 20,
+      "172.31.68": 4,
+      "172.31.69": 14
+    },
+    "probes": {
+      "capEC2AMAZ-O4EL3NG": 47,
+      "capDESKTOP-AN3U28N": 19,
+      "capPC1": 17,
+      "capWIN-J6GMIG1DQE5": 15,
+      "UCAP": 2
+    },
+    "victims_incl": 11
+  },
+  {
+    "target": 200,
+    "hosts": 200,
+    "compressed_GB": 19.24,
+    "extracted_GB": 23.72,
+    "byte_share_pct": 43.4,
+    "subnet_hosts": {
+      "172.31.64": 45,
+      "172.31.65": 44,
+      "172.31.66": 43,
+      "172.31.67": 43,
+      "172.31.68": 8,
+      "172.31.69": 17
+    },
+    "probes": {
+      "capEC2AMAZ-O4EL3NG": 109,
+      "capDESKTOP-AN3U28N": 35,
+      "capWIN-J6GMIG1DQE5": 34,
+      "capPC1": 20,
+      "UCAP": 2
+    },
+    "victims_incl": 11
+  }
+]

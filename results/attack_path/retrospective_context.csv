@@ -1,0 +1,18 @@
+onset_index,onset_timestamp,documented_region_at_onset,threat_layer_warned,threat_layer_lead_time_s,pre_onset_windows_examined,pre_onset_n_progression,pre_onset_n_ambiguous,pre_onset_n_none,pre_onset_stages,pre_onset_ttp_s,n_pre_onset_projections_reaching_onset,projections_reaching_onset,at_onset_status,at_onset_current_stage,at_onset_anchor_stage,at_onset_next_stage,at_onset_ttp_s,at_onset_reliability,post_onset_windows_examined,post_onset_n_progression,post_onset_n_ambiguous,post_onset_stages,post_onset_ttp_s,row_kind,documented_region,status,n_sequences,pct_of_region
+1039.0,2018-03-02 03:54:50,documented_attack_onset,1.0,50.0,5.0,0.0,5.0,0.0,Lateral Movement,,0.0,[],FORWARD_PROGRESSION_IDENTIFIED,No Alert,Reconnaissance,Initial Access,30,RELIABLE,5.0,2.0,3.0,Execution|Lateral Movement|Reconnaissance,10|10,documented_onset_episode,,,,
+2119.0,2018-03-02 10:13:20,documented_attack_onset,0.0,0.0,5.0,0.0,0.0,5.0,,,0.0,[],NO_FORWARD_PROGRESSION_IDENTIFIED,No Alert,,,,RELIABLE,5.0,0.0,0.0,,,documented_onset_episode,,,,
+2840.0,2018-03-02 12:13:30,documented_attack_onset,1.0,50.0,5.0,1.0,4.0,0.0,Initial Access|Lateral Movement|Reconnaissance,50,1.0,"[{""sequence_id"": 2837, ""stage"": ""Initial Access"", ""k"": 5, ""ttp_s"": 50, ""confidence"": ""MEDIUM""}]",PROGRESSION_AMBIGUOUS,No Alert,Lateral Movement,,,RELIABLE,5.0,0.0,2.0,Initial Access,,documented_onset_episode,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,attack_active,FORWARD_PROGRESSION_IDENTIFIED,156.0,15.726
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,attack_active,NO_FORWARD_PROGRESSION_IDENTIFIED,346.0,34.879
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,attack_active,PROGRESSION_AMBIGUOUS,490.0,49.395
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,attack_active_at_start_no_observable_onset,FORWARD_PROGRESSION_IDENTIFIED,135.0,13.031
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,attack_active_at_start_no_observable_onset,NO_FORWARD_PROGRESSION_IDENTIFIED,303.0,29.247
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,attack_active_at_start_no_observable_onset,PROGRESSION_AMBIGUOUS,598.0,57.722
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,benign,FORWARD_PROGRESSION_IDENTIFIED,15.0,1.397
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,benign,NO_FORWARD_PROGRESSION_IDENTIFIED,1026.0,95.531
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,benign,PROGRESSION_AMBIGUOUS,33.0,3.073
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,documented_attack_onset,FORWARD_PROGRESSION_IDENTIFIED,1.0,33.333
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,documented_attack_onset,NO_FORWARD_PROGRESSION_IDENTIFIED,1.0,33.333
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,documented_attack_onset,PROGRESSION_AMBIGUOUS,1.0,33.333
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,pre_attack,NO_FORWARD_PROGRESSION_IDENTIFIED,5.0,50.0
+,,,,,,,,,,,,,,,,,,,,,,,,region_status_crosstab,pre_attack,PROGRESSION_AMBIGUOUS,5.0,50.0

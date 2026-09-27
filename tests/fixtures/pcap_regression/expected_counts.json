@@ -1,0 +1,24 @@
+{
+  "demo_portscan": {
+    "n_packets": 10190,
+    "n_flows": 4924,
+    "n_windows": 22,
+    "X_shape": [
+      13,
+      10,
+      52
+    ],
+    "n_rejected_gap": 0
+  },
+  "demo_c2_beacon": {
+    "n_packets": 1390,
+    "n_flows": 194,
+    "n_windows": 22,
+    "X_shape": [
+      13,
+      10,
+      52
+    ],
+    "n_rejected_gap": 0
+  }
+}

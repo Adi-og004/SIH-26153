@@ -1,0 +1,317 @@
+{
+  "generated_utc": "2026-09-25T19:17:25Z",
+  "substrate": "results/v4_screening_mvp",
+  "git_head": "b14eabcc1ef12b34ec45b58c3bbfdf2114614efd",
+  "overall": "PASS",
+  "checks": {
+    "1_frozen_checkpoint": "PASS",
+    "2_frozen_scaler": "PASS",
+    "3_52d_feature_parity": "PASS",
+    "4_heldout_test_separation": "PASS",
+    "5_reproducible_predictions": "PASS",
+    "6_known_metrics_reproduced": "PASS",
+    "7_persistence_baseline_reproduced": "PASS",
+    "8_early_warning_evidence_reproduced": "PASS",
+    "9_explainability_available": "PASS",
+    "10_mitre_context_available": "PASS",
+    "11_real_data_replay_available": "PASS",
+    "12_no_synthetic_data": "PASS",
+    "13_no_test_leakage": "PASS",
+    "14_no_modification_of_frozen_artifacts": "PASS"
+  },
+  "check_details": [
+    {
+      "name": "Artifacts located",
+      "status": "PASS",
+      "detail": "21/21 present"
+    },
+    {
+      "name": "Checkpoint SHA256 == manifest",
+      "status": "PASS",
+      "detail": "76af8d8a9e022159\u2026"
+    },
+    {
+      "name": "Input scaler SHA256 == manifest",
+      "status": "PASS",
+      "detail": "e0ab9bebd2686995\u2026"
+    },
+    {
+      "name": "Target scaler SHA256 == manifest",
+      "status": "PASS",
+      "detail": "7155dec48f89d246\u2026"
+    },
+    {
+      "name": "Feature-order file SHA256 == manifest",
+      "status": "PASS",
+      "detail": "137b58333f1c7515\u2026"
+    },
+    {
+      "name": "X_test SHA256 == manifest",
+      "status": "PASS",
+      "detail": "2a03a11ca58c38bf\u2026"
+    },
+    {
+      "name": "Feature count == 52",
+      "status": "PASS",
+      "detail": "52 names"
+    },
+    {
+      "name": "State/output count == 26",
+      "status": "PASS",
+      "detail": "26 names"
+    },
+    {
+      "name": "Feature order == manifest order",
+      "status": "PASS",
+      "detail": "26 base + 26 rel_change, exact order"
+    },
+    {
+      "name": "Base 26 == state feature order",
+      "status": "PASS",
+      "detail": "decoder output order"
+    },
+    {
+      "name": "Frozen schema copy agrees",
+      "status": "PASS",
+      "detail": "docs/v4_feature_schema.json"
+    },
+    {
+      "name": "Input scaler n_features_in_ == 52",
+      "status": "PASS",
+      "detail": "52"
+    },
+    {
+      "name": "Target scaler n_features_in_ == 26",
+      "status": "PASS",
+      "detail": "26"
+    },
+    {
+      "name": "Scaler stats match frozen feature order",
+      "status": "PASS",
+      "detail": "n_samples_seen=8575, positional stats match"
+    },
+    {
+      "name": "Input scaler feature ORDER == contract",
+      "status": "PASS",
+      "detail": "52 names, exact order match (feature_names_in_)"
+    },
+    {
+      "name": "Target scaler feature ORDER == state contract",
+      "status": "PASS",
+      "detail": "26 names, exact order match (feature_names_in_)"
+    },
+    {
+      "name": "Checkpoint loads strict=True",
+      "status": "PASS",
+      "detail": "0 missing / 0 unexpected, 244,027 params"
+    },
+    {
+      "name": "Checkpoint dims == authoritative config",
+      "status": "PASS",
+      "detail": "input=52 seq=10 layers=2 latent=32 output=26 K=5"
+    },
+    {
+      "name": "Parameter count == manifest",
+      "status": "PASS",
+      "detail": "244,027"
+    },
+    {
+      "name": "Dropout disabled (eval mode)",
+      "status": "PASS",
+      "detail": "model.eval()"
+    },
+    {
+      "name": "Test input shape == (N,10,52)",
+      "status": "PASS",
+      "detail": "(3115, 10, 52)"
+    },
+    {
+      "name": "Test target shape == (N,5,26)",
+      "status": "PASS",
+      "detail": "(3115, 5, 26)"
+    },
+    {
+      "name": "Test label shape == (N,5)",
+      "status": "PASS",
+      "detail": "(3115, 5)"
+    },
+    {
+      "name": "Metadata aligned with X_test",
+      "status": "PASS",
+      "detail": "3115 == 3115"
+    },
+    {
+      "name": "No NaN/Inf in test arrays",
+      "status": "PASS",
+      "detail": "0 non-finite values"
+    },
+    {
+      "name": "Mar-2 absent from TRAIN metadata",
+      "status": "PASS",
+      "detail": "train days=['Thursday-15-02-2018', 'Wednesday-14-02-2018', 'Wednesday-28-02-2018']"
+    },
+    {
+      "name": "Mar-2 absent from VALIDATION metadata",
+      "status": "PASS",
+      "detail": "val days=['Thursday-15-02-2018', 'Wednesday-14-02-2018', 'Wednesday-28-02-2018']"
+    },
+    {
+      "name": "TEST is Mar-2 only",
+      "status": "PASS",
+      "detail": "test days=['Friday-02-03-2018']"
+    },
+    {
+      "name": "No timestamp overlap train/val/test",
+      "status": "PASS",
+      "detail": "train\u2229test=0, val\u2229test=0, train\u2229val=0"
+    },
+    {
+      "name": "Split counts == manifest",
+      "status": "PASS",
+      "detail": "train=8441 val=1473 test=3115"
+    },
+    {
+      "name": "Scaler fit count reproducible from source",
+      "status": "PASS",
+      "detail": "8575 == n_samples_seen_ == 8575 (Feb-14/15/28 heads only)"
+    },
+    {
+      "name": "Mar-2 excluded from scaler fitting",
+      "status": "PASS",
+      "detail": "Mar-2 has 3143 windows, none in the 8575 fitted"
+    },
+    {
+      "name": "Manifest declares test not fitted",
+      "status": "PASS",
+      "detail": "test_participates_in_any_fitting=false"
+    },
+    {
+      "name": "Test-day separation REPRODUCIBLE",
+      "status": "PASS",
+      "detail": "re-derived from metadata + source CSVs + scaler state"
+    },
+    {
+      "name": "screening_X.npy identical to X_test.npy",
+      "status": "PASS",
+      "detail": "2a03a11ca58c38bf\u2026"
+    },
+    {
+      "name": "feature_names.txt identical to contract",
+      "status": "PASS",
+      "detail": "52 names"
+    },
+    {
+      "name": "Every sequence internally 10s-contiguous",
+      "status": "PASS",
+      "detail": "3115/3115 sequences span 15 consecutive 10s windows"
+    },
+    {
+      "name": "Sequence rejections explained by raw gap",
+      "status": "PASS",
+      "detail": "14 rejected == 14 blocks straddling 1 documented capture gap(s)"
+    },
+    {
+      "name": "Inference bitwise-deterministic (rerun)",
+      "status": "PASS",
+      "detail": "max|\u0394| = 0.000e+00 over 2 runs on mps"
+    },
+    {
+      "name": "Cross-device agreement (CPU)",
+      "status": "PASS",
+      "detail": "max|\u0394| = 1.997e-06 vs CPU"
+    },
+    {
+      "name": "Frozen thresholds re-derived on validation",
+      "status": "PASS",
+      "detail": "point 0.45/0.54/0.65/0.72 \u00b7 trajMAX 0.51/0.68/0.69"
+    },
+    {
+      "name": "Replay dataset written",
+      "status": "PASS",
+      "detail": "3115 sequences \u00b7 real Mar-2 held-out substrate"
+    },
+    {
+      "name": "No non-finite probabilities",
+      "status": "PASS",
+      "detail": "0 non-finite"
+    },
+    {
+      "name": "Probabilities within [0,1]",
+      "status": "PASS",
+      "detail": "[0.0000, 0.7972]"
+    },
+    {
+      "name": "Rollout stable over K=5",
+      "status": "PASS",
+      "detail": "no divergence; mean latent norm 6.376\u21926.352"
+    },
+    {
+      "name": "Known V4 metrics reproduced",
+      "status": "PASS",
+      "detail": "point K=1/2/3/5 + trajectory MAX/MEAN K=2/3/5, exact to 1e-9"
+    },
+    {
+      "name": "Persistence baseline reproduced",
+      "status": "PASS",
+      "detail": "matches results/baseline_results.md to 4 dp"
+    },
+    {
+      "name": "Onsets match documented events",
+      "status": "PASS",
+      "detail": "3 onsets, timestamps identical to manifest"
+    },
+    {
+      "name": "Already-active episode excluded",
+      "status": "PASS",
+      "detail": "no pre-attack region exists before the first window"
+    },
+    {
+      "name": "Early-warning evidence reproduced",
+      "status": "PASS",
+      "detail": "2/3 warned, 50s mean lead, 5.55 FP/h"
+    },
+    {
+      "name": "Demo-safe event timeline written",
+      "status": "PASS",
+      "detail": "5 region types, separate file, no model coupling"
+    },
+    {
+      "name": "Explainability available",
+      "status": "PASS",
+      "detail": "IG (N,10,52), top-5 signed + direction, identity \u0394=1.2e-07"
+    },
+    {
+      "name": "MITRE context available",
+      "status": "PASS",
+      "detail": "TA0043 / T1018, 10 rules"
+    },
+    {
+      "name": "Frozen artifacts unmodified",
+      "status": "PASS",
+      "detail": "21 files re-hashed, 0 changed"
+    },
+    {
+      "name": "All writes confined to results/v4_screening_mvp",
+      "status": "PASS",
+      "detail": "7 output files"
+    },
+    {
+      "name": "No synthetic data",
+      "status": "PASS",
+      "detail": "substrate is byte-identical to the real Mar-2 CSE-CIC-IDS2018 X_test.npy"
+    },
+    {
+      "name": "No test leakage",
+      "status": "PASS",
+      "detail": "thresholds validation-only; Mar-2 in no fit; no split overlap"
+    }
+  ],
+  "discrepancies": [],
+  "notes": [
+    "src/verify_v4_baseline.py reports its git-revision check as FAIL because HEAD (b14eabcc1e) has moved past the freeze commit 53c22227d3. Every frozen artifact hash still matches the manifest exactly, and no frozen artifact is tracked in git (data/* and models/* are gitignored), so this is bookkeeping drift, not artifact drift.",
+    "The screening alert threshold is the frozen validation-selected K=5 trajectory-MAX threshold (0.69), not the checkpoint-embedded 0.05 training artefact used by src/app.py and src/shap_explainer.py.",
+    "K=4 has no reference number: the frozen reference evaluation covers horizons [1,2,3,5] only. prob_t4 is emitted in the replay set but has no published metric.",
+    "Early-warning onset sample is small (3 observable onsets, one held-out day).",
+    "The reference early-warning rule credits the first alerting window in [onset-5, onset), which for 2 of the 3 episodes still lies inside the preceding active attack. The reference 66.7% / 50.0 s figures are reproduced exactly; the strict pre-attack-only variant gives the same 66.7% coverage with 15 s mean lead. Both are recorded in screening_manifest.json under early_warning."
+  ]
+}

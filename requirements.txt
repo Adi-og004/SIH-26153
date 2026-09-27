@@ -4,4 +4,7 @@ scikit-learn
 torch
 matplotlib
 streamlit
+plotly
+captum
+scapy
 shap

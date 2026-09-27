@@ -1,0 +1,234 @@
+{
+  "layer_version": "v4-abstain-1.0",
+  "decisions": [
+    "ALERT",
+    "BENIGN",
+    "ABSTAIN"
+  ],
+  "decision_display": {
+    "ALERT": "ALERT",
+    "BENIGN": "BENIGN",
+    "ABSTAIN": "ABSTAIN / ANALYST REVIEW"
+  },
+  "decision_semantics": {
+    "ALERT": "The analyst receives a forecast-based warning: the frozen screening criterion is crossed within the next 50 s.",
+    "BENIGN": "Current evidence and forecast do not cross the frozen screening criterion.",
+    "ABSTAIN": "The model output should NOT be acted upon automatically. Analyst review is recommended because reliability or decision-margin evidence is insufficient for an automated call. This is the model DECLINING TO DECIDE \u2014 not the model reporting an absence of signal. The forecast probability is still shown and still available to the analyst."
+  },
+  "policy": {
+    "evaluation_order": [
+      "1. HARD SAFETY RULE: reliability == UNRELIABLE -> ABSTAIN (unconditional, no bypass)",
+      "2. VALIDATION-FROZEN GATE: |max_forecast - 0.69| < 0.05 -> ABSTAIN; or reliability == CAUTION -> ABSTAIN",
+      "3. OTHERWISE the frozen rule decides, unchanged: max_forecast > 0.69 -> ALERT else BENIGN"
+    ],
+    "alert_threshold": 0.69,
+    "alert_threshold_changed_by_this_layer": false,
+    "alert_threshold_source": "docs/v4_baseline_manifest.json -> threshold.per_horizon_trajectory_max['5'] (validation-selected, grid search np.arange(0.01, 0.99, 0.01), keep first threshold maximizing validation F1 (strict >))",
+    "margin_delta": 0.05,
+    "caution_abstains": true,
+    "deterministic": true,
+    "learned_components": 0,
+    "never_flips_alert_and_benign": true
+  },
+  "margin_selection_rule": {
+    "split_used": "VALIDATION ONLY (data/processed/multiday_benchmark_K5/X_val.npy + A_binary_multistep_val.npy)",
+    "grid": "numpy.arange(0.00, 0.31, 0.01), rounded to 2 decimals",
+    "rule": "among all grid deltas whose SELECTIVE F1 on the non-abstained validation windows is >= the no-abstain baseline validation F1, choose the LARGEST delta",
+    "why_this_rule": "A plain 'minimise selective error' rule is actively misleading on this data. The model's positive predictions cluster just above 0.69, so a wide margin band abstains on almost every ALERT and leaves a retained set that is ~82% negative. Error rate then falls simply because the retained classifier approaches 'always BENIGN' \u2014 an artefact of class imbalance, not a better decision. The F1 floor is therefore imposed as a CONSTRAINT: abstention must not be bought by discarding the operating point's recall. Error and FPR reduction are then a measured OUTCOME of the gate, never its optimisation target.",
+    "declared_before_test": true,
+    "test_labels_used_for_selection": false
+  },
+  "margin_evidence": {
+    "baseline_validation_f1": 0.5638766519823789,
+    "f1_floor_applied": 0.5638766519823789,
+    "grid": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.07,
+      0.08,
+      0.09,
+      0.1,
+      0.11,
+      0.12,
+      0.13,
+      0.14,
+      0.15,
+      0.16,
+      0.17,
+      0.18,
+      0.19,
+      0.2,
+      0.21,
+      0.22,
+      0.23,
+      0.24,
+      0.25,
+      0.26,
+      0.27,
+      0.28,
+      0.29,
+      0.3
+    ],
+    "passing_deltas": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05
+    ],
+    "selected_delta": 0.05,
+    "selection": "largest passing delta",
+    "reliability_error_rates_validation": {
+      "RELIABLE": {
+        "n": 1448,
+        "error_rate": 0.19889502762430938
+      },
+      "CAUTION": {
+        "n": 25,
+        "error_rate": 0.36
+      },
+      "UNRELIABLE": {
+        "n": 0,
+        "error_rate": null
+      }
+    },
+    "caution_evidence_is_weak": "only n=25 CAUTION windows exist on validation, so the CAUTION branch rests on a small sample and is reported as weak evidence, not as a measured effect",
+    "no_unreliable_on_validation": true,
+    "unreliable_branch_note": "the validation split contains ZERO UNRELIABLE windows, so the hard UNRELIABLE -> ABSTAIN rule could not be, and was not, tuned on data. It is a DECLARED SAFETY RULE inherited from Task 15, and its effect is only observable on test.",
+    "imbalance_artefact_diagnostic": [
+      {
+        "margin_delta": 0.05,
+        "baseline_alerts": 289,
+        "baseline_alerts_abstained": 54,
+        "pct_of_alerts_abstained": 18.69,
+        "retained_negative_share": 0.7320782041998551,
+        "selective_error_rate": 0.1875452570601014,
+        "selective_f1": 0.5676126878130217
+      },
+      {
+        "margin_delta": 0.08,
+        "baseline_alerts": 289,
+        "baseline_alerts_abstained": 204,
+        "pct_of_alerts_abstained": 70.59,
+        "retained_negative_share": 0.7806661251015434,
+        "selective_error_rate": 0.17384240454914704,
+        "selective_f1": 0.3954802259887006
+      },
+      {
+        "margin_delta": 0.1,
+        "baseline_alerts": 289,
+        "baseline_alerts_abstained": 273,
+        "pct_of_alerts_abstained": 94.46,
+        "retained_negative_share": 0.8206896551724138,
+        "selective_error_rate": 0.1793103448275862,
+        "selective_f1": 0.07142857142857142
+      }
+    ]
+  },
+  "reason_codes": {
+    "RELIABILITY_UNRELIABLE": {
+      "text": "Forecast reliability is UNRELIABLE \u2014 the Task-15 layer reports the forecast was produced outside the reference operating conditions (out-of-distribution input, rollout instability, or a hard numerical fail-safe).",
+      "group": "out-of-distribution input / forecast instability"
+    },
+    "RELIABILITY_CAUTION": {
+      "text": "Forecast reliability is CAUTION \u2014 one or more Task-15 indicators sit above the reference 99th percentile.",
+      "group": "unusual operating conditions"
+    },
+    "DECISION_MARGIN_NARROW": {
+      "text": "The forecast sits within the validation-derived abstention margin of the frozen 0.69 decision boundary, so the ALERT/BENIGN call would rest on a difference the validation split does not support resolving automatically.",
+      "group": "narrow decision margin"
+    }
+  },
+  "rejected_signals": {
+    "attack_path_status": "REJECTED as a gate input. Measured on validation, the Task-16 status partitions EXACTLY on the 0.69 alert boundary (NO_FORWARD_PROGRESSION <=> alert=0; AMBIGUOUS and FORWARD_PROGRESSION <=> alert=1, 1473/1473 windows). It is downstream of the same threshold, so it carries no information independent of the ALERT/BENIGN bit and cannot inform the gate. It IS shown in the UI as decision RATIONALE, which is a different role.",
+    "early_warning_status": "REJECTED as a gate input. Early-warning status is defined relative to a DOCUMENTED ATTACK ONSET, so it is label-derived and only knowable retrospectively. Using it at decision time would be leakage. It appears in the retrospective reporting only.",
+    "forecast_trajectory_consistency": "INVESTIGATED, not adopted. Trajectory spread across k=1..5 is already an input to the Task-15 rollout-stability indicators, so adding it here would double-count the same evidence under a second, independently-chosen threshold.",
+    "learned_confidence_mapping": "NOT ATTEMPTED. No calibration was fitted, so no output of this layer is described as calibrated."
+  },
+  "abstain_wording": {
+    "headline": "AUTOMATIC DECISION WITHHELD",
+    "subline": "Analyst review recommended.",
+    "must_not_be_presented_as": "model says nothing",
+    "means": "model declines to make an automated decision"
+  },
+  "provenance": {
+    "validation_split": "data/processed/multiday_benchmark_K5/X_val.npy",
+    "validation_labels": "A_binary_multistep_val.npy",
+    "n_validation": 1473,
+    "n_validation_positives": 392,
+    "test_labels_read_before_freeze": false,
+    "frozen_utc": "2026-09-26T11:24:32Z"
+  },
+  "validation_selective_risk_curve_summary": [
+    {
+      "margin_delta": 0.0,
+      "coverage": 0.9830278343516633,
+      "abstention_rate": 0.01697216564833673,
+      "selective_error_rate": 0.19889502762430938,
+      "selective_f1": 0.5701492537313433,
+      "passes_f1_floor": true
+    },
+    {
+      "margin_delta": 0.02,
+      "coverage": 0.9742023082145281,
+      "abstention_rate": 0.025797691785471828,
+      "selective_error_rate": 0.19930313588850174,
+      "selective_f1": 0.56797583081571,
+      "passes_f1_floor": true
+    },
+    {
+      "margin_delta": 0.05,
+      "coverage": 0.9375424304141209,
+      "abstention_rate": 0.062457569585879155,
+      "selective_error_rate": 0.1875452570601014,
+      "selective_f1": 0.5676126878130217,
+      "passes_f1_floor": true
+    },
+    {
+      "margin_delta": 0.08,
+      "coverage": 0.8357094365241005,
+      "abstention_rate": 0.16429056347589951,
+      "selective_error_rate": 0.17384240454914704,
+      "selective_f1": 0.3954802259887006,
+      "passes_f1_floor": false
+    },
+    {
+      "margin_delta": 0.1,
+      "coverage": 0.7875084860828242,
+      "abstention_rate": 0.21249151391717583,
+      "selective_error_rate": 0.1793103448275862,
+      "selective_f1": 0.07142857142857142,
+      "passes_f1_floor": false
+    },
+    {
+      "margin_delta": 0.15,
+      "coverage": 0.7718940936863544,
+      "abstention_rate": 0.22810590631364563,
+      "selective_error_rate": 0.1759014951627089,
+      "selective_f1": 0.0,
+      "passes_f1_floor": false
+    },
+    {
+      "margin_delta": 0.2,
+      "coverage": 0.7664630006788866,
+      "abstention_rate": 0.23353699932111338,
+      "selective_error_rate": 0.1771479185119575,
+      "selective_f1": 0.0,
+      "passes_f1_floor": false
+    },
+    {
+      "margin_delta": 0.3,
+      "coverage": 0.7630685675492193,
+      "abstention_rate": 0.23693143245078072,
+      "selective_error_rate": 0.17793594306049823,
+      "selective_f1": 0.0,
+      "passes_f1_floor": false
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "hosts": [
+    6,
+    8,
+    10,
+    12,
+    14,
+    17,
+    23,
+    26,
+    29,
+    30
+  ],
+  "range_utc": [
+    "2018-03-02 12:47:00",
+    "2018-03-02 15:10:00"
+  ],
+  "n_packets": 791549,
+  "n_flows": 44993,
+  "n_windows": 857,
+  "mean_absZ": 2.782900821805078,
+  "n_feat_absZ_lt2": 14,
+  "volume_features_still_OOD": [
+    "log_flow_count",
+    "log_total_packets",
+    "log_unique_dst_ports",
+    "unique_protocols",
+    "dst_port_entropy"
+  ]
+}

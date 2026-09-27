@@ -1,0 +1,14 @@
+{
+  "n_shared_windows": 611,
+  "range_utc": [
+    "2018-03-02 12:47:20",
+    "2018-03-02 14:39:50"
+  ],
+  "n_packets": 54626,
+  "n_flows_B": 3372,
+  "files": {
+    "pcap": "/Users/adityashah/Projects/cyber-world-model/data/raw/march02/bot_pcaps/pcap/capEC2AMAZ-O4EL3NG-172.31.69.30",
+    "training_feature_code": "archive/create_network_states_v2.py",
+    "v4_feature_code": "src/pcap_ingest_v4.py"
+  }
+}

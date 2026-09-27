@@ -1,0 +1,443 @@
+{
+  "generated_utc": "2026-09-26T07:40:35+00:00",
+  "task": "Task 14 - final browser QA and demo choreography",
+  "browser_availability": {
+    "available": true,
+    "tool": "Playwright 1.62.0 (Python) + bundled Chromium",
+    "env": "src/venv",
+    "headless": true,
+    "note": "Pages were driven and screenshotted in a real browser engine and the screenshots were inspected visually."
+  },
+  "viewport_resolution": "1920x1080",
+  "device_scale_factor": 1,
+  "server": {
+    "command": "streamlit run src/app.py --server.address=127.0.0.1 --browser.gatherUsageStats=false",
+    "root_http_status": 200,
+    "stcore_health": "ok",
+    "startup_exceptions": 0
+  },
+  "pages_inspected": [
+    {
+      "index": 0,
+      "page": "\ud83c\udfaf Live Forecast",
+      "charts": 2,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 0
+    },
+    {
+      "index": 1,
+      "page": "\u23f1\ufe0f Early Warning",
+      "charts": 0,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 0
+    },
+    {
+      "index": 2,
+      "page": "\ud83e\udded Event Timeline",
+      "charts": 1,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 0
+    },
+    {
+      "index": 3,
+      "page": "\ud83d\udd2e Trajectory Rollout",
+      "charts": 3,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 1
+    },
+    {
+      "index": 4,
+      "page": "\ud83d\udcca Window Inspector",
+      "charts": 4,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 0
+    },
+    {
+      "index": 5,
+      "page": "\ud83d\udd0d Feature Attribution",
+      "charts": 3,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 1
+    },
+    {
+      "index": 6,
+      "page": "\ud83d\uddfa\ufe0f MITRE ATT&CK Timeline",
+      "charts": 0,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 2
+    },
+    {
+      "index": 7,
+      "page": "\ud83d\udce1 Live PCAP Ingestion",
+      "charts": 0,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 1
+    },
+    {
+      "index": 8,
+      "page": "\ud83d\udcd0 Methodology & Limits",
+      "charts": 0,
+      "clipped_text": 0,
+      "offscreen_elements": 0,
+      "overlapping_cards": 0,
+      "tiny_text": 0,
+      "broken_images": 0,
+      "horizontal_overflow": false,
+      "ui_error_boxes": 3
+    }
+  ],
+  "pages_inspected_count": 9,
+  "console_errors": 0,
+  "external_requests": [],
+  "visual_defects": [
+    {
+      "id": "VD-1",
+      "severity": "major",
+      "pages": [
+        "Live Forecast",
+        "Event Timeline",
+        "Window Inspector"
+      ],
+      "title": "Plotly chart title drawn on top of the horizontal legend",
+      "detail": "style_fig() set margin t=36 while the horizontal legend sits at y=1.02, so the chart title and the legend were painted into the same band. On Live Forecast this obscured 'Sequence #2341 - observed window t = 2018-03-02 10:50:10' - the observed window timestamp, a key demo value.",
+      "fix": "src/app.py style_fig(): reserve t=68 and pin the title to the top of the container when a titled chart also shows a legend. Layout only.",
+      "status": "FIXED",
+      "verified_by": "re-screenshot at 1920x1080"
+    },
+    {
+      "id": "VD-2",
+      "severity": "minor",
+      "pages": [
+        "Early Warning",
+        "Trajectory Rollout",
+        "MITRE ATT&CK"
+      ],
+      "title": "Stray vertical bar rendered after three bold headings",
+      "detail": "'<span class=\"note\"><br>' put the <br> INSIDE the span, so the inline span's border-left painted a 2px bar at the end of the heading line - reading as a typo (e.g. 'Read this number carefully.|'). Not a caret: confirmed not present in the DOM, no ::after, and identical under Playwright caret=hide vs caret=initial.",
+      "fix": "src/app.py: moved <br> outside the span at 3 sites, matching the 13 other .note usages in the same file that already render correctly. Markup only, no CSS change.",
+      "status": "FIXED",
+      "verified_by": "re-screenshot at 1920x1080"
+    },
+    {
+      "id": "VD-3",
+      "severity": "minor",
+      "pages": [
+        "Live Forecast",
+        "Event Timeline"
+      ],
+      "title": "'Frozen alert threshold 0.69' label unreadable where the forecast line crosses it",
+      "detail": "On the whole-day Event Timeline view the dense orange forecast curve ran straight through the threshold annotation text.",
+      "fix": "src/app.py: annotation_bgcolor='rgba(19,23,34,0.82)' on both threshold hlines.",
+      "status": "FIXED",
+      "verified_by": "re-screenshot at 1920x1080"
+    },
+    {
+      "id": "VD-4",
+      "severity": "cosmetic",
+      "pages": [
+        "Methodology & Limits"
+      ],
+      "title": "'What is frozen' table occupies only the left half of the content area",
+      "detail": "Streamlit default table sizing; fully readable, no truncation.",
+      "fix": "none - not fixed, does not impede understanding and changing it would be redesign",
+      "status": "ACCEPTED",
+      "verified_by": "visual inspection"
+    }
+  ],
+  "fixes_applied": [
+    "VD-1",
+    "VD-2",
+    "VD-3"
+  ],
+  "files_modified": [
+    "src/app.py"
+  ],
+  "model_data_threshold_changes": "none",
+  "default_demo_state": {
+    "sequence_id": 2341,
+    "observed_window": "2018-03-02 10:50:10",
+    "target_t1": "2018-03-02 10:50:20",
+    "nowcast_t0_displayed": 0.756,
+    "max_forecast_displayed": 0.797,
+    "max_forecast_frozen_csv": 0.797192,
+    "peak_horizon": "t+2 (+20s)",
+    "frozen_threshold": 0.69,
+    "alert_status": "ALERT",
+    "x_tick_labels": [
+      "t-90",
+      "t-60",
+      "t-30",
+      "t",
+      "+10s",
+      "+20s",
+      "+30s",
+      "+40s",
+      "+50s"
+    ],
+    "horizons_10_to_50s_present": true,
+    "threshold_visible_on_page": true,
+    "wording": {
+      "says_model_forecast": true,
+      "says_frozen_threshold": true,
+      "no_calibrated_confidence_claim": true,
+      "no_guarantee_or_will_occur_claim": true,
+      "evidence": "every occurrence of 'guarantee', 'will occur' and 'calibrated' on every page appears inside an explicit negation, e.g. 'not a guarantee that an attack will occur', 'Probabilities are not calibrated'"
+    }
+  },
+  "early_warning_demo_state": {
+    "control_used": "Jump to an onset episode -> Go to onset",
+    "manual_label_selection_used": false,
+    "deterministic_sequence_selected": 1039,
+    "onset_timestamp": "2018-03-02 03:54:50",
+    "ui_communicates": {
+      "onset_coverage_66_7": true,
+      "mean_strict_lead_15s": true,
+      "evaluable_onsets_3": true
+    },
+    "50s_reference_is_not_headline": true,
+    "explains_missing_per_sequence_lead": true,
+    "small_sample_disclosed": true
+  },
+  "xai_state": {
+    "ran": true,
+    "sequence": 1039,
+    "method": "Integrated Gradients (gausslegendre), 1024 steps",
+    "attribution_tensor": "[1, 10, 52]",
+    "explained_probability": 0.7794,
+    "displayed_probability": 0.7794,
+    "frozen_csv_prob_t5": 0.779403,
+    "completeness_error": 0.00379,
+    "top_features": [
+      {
+        "feature": "rst_rate",
+        "attribution": 0.373033,
+        "direction": "toward higher predicted threat"
+      },
+      {
+        "feature": "log_unique_dst_ports",
+        "attribution": 0.209365,
+        "direction": "toward higher predicted threat"
+      },
+      {
+        "feature": "dst_port_entropy",
+        "attribution": 0.154673,
+        "direction": "toward higher predicted threat"
+      },
+      {
+        "feature": "mean_down_up_ratio",
+        "attribution": -0.124125,
+        "direction": "toward lower predicted threat"
+      },
+      {
+        "feature": "log_mean_fwd_iat",
+        "attribution": 0.113362,
+        "direction": "toward higher predicted threat"
+      }
+    ],
+    "non_causal_wording": true
+  },
+  "mitre_state": {
+    "ran": true,
+    "sequence": 1039,
+    "tactic": "Lateral Movement",
+    "tactic_id": "TA0008",
+    "technique": "Remote Services",
+    "technique_id": "T1021",
+    "confidence": "HIGH",
+    "phase": "mid",
+    "analyst_explanation_present": true,
+    "rule_library_size": 10,
+    "says_rule_based_interpretation": true,
+    "explicitly_not_model_output": true,
+    "never_trained_on_attack_labels": true,
+    "default_sequence_2341_mapping": {
+      "tactic": "Reconnaissance",
+      "tactic_id": "TA0043",
+      "technique": "Remote System Discovery",
+      "technique_id": "T1018",
+      "confidence": "HIGH",
+      "phase": "late"
+    }
+  },
+  "trajectory_state": {
+    "chain_rendered": "Z_t -> Z_t+1 -> Z_t+2 -> Z_t+3 -> Z_t+4 -> Z_t+5",
+    "gated_residual_transition_arrows": 8,
+    "tied_to_frozen_predictions": true,
+    "max_abs_delta_displayed_vs_frozen_csv": 3.85e-05,
+    "delta_explanation": "display rounding to 4 decimals; underlying values are the frozen predictions",
+    "verified_sequences": {
+      "2341": {
+        "displayed": [
+          0.7561,
+          0.7957,
+          0.7972,
+          0.7774,
+          0.7676,
+          0.7785
+        ],
+        "frozen": [
+          0.756062,
+          0.795738,
+          0.797192,
+          0.777403,
+          0.767614,
+          0.778526
+        ]
+      },
+      "1039": {
+        "displayed": [
+          0.644,
+          0.6876,
+          0.7259,
+          0.7582,
+          0.7759,
+          0.7794
+        ],
+        "frozen": [
+          0.643963,
+          0.687602,
+          0.725924,
+          0.758184,
+          0.775903,
+          0.779403
+        ]
+      }
+    }
+  },
+  "window_inspector_state": {
+    "combines": {
+      "ten_window_history": true,
+      "current_state": true,
+      "forecast": true,
+      "attribution": true,
+      "mitre_interpretation": true
+    },
+    "page_height_px": 3819,
+    "viewport_screens": 3.54,
+    "readable_without_excessive_scrolling": "acceptable - 3.5 screens for a deliberate deep-dive page"
+  },
+  "event_timeline_state": {
+    "annotations_visually_distinct_from_forecast": true,
+    "distinction": "documented event regions are shaded background bands; the forecast is a line series",
+    "labelled_context_only": true,
+    "states_not_model_input": true,
+    "never_enter_input_tensor": true,
+    "never_used_for_thresholding": true,
+    "never_generate_warning": true
+  },
+  "capture_gap_result": {
+    "documented_gap_in_frozen_substrate": "2018-03-02 05:29:30 -> 2018-03-02 08:48:10 (3.31 h)",
+    "gap_requested_in_task_brief": "05:30:10 -> 08:46:30",
+    "discrepancy_note": "The brief's timestamps do not match the frozen substrate. The values above are what screening_manifest.json and the dashboard actually carry, under both the observed-t and target-t+1 conventions. Nothing was changed to match the brief.",
+    "last_sequence_before_gap": 1607,
+    "first_sequence_after_gap": 1608,
+    "data_gap_marker_shown": true,
+    "history_line_breaks": true,
+    "history_break_evidence": "at #1608 no observed-history series is drawn to the left of t - the pre-gap segment is not bridged",
+    "no_interpolation": true,
+    "no_interpolation_evidence": "on-screen: 'Nothing is interpolated and no future windows are synthesised'",
+    "autoplay_stops_at_gap": true,
+    "autoplay_evidence": "autoplay toggled ON at #1607 and the sequence did not advance",
+    "replay_resumes_only_after_valid_segment": true,
+    "segment_readouts": {
+      "1607": "segment 0-1607",
+      "1608": "segment 1608-3114"
+    }
+  },
+  "offline_result": {
+    "external_network_requests_during_full_9_page_sweep": [],
+    "external_request_count": 0,
+    "console_errors_or_warnings": 0,
+    "broken_images": 0,
+    "all_assets_same_origin": true,
+    "bind": "127.0.0.1"
+  },
+  "frozen_artifact_integrity": {
+    "artifacts_hashed": 16,
+    "hashed_before_and_after": true,
+    "changed": [],
+    "all_unchanged": true,
+    "hashes": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    }
+  },
+  "deliverables": [
+    "results/v4_screening_mvp/FINAL_DEMO_FLOW.md",
+    "results/v4_screening_mvp/JUDGE_LANGUAGE.md",
+    "results/v4_screening_mvp/visual_qa.json"
+  ],
+  "checks": {
+    "browser_available": true,
+    "all_9_pages_inspected": true,
+    "no_clipped_text": true,
+    "no_overlapping_cards": true,
+    "no_offscreen_content": true,
+    "no_broken_images": true,
+    "no_console_errors": true,
+    "no_external_network": true,
+    "default_state_correct": true,
+    "early_warning_deterministic": true,
+    "xai_matches_displayed": true,
+    "mitre_complete_and_labelled_rule_based": true,
+    "trajectory_tied_to_frozen": true,
+    "gap_handled_correctly": true,
+    "all_major_defects_fixed": true,
+    "frozen_artifacts_unchanged": true
+  },
+  "overall": "PASS"
+}

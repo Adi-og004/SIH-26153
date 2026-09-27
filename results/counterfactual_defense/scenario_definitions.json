@@ -1,0 +1,338 @@
+{
+  "layer_version": "v4-counterfactual-1.0",
+  "module": "src/v4_counterfactual.py",
+  "task": "Task 19 / S5 \u2014 multi-intervention counterfactual defense simulator",
+  "built_on": {
+    "src/v4_defense_simulator.py": "v4-defense-sim-1.0",
+    "src/v4_reliability.py": "v4-reliability-1.0",
+    "src/attack_path_predictor.py": "attack-path-1.0"
+  },
+  "extends_not_duplicates": "every state transformation, intervention definition, strength constant and the counterfactual-state builder are imported from src/v4_defense_simulator.py and used unchanged. This module adds the scenario set, the multi-scenario comparison, the categorical progression taxonomy and the consistency checks.",
+  "headline": "COUNTERFACTUAL MODEL SIMULATION",
+  "disclaimers": {
+    "causal": "These trajectories are model-based what-if projections. They do not estimate causal real-world defense effectiveness because the World Model was not trained on intervention/outcome data.",
+    "direction": "Different scenarios may produce higher or lower projected threat probabilities. This reflects the frozen model's response to the simulated state perturbation and should not be interpreted as proof that a defense would help or harm in reality."
+  },
+  "wording": {
+    "delta_is_called": "projected change under scenario",
+    "delta_is_never_called": "risk reduction caused by scenario",
+    "progression_delta_is_called": "model-projected progression change",
+    "progression_delta_is_never_called": "attack delayed by N seconds",
+    "abstain_coexistence": "Counterfactual exploration is available for analyst review, but automated action is withheld.",
+    "unreliable_banner": "COUNTERFACTUAL FORECAST UNRELIABLE"
+  },
+  "analyst_workflow": [
+    "OBSERVE",
+    "FORECAST",
+    "EXPLORE COUNTERFACTUAL",
+    "COMPARE",
+    "ANALYST DECIDES"
+  ],
+  "declared_strengths": [
+    0.1,
+    0.25,
+    0.5
+  ],
+  "strengths_declared_before_evaluation": true,
+  "strengths_source": "src/v4_defense_simulator.py SWEEP_STRENGTHS, asserted identical at import",
+  "n_scenarios": 7,
+  "scenarios": [
+    {
+      "scenario_id": "NO_ACTION",
+      "scenario_name": "No action",
+      "intervention_type": "NONE",
+      "strength": 0.0,
+      "description": "The observed window is rolled forward through the frozen V4 model with no perturbation of any kind. This is the frozen forecast every other page of the console shows, and it is the reference every scenario delta is measured against.",
+      "is_no_action": true
+    },
+    {
+      "scenario_id": "RATE_LIMIT@0.10",
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 10% simulated strength",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.1,
+      "description": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.10. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RATE_LIMIT@0.25",
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 25% simulated strength",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.25,
+      "description": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.25. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RATE_LIMIT@0.50",
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 50% simulated strength",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.5,
+      "description": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.50. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RESTRICT_EGRESS@0.10",
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 10% simulated strength",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.1,
+      "description": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.10. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RESTRICT_EGRESS@0.25",
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 25% simulated strength",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.25,
+      "description": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.25. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RESTRICT_EGRESS@0.50",
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 50% simulated strength",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.5,
+      "description": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.50. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    }
+  ],
+  "reproducibility_key": [
+    "sequence_id",
+    "intervention_type",
+    "strength"
+  ],
+  "baseline_definition": "NO_ACTION rolls the OBSERVED tensor forward verbatim. It does NOT take the zero-strength round trip, so 'zero strength == NO_ACTION' is a real test of that round trip rather than a tautology.",
+  "identical_initial_conditions": {
+    "timesteps_shared": "0..8",
+    "verified_per_sequence": true,
+    "only_final_timestep_perturbed": true,
+    "relative_change_row_0": "preserved from the observed tensor, never regenerated \u2014 these are sliding windows, so row 0 references the window before the sequence begins"
+  },
+  "third_intervention_audit": {
+    "candidate": "PROTOCOL_ALLOWLIST",
+    "concept": "block a fraction of the distinct protocols observed in the current window, as a service allow-list would",
+    "would_modify": [
+      "unique_protocols",
+      "protocol_entropy",
+      "+ the coupled volume chain"
+    ],
+    "mathematically_definable": true,
+    "admitted": false,
+    "reason": "unique_protocols has support {1, 2, 3} on the frozen substrate, so a fractional 'fraction of protocols blocked' does not correspond to a whole protocol at any declared strength, and the entropy rescaling saturates against the log2(max(n,2)) floor at strength 0.50. The parameter would not mean what its name says and the scenario would be a near-degenerate relabelling of RATE_LIMIT.",
+    "rejected_alternatives": {
+      "flag-rate interventions (syn/ack/rst/fin/psh/urg)": "per-flow statistics averaged over flows; S4 established that no signed change follows from the feature definition",
+      "timing interventions (log_mean_fwd_iat, log_mean_flow_duration)": "a rate limit plausibly raises inter-arrival time, but neither sign nor magnitude follows from the contract",
+      "direction-ratio interventions": "ratios invariant to uniform volume scaling; fwd+bwd packet ratios are additionally pinned to 1.0 by a measured identity",
+      "packet-shape interventions (mean_pkt_len, std_pkt_len)": "means of per-flow means; unchanged in expectation under uniform volume reduction"
+    },
+    "consequence": "this layer ships two interventions and one no-action baseline, at three predeclared strengths \u2014 seven scenarios in total",
+    "measured_on_substrate": {
+      "unique_protocols_support": {
+        "1": 130,
+        "2": 3945,
+        "3": 27075
+      },
+      "unique_protocols_n_distinct_values": 3,
+      "unique_protocols_modal_share_pct": 86.91813804173354,
+      "unique_protocols_min": 0.9999999506326922,
+      "unique_protocols_max": 3.0000000027748057,
+      "protocol_entropy_median": 0.5561950954485455,
+      "protocol_entropy_max": 1.3198083996520682,
+      "unique_dst_ports_median": 40.99999953235783,
+      "unique_dst_ports_min": 12.00000028555204,
+      "unique_dst_ports_max": 451.0000077688407,
+      "n_observed_windows": 31150,
+      "verdict": "DECLINED \u2014 a 'fraction of protocols blocked' is not representable as a whole protocol on a support of size 3, whereas the destination-port axis (median 41 ports) supports a fractional reduction. See third_intervention_audit."
+    }
+  },
+  "progression_change_taxonomy": {
+    "categories": [
+      "progression_disappears",
+      "progression_appears",
+      "progression_shifts_later",
+      "progression_shifts_earlier",
+      "same_progression",
+      "progression_target_stage_changed",
+      "ambiguous",
+      "no_progression_identified"
+    ],
+    "display": {
+      "progression_disappears": "Projected progression disappears under this scenario",
+      "progression_appears": "Projected progression appears under this scenario",
+      "progression_shifts_later": "Projected progression shifts later under this scenario",
+      "progression_shifts_earlier": "Projected progression shifts earlier under this scenario",
+      "same_progression": "Same projected progression",
+      "progression_target_stage_changed": "Same projected timing, different projected next stage",
+      "ambiguous": "Ambiguous \u2014 analyst review",
+      "no_progression_identified": "No progression identified in either scenario"
+    },
+    "notes": {
+      "categories_from_task": [
+        "progression_disappears",
+        "progression_appears",
+        "progression_shifts_later",
+        "progression_shifts_earlier",
+        "same_progression",
+        "ambiguous",
+        "no_progression_identified"
+      ],
+      "extension": {
+        "progression_target_stage_changed": "added because stage transitions are compared categorically: a hypothesis reaching a DIFFERENT next stage at the same horizon is not the same progression"
+      },
+      "stage_comparison": "categorical string equality on the ATT&CK stage name \u2014 never a numeric difference of stage indices",
+      "precedence": "when BOTH the horizon and the stage move, the TIMING category wins (shifts_later / shifts_earlier) and the stage move is disclosed separately in next_stage_comparison. No row hides a stage change: every row carries both fields."
+    }
+  },
+  "stability_definition": {
+    "source": "src/v4_reliability.py indicators, reused unchanged",
+    "forecast_stability": [
+      "prob_max_abs_step",
+      "prob_range"
+    ],
+    "rollout_stability": [
+      "latent_norm_max",
+      "latent_norm_change",
+      "step_delta_max",
+      "displacement"
+    ],
+    "new_metric_invented": false
+  },
+  "demonstration_case_rules": {
+    "A_elevated_threat": "highest NO_ACTION max-forecast probability among the swept sequences; ties broken by lowest sequence_id",
+    "B_forward_progression": "lowest sequence_id among swept sequences whose NO_ACTION Task-16 status is FORWARD_PROGRESSION_IDENTIFIED",
+    "C_scenarios_diverge": "largest spread across scenarios of the projected max-forecast probability, max(scenario) - min(scenario). Direction-agnostic: it measures how much the scenarios DISAGREE, not which way any of them moves",
+    "D_unreliable_or_caution": "lowest sequence_id among swept sequences whose NO_ACTION Task-15 status is UNRELIABLE; if none, the lowest whose status is CAUTION",
+    "E_progression_change": "lowest sequence_id among swept sequences where at least one scenario's categorical progression-change outcome is not 'same_progression' and not 'no_progression_identified'",
+    "F_progression_timing_shift": "lowest sequence_id among swept sequences where at least one scenario shifts the estimated time-to-progression. Direction-agnostic: 'shifts later' and 'shifts earlier' are both admitted, so the rule cannot prefer the flattering direction"
+  },
+  "guarantees": {
+    "retrains_v4": false,
+    "modifies_v4_checkpoint": false,
+    "refits_scalers": false,
+    "modifies_thresholds": false,
+    "modifies_screening_predictions": false,
+    "changes_feature_definitions": false,
+    "modifies_task15_logic": false,
+    "modifies_task16_logic": false,
+    "modifies_task17_logic": false,
+    "modifies_s4_intervention_mathematics": false,
+    "overwrites_s4_artifacts": false,
+    "executes_network_actions": false,
+    "claims_causal_efficacy": false,
+    "uses_labels_to_tune_interventions": false,
+    "selects_strength_after_inspecting_outcomes": false,
+    "overrides_abstention": false,
+    "ranks_or_scores_scenarios": false,
+    "deterministic": true
+  },
+  "limitations": [
+    "No output of this layer is a causal effect. The model was never trained on interventions, so its response to a state perturbation is a property of the model, not of a defense.",
+    "Only the FINAL observed timestep is perturbed, because earlier timesteps are observed history. The V4 encoder is an LSTM over ten windows, so projected changes are small by construction.",
+    "Projected changes are heterogeneous in sign across sequences. A lower projection is not mitigation and a higher projection is not evidence that defending would be harmful.",
+    "Interventions modify only features whose transformation follows from the frozen contract; plausible real consequences the contract cannot determine are deliberately not modelled, so every perturbation is incomplete by design.",
+    "RESTRICT_EGRESS assumes blocked destinations carry a proportional share of window volume \u2014 a first-order assumption, not a measured property.",
+    "Only two interventions are defensible on the frozen 26-feature contract; see third_intervention_audit.",
+    "The scenario matrix is descriptive. It carries no overall score and no ranking, because the model cannot support one."
+  ],
+  "inherited_intervention_definitions": {
+    "RATE_LIMIT": {
+      "key": "RATE_LIMIT",
+      "display": "Defend now \u2014 uniform traffic rate limit",
+      "concept": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports.",
+      "parameter": "simulated intervention strength (fraction of volume withheld), in [0, 1]",
+      "affected_features": [
+        "flow_count",
+        "log_flow_count",
+        "log_total_packets",
+        "window_packet_rate",
+        "log_total_bytes",
+        "window_byte_rate"
+      ],
+      "transformation": [
+        "keep = 1 - strength",
+        "flow_count      <- flow_count * keep",
+        "log_flow_count  <- log1p(flow_count_new)",
+        "total_packets   <- expm1(log_total_packets) * keep",
+        "log_total_packets   <- log1p(total_packets_new)",
+        "window_packet_rate  <- total_packets_new / 10",
+        "total_bytes     <- expm1(log_total_bytes) * keep",
+        "log_total_bytes     <- log1p(total_bytes_new)",
+        "window_byte_rate    <- total_bytes_new / 10"
+      ],
+      "justification": "flow_count, total_packets and total_bytes are the three underlying volume quantities in the frozen contract, and the log / rate features are exact derivations of them (identities verified to 1e-7 on the frozen substrate). A rate limit reduces the underlying quantities, so every derived feature must move with them. Nothing outside that derivation chain is touched.",
+      "unchanged": {
+        "syn_rate": "per-flow flag presence / packets, averaged over flows. Dropping or throttling whole flows leaves the per-flow statistic's distribution unchanged in expectation; no signed change is derivable from the feature definition.",
+        "ack_rate": "as syn_rate",
+        "rst_rate": "as syn_rate. (A real block would likely RAISE rst_rate, but neither the magnitude nor the flow-accounting consequence is derivable from the contract, so it is not invented.)",
+        "fin_rate": "as syn_rate",
+        "psh_rate": "as syn_rate",
+        "urg_rate": "as syn_rate",
+        "mean_pkt_len": "mean over flows of each flow's mean packet length. A uniform volume reduction does not change the mean-of-per-flow-means in expectation.",
+        "std_pkt_len": "mean over flows of each flow's packet-length std; same argument as mean_pkt_len.",
+        "log_mean_flow_duration": "a rate limit or block plausibly changes flow lifetimes, but neither the sign nor the magnitude follows from the feature definition. Left unchanged rather than guessed.",
+        "log_mean_fwd_iat": "as log_mean_flow_duration (a rate limit would plausibly INCREASE inter-arrival time, but by an amount the contract does not determine).",
+        "log_mean_bwd_iat": "as log_mean_fwd_iat",
+        "fwd_packet_ratio": "a ratio, invariant to uniform volume scaling. Also constrained by the measured identity fwd_packet_ratio + bwd_packet_ratio == 1.0 (to float32 precision), which leaving both unchanged preserves.",
+        "bwd_packet_ratio": "as fwd_packet_ratio",
+        "fwd_byte_ratio": "a ratio, invariant to uniform volume scaling. NOTE the byte ratios do NOT sum to 1 (measured mean 0.663), so no coupled redistribution can be defined for them and none is attempted.",
+        "bwd_byte_ratio": "as fwd_byte_ratio",
+        "mean_down_up_ratio": "an integer-valued per-flow ratio, averaged. Not derivably changed by uniform volume scaling.",
+        "unique_protocols": "a count of distinct protocols. Throttling volume does not remove a protocol from the window.",
+        "protocol_entropy": "Shannon entropy over protocol counts; unchanged for the same reason as unique_protocols.",
+        "log_unique_dst_ports": "throttling volume does not remove a destination port from the window",
+        "dst_port_entropy": "as log_unique_dst_ports"
+      }
+    },
+    "RESTRICT_EGRESS": {
+      "key": "RESTRICT_EGRESS",
+      "display": "Block C2 / restrict egress \u2014 destination allow-listing",
+      "concept": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would.",
+      "parameter": "simulated intervention strength (fraction of distinct destination ports blocked), in [0, 1]",
+      "affected_features": [
+        "log_unique_dst_ports",
+        "dst_port_entropy",
+        "flow_count",
+        "log_flow_count",
+        "log_total_packets",
+        "window_packet_rate",
+        "log_total_bytes",
+        "window_byte_rate"
+      ],
+      "transformation": [
+        "keep = 1 - strength",
+        "n_old = expm1(log_unique_dst_ports)",
+        "n_new = n_old * keep",
+        "log_unique_dst_ports <- log1p(n_new)",
+        "dst_port_entropy <- dst_port_entropy * min(log2(max(n_new,2)) / log2(max(n_old,2)), 1)",
+        "then the same coupled volume reduction as RATE_LIMIT"
+      ],
+      "justification": "Two consequences follow from the contract's own definitions. log_unique_dst_ports is log1p(nunique of Dst Port), so blocking a fraction of destinations reduces the count directly. dst_port_entropy is Shannon entropy over the destination-port counts, which is bounded above by log2 of the support size; rescaling by the ratio of ceilings shrinks entropy with its bound and preserves the measured invariant entropy <= log2(nunique) (0 violations on the frozen substrate). Volume falls too, on the first-order assumption that blocked destinations carry a proportional share of the window's flows. Direction ratios are NOT shifted because 'forward' is the direction of a flow's first packet, so egress blocking removes whole flows rather than re-balancing surviving ones.",
+      "unchanged": {
+        "syn_rate": "per-flow flag presence / packets, averaged over flows. Dropping or throttling whole flows leaves the per-flow statistic's distribution unchanged in expectation; no signed change is derivable from the feature definition.",
+        "ack_rate": "as syn_rate",
+        "rst_rate": "as syn_rate. (A real block would likely RAISE rst_rate, but neither the magnitude nor the flow-accounting consequence is derivable from the contract, so it is not invented.)",
+        "fin_rate": "as syn_rate",
+        "psh_rate": "as syn_rate",
+        "urg_rate": "as syn_rate",
+        "mean_pkt_len": "mean over flows of each flow's mean packet length. A uniform volume reduction does not change the mean-of-per-flow-means in expectation.",
+        "std_pkt_len": "mean over flows of each flow's packet-length std; same argument as mean_pkt_len.",
+        "log_mean_flow_duration": "a rate limit or block plausibly changes flow lifetimes, but neither the sign nor the magnitude follows from the feature definition. Left unchanged rather than guessed.",
+        "log_mean_fwd_iat": "as log_mean_flow_duration (a rate limit would plausibly INCREASE inter-arrival time, but by an amount the contract does not determine).",
+        "log_mean_bwd_iat": "as log_mean_fwd_iat",
+        "fwd_packet_ratio": "a ratio, invariant to uniform volume scaling. Also constrained by the measured identity fwd_packet_ratio + bwd_packet_ratio == 1.0 (to float32 precision), which leaving both unchanged preserves.",
+        "bwd_packet_ratio": "as fwd_packet_ratio",
+        "fwd_byte_ratio": "a ratio, invariant to uniform volume scaling. NOTE the byte ratios do NOT sum to 1 (measured mean 0.663), so no coupled redistribution can be defined for them and none is attempted.",
+        "bwd_byte_ratio": "as fwd_byte_ratio",
+        "mean_down_up_ratio": "an integer-valued per-flow ratio, averaged. Not derivably changed by uniform volume scaling.",
+        "unique_protocols": "a count of distinct protocols. Throttling volume does not remove a protocol from the window.",
+        "protocol_entropy": "Shannon entropy over protocol counts; unchanged for the same reason as unique_protocols."
+      }
+    }
+  },
+  "inherited_scope": {
+    "timesteps_modified": "the FINAL timestep only (the current state)",
+    "why": "the defender acts NOW; earlier timesteps are OBSERVED HISTORY and rewriting them would fabricate a past that did not happen",
+    "cells_written_per_sequence": 52,
+    "rows_preserved_verbatim": "base rows 0..8 and relative-change rows 0..8, copied from the observed tensor",
+    "relative_change_row_0": "PRESERVED, never regenerated \u2014 these are sliding windows, so row 0 was computed against the window before the sequence begins and is not recomputable from inside it",
+    "consequence": "projected changes are modest by construction: the V4 encoder is an LSTM over ten windows, so one perturbed window has limited leverage. This is a property of the model being probed, reported rather than tuned away."
+  }
+}

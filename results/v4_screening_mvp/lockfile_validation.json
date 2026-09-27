@@ -1,0 +1,84 @@
+{
+  "generated_utc": "2026-09-26T07:12:22+00:00",
+  "task": "Task 13 - screening demo lockfile validation",
+  "lockfile_created": true,
+  "lockfile_path": "requirements-screening-lock.txt",
+  "clean_install": "PASS",
+  "package_count": 58,
+  "dashboard_startup": "PASS",
+  "artifact_loading": "PASS",
+  "forecast_equivalence": "PASS",
+  "alert_equivalence": "PASS",
+  "xai": "PASS",
+  "mitre": "PASS",
+  "offline": "PASS",
+  "frozen_artifact_integrity": "PASS",
+  "overall": "PASS",
+  "evidence": {
+    "clean_install": {
+      "baseline_packages": 0,
+      "installed_only": "requirements-screening-lock.txt",
+      "packages_installed": 58,
+      "resolved_set_identical_to_lockfile": true,
+      "outside_repository": true,
+      "shap_absent": true
+    },
+    "dashboard_startup": {
+      "root_http_status": 200,
+      "stcore_health": "ok",
+      "pages_passed": "9/9",
+      "static_assets_local": true
+    },
+    "forecast_equivalence": {
+      "per_column_max_abs_delta": {
+        "nowcast_probability_t0": 6.258487701971127e-07,
+        "prob_t1": 8.344650268554688e-07,
+        "prob_t2": 1.043081283569336e-06,
+        "prob_t3": 1.2814998626708984e-06,
+        "prob_t4": 1.430511474609375e-06,
+        "prob_t5": 1.996755599975586e-06
+      },
+      "max_forecast_max_abs_delta": 1.5348196030218197e-06,
+      "overall_max_abs_delta": 1.996755599975586e-06,
+      "documented_cross_device_delta": 1.996755599975586e-06,
+      "tolerance_source": "pre-existing documented MPS-vs-CPU delta recorded in screening_manifest.json at substrate build time; no new tolerance introduced by Task 13",
+      "within_documented_delta": true,
+      "threshold_equal": true,
+      "sequence_count_equal": true,
+      "sequence_count": 3115
+    },
+    "alert_equivalence": {
+      "disagreements": 0,
+      "stored_alerts": 1434,
+      "recomputed_alerts": 1434
+    },
+    "xai": {
+      "attribution_shape": [
+        1,
+        10,
+        52
+      ],
+      "method": "gausslegendre",
+      "explained_vs_displayed_abs_delta": 0.0
+    },
+    "mitre": {
+      "tactic": "TA0043 Reconnaissance",
+      "technique": "T1018 Remote System Discovery",
+      "rule_library_size": 10,
+      "confidence": "high"
+    },
+    "offline": {
+      "pages_passed_network_blocked": "9/9",
+      "outbound_connections": 0,
+      "hostname_dns_lookups": 0,
+      "server_offline_http": 200,
+      "server_offline_health": "ok"
+    },
+    "frozen_artifact_integrity": {
+      "artifacts_hashed": 16,
+      "changed": [],
+      "all_unchanged": true,
+      "matches_task12": true
+    }
+  }
+}

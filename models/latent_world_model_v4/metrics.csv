@@ -1,0 +1,16 @@
+metric,value
+best_validation_f1,0.8043478260869565
+selected_threshold,0.05
+test_state_loss,0.2688717890073596
+test_accuracy,0.704225352112676
+test_precision,0.8378378378378378
+test_recall,0.18023255813953487
+test_f1,0.2966507177033493
+test_roc_auc,0.6708944543828265
+test_false_positive_rate,0.018461538461538463
+positive_class_weight,5.807471264367816
+max_k,5.0
+gamma,0.8
+lr_baseline_f1,0.4631578947368421
+lr_baseline_roc_auc,0.6092844364937389
+lr_baseline_fpr,0.14461538461538462

@@ -1,0 +1,167 @@
+{
+  "layer_version": "v4-defense-sim-1.0",
+  "module": "src/v4_defense_simulator.py",
+  "n_interventions": 2,
+  "default_intervention": "RATE_LIMIT",
+  "sweep_strengths": [
+    0.1,
+    0.25,
+    0.5
+  ],
+  "parameter_semantics": "every strength is a SIMULATED INTERVENTION STRENGTH \u2014 a perturbation magnitude applied to the model's input state. It is NOT a real-world effectiveness, efficacy or success rate.",
+  "scope": {
+    "timesteps_modified": "the FINAL timestep only (the current state)",
+    "why": "the defender acts NOW; earlier timesteps are OBSERVED HISTORY and rewriting them would fabricate a past that did not happen",
+    "cells_written_per_sequence": 52,
+    "rows_preserved_verbatim": "base rows 0..8 and relative-change rows 0..8, copied from the observed tensor",
+    "relative_change_row_0": "PRESERVED, never regenerated \u2014 these are sliding windows, so row 0 was computed against the window before the sequence begins and is not recomputable from inside it",
+    "consequence": "projected changes are modest by construction: the V4 encoder is an LSTM over ten windows, so one perturbed window has limited leverage. This is a property of the model being probed, reported rather than tuned away."
+  },
+  "verified_identities": {
+    "log_flow_count == log1p(flow_count)": "max|d| 1.2e-07",
+    "window_packet_rate == expm1(log_total_packets)/10": "max relative 2.4e-07",
+    "window_byte_rate == expm1(log_total_bytes)/10": "max relative 7.2e-07",
+    "fwd_packet_ratio + bwd_packet_ratio == 1.0": "holds to 1.9e-08 \u2014 float32 storage precision on a quantity of order 1.0",
+    "dst_port_entropy <= log2(unique_dst_ports)": "0 violations",
+    "fwd_byte_ratio + bwd_byte_ratio": "NOT 1 (measured mean 0.663) \u2014 so no sum constraint is imposed and the byte ratios are left unchanged"
+  },
+  "frozen_formula": {
+    "source_of_truth": "src/feature_contract.py",
+    "epsilon": 1e-08,
+    "clip": 10.0,
+    "formula": "(x_t - x_{t-1}) / (|x_{t-1}| + 1e-8) clipped to [-10, 10]",
+    "new_transform_introduced": false
+  },
+  "wording": {
+    "required": [
+      "MODEL-BASED WHAT-IF PROJECTION",
+      "This simulator does not estimate causal real-world effectiveness. It applies a defined state perturbation and rolls the frozen World Model forward."
+    ],
+    "forbidden": [
+      "Defense will reduce the attack by X%",
+      "Attack prevented",
+      "Firewall blocked attacker",
+      "Guaranteed mitigation",
+      "risk reduction caused by defense"
+    ],
+    "delta_is_called": "model-projected change under intervention",
+    "delta_is_never_called": "risk reduction caused by defense"
+  },
+  "guarantees": {
+    "retrains_v4": false,
+    "modifies_checkpoint": false,
+    "refits_scalers": false,
+    "modifies_thresholds": false,
+    "modifies_screening_predictions": false,
+    "changes_feature_definitions": false,
+    "executes_network_actions": false,
+    "claims_causal_efficacy": false,
+    "claims_model_learned_intervention_effects": false,
+    "uses_labels_to_design_interventions": false,
+    "observed_state_overwritten": false,
+    "deterministic": true
+  },
+  "interventions": {
+    "RATE_LIMIT": {
+      "key": "RATE_LIMIT",
+      "display": "Defend now \u2014 uniform traffic rate limit",
+      "concept": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports.",
+      "parameter": "simulated intervention strength (fraction of volume withheld), in [0, 1]",
+      "affected_features": [
+        "flow_count",
+        "log_flow_count",
+        "log_total_packets",
+        "window_packet_rate",
+        "log_total_bytes",
+        "window_byte_rate"
+      ],
+      "transformation": [
+        "keep = 1 - strength",
+        "flow_count      <- flow_count * keep",
+        "log_flow_count  <- log1p(flow_count_new)",
+        "total_packets   <- expm1(log_total_packets) * keep",
+        "log_total_packets   <- log1p(total_packets_new)",
+        "window_packet_rate  <- total_packets_new / 10",
+        "total_bytes     <- expm1(log_total_bytes) * keep",
+        "log_total_bytes     <- log1p(total_bytes_new)",
+        "window_byte_rate    <- total_bytes_new / 10"
+      ],
+      "justification": "flow_count, total_packets and total_bytes are the three underlying volume quantities in the frozen contract, and the log / rate features are exact derivations of them (identities verified to 1e-7 on the frozen substrate). A rate limit reduces the underlying quantities, so every derived feature must move with them. Nothing outside that derivation chain is touched.",
+      "unchanged": {
+        "syn_rate": "per-flow flag presence / packets, averaged over flows. Dropping or throttling whole flows leaves the per-flow statistic's distribution unchanged in expectation; no signed change is derivable from the feature definition.",
+        "ack_rate": "as syn_rate",
+        "rst_rate": "as syn_rate. (A real block would likely RAISE rst_rate, but neither the magnitude nor the flow-accounting consequence is derivable from the contract, so it is not invented.)",
+        "fin_rate": "as syn_rate",
+        "psh_rate": "as syn_rate",
+        "urg_rate": "as syn_rate",
+        "mean_pkt_len": "mean over flows of each flow's mean packet length. A uniform volume reduction does not change the mean-of-per-flow-means in expectation.",
+        "std_pkt_len": "mean over flows of each flow's packet-length std; same argument as mean_pkt_len.",
+        "log_mean_flow_duration": "a rate limit or block plausibly changes flow lifetimes, but neither the sign nor the magnitude follows from the feature definition. Left unchanged rather than guessed.",
+        "log_mean_fwd_iat": "as log_mean_flow_duration (a rate limit would plausibly INCREASE inter-arrival time, but by an amount the contract does not determine).",
+        "log_mean_bwd_iat": "as log_mean_fwd_iat",
+        "fwd_packet_ratio": "a ratio, invariant to uniform volume scaling. Also constrained by the measured identity fwd_packet_ratio + bwd_packet_ratio == 1.0 (to float32 precision), which leaving both unchanged preserves.",
+        "bwd_packet_ratio": "as fwd_packet_ratio",
+        "fwd_byte_ratio": "a ratio, invariant to uniform volume scaling. NOTE the byte ratios do NOT sum to 1 (measured mean 0.663), so no coupled redistribution can be defined for them and none is attempted.",
+        "bwd_byte_ratio": "as fwd_byte_ratio",
+        "mean_down_up_ratio": "an integer-valued per-flow ratio, averaged. Not derivably changed by uniform volume scaling.",
+        "unique_protocols": "a count of distinct protocols. Throttling volume does not remove a protocol from the window.",
+        "protocol_entropy": "Shannon entropy over protocol counts; unchanged for the same reason as unique_protocols.",
+        "log_unique_dst_ports": "throttling volume does not remove a destination port from the window",
+        "dst_port_entropy": "as log_unique_dst_ports"
+      }
+    },
+    "RESTRICT_EGRESS": {
+      "key": "RESTRICT_EGRESS",
+      "display": "Block C2 / restrict egress \u2014 destination allow-listing",
+      "concept": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would.",
+      "parameter": "simulated intervention strength (fraction of distinct destination ports blocked), in [0, 1]",
+      "affected_features": [
+        "log_unique_dst_ports",
+        "dst_port_entropy",
+        "flow_count",
+        "log_flow_count",
+        "log_total_packets",
+        "window_packet_rate",
+        "log_total_bytes",
+        "window_byte_rate"
+      ],
+      "transformation": [
+        "keep = 1 - strength",
+        "n_old = expm1(log_unique_dst_ports)",
+        "n_new = n_old * keep",
+        "log_unique_dst_ports <- log1p(n_new)",
+        "dst_port_entropy <- dst_port_entropy * min(log2(max(n_new,2)) / log2(max(n_old,2)), 1)",
+        "then the same coupled volume reduction as RATE_LIMIT"
+      ],
+      "justification": "Two consequences follow from the contract's own definitions. log_unique_dst_ports is log1p(nunique of Dst Port), so blocking a fraction of destinations reduces the count directly. dst_port_entropy is Shannon entropy over the destination-port counts, which is bounded above by log2 of the support size; rescaling by the ratio of ceilings shrinks entropy with its bound and preserves the measured invariant entropy <= log2(nunique) (0 violations on the frozen substrate). Volume falls too, on the first-order assumption that blocked destinations carry a proportional share of the window's flows. Direction ratios are NOT shifted because 'forward' is the direction of a flow's first packet, so egress blocking removes whole flows rather than re-balancing surviving ones.",
+      "unchanged": {
+        "syn_rate": "per-flow flag presence / packets, averaged over flows. Dropping or throttling whole flows leaves the per-flow statistic's distribution unchanged in expectation; no signed change is derivable from the feature definition.",
+        "ack_rate": "as syn_rate",
+        "rst_rate": "as syn_rate. (A real block would likely RAISE rst_rate, but neither the magnitude nor the flow-accounting consequence is derivable from the contract, so it is not invented.)",
+        "fin_rate": "as syn_rate",
+        "psh_rate": "as syn_rate",
+        "urg_rate": "as syn_rate",
+        "mean_pkt_len": "mean over flows of each flow's mean packet length. A uniform volume reduction does not change the mean-of-per-flow-means in expectation.",
+        "std_pkt_len": "mean over flows of each flow's packet-length std; same argument as mean_pkt_len.",
+        "log_mean_flow_duration": "a rate limit or block plausibly changes flow lifetimes, but neither the sign nor the magnitude follows from the feature definition. Left unchanged rather than guessed.",
+        "log_mean_fwd_iat": "as log_mean_flow_duration (a rate limit would plausibly INCREASE inter-arrival time, but by an amount the contract does not determine).",
+        "log_mean_bwd_iat": "as log_mean_fwd_iat",
+        "fwd_packet_ratio": "a ratio, invariant to uniform volume scaling. Also constrained by the measured identity fwd_packet_ratio + bwd_packet_ratio == 1.0 (to float32 precision), which leaving both unchanged preserves.",
+        "bwd_packet_ratio": "as fwd_packet_ratio",
+        "fwd_byte_ratio": "a ratio, invariant to uniform volume scaling. NOTE the byte ratios do NOT sum to 1 (measured mean 0.663), so no coupled redistribution can be defined for them and none is attempted.",
+        "bwd_byte_ratio": "as fwd_byte_ratio",
+        "mean_down_up_ratio": "an integer-valued per-flow ratio, averaged. Not derivably changed by uniform volume scaling.",
+        "unique_protocols": "a count of distinct protocols. Throttling volume does not remove a protocol from the window.",
+        "protocol_entropy": "Shannon entropy over protocol counts; unchanged for the same reason as unique_protocols."
+      }
+    }
+  },
+  "measured_feature_identities": {
+    "log_flow_count == log1p(flow_count)": 1.2254490044938393e-07,
+    "window_packet_rate == expm1(log_total_packets)/10 (relative)": 2.349763299404068e-07,
+    "window_byte_rate == expm1(log_total_bytes)/10 (relative)": 7.18491640948571e-07,
+    "fwd_packet_ratio + bwd_packet_ratio == 1": 1.8887943209477953e-08,
+    "dst_port_entropy <= log2(unique_dst_ports) violations": 0,
+    "fwd_byte_ratio + bwd_byte_ratio mean (NOT constrained)": 0.6627888861141227
+  }
+}

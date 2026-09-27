@@ -1,0 +1,25 @@
+{
+  "hosts_present": 21,
+  "hosts_missing": [
+    "capDESKTOP-AN3U28N-172.31.64.126",
+    "capDESKTOP-AN3U28N-172.31.65.66",
+    "capDESKTOP-AN3U28N-172.31.65.126",
+    "capEC2AMAZ-O4EL3NG-172.31.66.70"
+  ],
+  "packets": 1341825,
+  "per_host_flow_rows": 86455,
+  "dup_flow_groups": 1,
+  "dup_rows_removed": 1,
+  "internal_flows_kept": 0,
+  "deduped_flows": 86454,
+  "windows": 858,
+  "mean_absz_1h": 3.3661229010773233,
+  "mean_absz_10h": 2.782900821805078,
+  "mean_absz_25h": 2.1269228356759204,
+  "within_1sd_1h": 6,
+  "within_1sd_10h": 7,
+  "within_1sd_25h": 9,
+  "within_2sd_1h": 10,
+  "within_2sd_10h": 14,
+  "within_2sd_25h": 16
+}

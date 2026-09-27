@@ -1,32 +1,195 @@
+# =============================================================
+# SIH 26153 — Predictive Cyber Defence Using World Models
+# .gitignore
+#
+# Policy: exclude environments, caches, raw data and bulk research
+# outputs. Every file that IS committed from an otherwise-excluded
+# directory is re-included below with an explicit "!" rule and a
+# reason. See README.md -> "What is not in this repository".
+# =============================================================
+
+# ----- Python -----
 __pycache__/
 *.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
 
-.venv/
+# ----- Environments -----
 venv/
+.venv/
 env/
+src/venv/
+demoenv/
 
+# ----- OS -----
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# ----- IDE / editor -----
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ----- Notebooks -----
+.ipynb_checkpoints/
+
+# ----- Testing / tooling caches -----
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ----- Logs -----
+*.log
+# Kept: console output of the CICFlowMeter parity comparison
+# (aggregate_and_compare.py), stored with its result CSVs as a record.
+!models/pcap_analysis_v4/parity/cicflowmeter/results/compare.log
+
+# ----- Local secrets -----
 .env
+.env.*
 
-# Ignore everything in data/ and models/ except README.md
-data/*
-!data/README.md
+# ----- Temporary files -----
+*.tmp
+*.bak
+*.orig
+.cache/
+checkpoints/
+runs/
+
+# ----- Archives / raw captures (safety net) -----
+*.zip
+*.tar.gz
+*.tar.bz2
+*.pcap
+*.pcapng
+*.pkl
+*.joblib
+
+# =============================================================
+# DATA — raw and processed datasets are NOT committed
+# =============================================================
+data/raw/
+data/pcaps/
+data/samples/
+data/sample_pcap/
+data/packet_research/
+data/transition_analysis/
+data/*.png
+data/processed/*
+!data/processed/multiday_benchmark_K5/
+!data/processed/v5_multistep_K5/
+
+# ---- Frozen V4 runtime artifacts (loaded by the dashboard) ----
+# Paths are pinned (with SHA-256) in docs/v4_baseline_manifest.json and
+# hash-verified by src/v4_explainer.py, so they must stay at these paths.
+data/processed/multiday_benchmark_K5/*
+!data/processed/multiday_benchmark_K5/input_feature_names.txt
+!data/processed/multiday_benchmark_K5/state_feature_names.txt
+!data/processed/multiday_benchmark_K5/input_scaler.pkl
+!data/processed/multiday_benchmark_K5/target_scaler.pkl
+# Held-out TEST split (Mar-2) only. X_test.npy is read at dashboard start-up
+# (src/app.py load_test_data) and by the prediction-identity tests;
+# test_metadata.csv supplies its timestamps. The Y/A arrays are the test
+# labels/targets, used by the tests that check the upload page REJECTS them.
+# Train/validation splits are intentionally NOT committed.
+!data/processed/multiday_benchmark_K5/X_test.npy
+!data/processed/multiday_benchmark_K5/test_metadata.csv
+!data/processed/multiday_benchmark_K5/Y_multistep_test.npy
+!data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy
+!data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy
+
+# ---- V5 development scalers (NOT used by the dashboard) ----
+# Needed only so the V5 checkpoint can be loaded by
+# src/infer_latent_world_model_v5.py --self-test.
+data/processed/v5_multistep_K5/*
+!data/processed/v5_multistep_K5/v5_input_scaler.pkl
+!data/processed/v5_multistep_K5/v5_target_scaler.pkl
+
+# =============================================================
+# MODELS
+# =============================================================
 models/*
 !models/README.md
 
-*.pcap
-*.pcapng
+# ---- V4 (CURRENT, frozen) ----
+!models/latent_world_model_v4/
+models/latent_world_model_v4/*
+!models/latent_world_model_v4/latent_world_model_v4.pt
+!models/latent_world_model_v4/README.md
+# Training-time artefacts (see docs/v4_baseline_manifest.json known_issues:
+# these are NOT the reference results; kept for provenance only).
+!models/latent_world_model_v4/metrics.csv
+!models/latent_world_model_v4/confusion_matrix.csv
+!models/latent_world_model_v4/training_history.csv
+!models/latent_world_model_v4/validation_threshold_search.csv
+!models/latent_world_model_v4/trajectory_evaluation.csv
+!models/latent_world_model_v4/test_attack_predictions.csv
+# Rule-based ATT&CK table read by the dashboard's MITRE page
+# (src/app.py load_mitre_mappings).
+!models/latent_world_model_v4/mitre_mapping/
+models/latent_world_model_v4/mitre_mapping/*
+!models/latent_world_model_v4/mitre_mapping/mitre_summary.csv
 
-*.npy
-*.npz
+# ---- V5 (DEVELOPMENT, not used by the dashboard) ----
+!models/latent_world_model_v5/
+models/latent_world_model_v5/*
+!models/latent_world_model_v5/latent_world_model_v5.pt
+!models/latent_world_model_v5/README.md
 
-*.pt
-*.pth
-*.ckpt
+# ---- PCAP -> V4 feature-parity evidence ----
+!models/pcap_analysis_v4/
+!models/pcap_analysis_v4/**
+models/pcap_analysis_v4/**/__pycache__/
+models/pcap_analysis_v4/**/*.pyc
+models/pcap_analysis_v4/**/.DS_Store
 
-checkpoints/
-logs/
-runs/
+# =============================================================
+# RESULTS — curated evidence only; bulk per-row outputs excluded
+# =============================================================
+results/v5_demo/
+results/v5_demo_multihost/
+results/v5_mixed_scope_diagnostic/
+results/v5_packet_ablation/
+results/counterfactual_defense/scenario_results.csv
+results/counterfactual_defense/trajectory_comparison.csv
+results/counterfactual_defense/progression_comparison.csv
+results/counterfactual_defense/reliability_comparison.csv
+results/defense_simulation/scenarios.csv
+results/defense_simulation/trajectory_comparison.csv
+results/attack_path/per_sequence_paths.csv
+results/attack_path/progression_events.csv
+# Per-row files cited by docs (error_events.csv, latent_stability.csv,
+# prediction_identity.csv, ...) are kept; they were already in git history.
+# NOT excluded (read by the dashboard at runtime, so they must ship):
+#   results/v4_explainability/attributions_k{1,3,5}.npy  (hash-pinned)
+#   results/v4_reliability/reliability_per_sequence.csv
+#   results/v4_reliability/forecast_vs_observed.csv
+#   results/abstain/per_sequence_decisions.csv
 
-.DS_Store
-.vscode/
-.idea/
+# =============================================================
+# EXAMPLES — small demo inputs for judges
+# =============================================================
+# Synthetic PCAPs generated by src/generate_demo_pcaps.py (seeded, no
+# third-party traffic), re-included despite the *.pcap rule above.
+!examples/pcap/*.pcap
+
+# =============================================================
+# ARCHIVE — only historical scripts that document V4 lineage
+# =============================================================
+archive/*
+!archive/README.md
+!archive/clean_datasets.py
+!archive/create_network_states_v2.py
+!archive/prepare_temporal_benchmark_v2.py
+!archive/prepare_multistep_data.py
+!archive/train_baseline.py
+!archive/train_temporal_baseline.py
+!archive/train_persistence_baseline.py

@@ -1,0 +1,145 @@
+{
+  "generated_utc": "2026-09-26T07:00:20Z",
+  "clean_room": "/private/tmp/claude-501/-Users-adityashah-Projects-cyber-world-model/0c45ca78-50d7-4b48-949b-a7d75c7ad099/scratchpad/cleanroom/demoenv",
+  "authoritative_environment": "src/venv",
+  "pinned_requirements": "requirements-screening.txt",
+  "overall": "PASS",
+  "checks": {
+    "clean_install": "PASS",
+    "dashboard_startup": "PASS",
+    "artifact_loading": "PASS",
+    "forecast_equivalence": "PASS",
+    "alert_equivalence": "PASS",
+    "xai": "PASS",
+    "mitre": "PASS",
+    "offline_operation": "PASS",
+    "frozen_artifact_integrity": "PASS"
+  },
+  "evidence": {
+    "clean_install": {
+      "packages_installed": 58,
+      "direct_pins": {
+        "streamlit": "1.62.0",
+        "plotly": "7.0.0",
+        "torch": "2.13.0",
+        "numpy": "2.5.2",
+        "pandas": "3.0.5",
+        "scikit-learn": "1.9.0",
+        "captum": "0.9.0",
+        "matplotlib": "3.11.1",
+        "scapy": "2.7.0"
+      },
+      "resolved_versions": {
+        "streamlit": "1.62.0",
+        "plotly": "7.0.0",
+        "torch": "2.13.0",
+        "numpy": "2.5.2",
+        "pandas": "3.0.5",
+        "scikit-learn": "1.9.0",
+        "captum": "0.9.0",
+        "matplotlib": "3.11.1",
+        "scapy": "2.7.0"
+      },
+      "shap_absent": true
+    },
+    "dashboard_startup": {
+      "pages_exercised": 9,
+      "all_executed": true,
+      "streamlit_http": 200,
+      "streamlit_health": "ok"
+    },
+    "artifact_loading": {
+      "sequences": 3115,
+      "counts_aligned": true,
+      "threshold_equal_to_manifest": true,
+      "threshold": 0.69
+    },
+    "forecast_equivalence": {
+      "device": "cpu (clean env)",
+      "per_column_max_abs_delta": {
+        "nowcast_probability_t0": 6.258487701971127e-07,
+        "prob_t1": 8.344650268554688e-07,
+        "prob_t2": 1.043081283569336e-06,
+        "prob_t3": 1.2814998626708984e-06,
+        "prob_t4": 1.430511474609375e-06,
+        "prob_t5": 1.996755599975586e-06
+      },
+      "overall_max_abs_delta": 1.996755599975586e-06,
+      "tolerance": 1e-05,
+      "tolerance_justification": "The stored CSV was produced on MPS (recorded in screening_manifest.json as environment.device_used). The clean environment has no MPS-equivalent reduction order, so the observed delta 1.997e-06 is the MPS<->CPU float ordering difference already measured and recorded at substrate build time as 1.997e-06. It is NOT a relaxation introduced here: the same figure was independently reproduced in Task 11. Alert decisions are identical, and the UI displays 3-4 decimals, so nothing visible changes.",
+      "cpu_vs_mps_reported_separately": true
+    },
+    "alert_equivalence": {
+      "stored_alerts": 1434,
+      "recomputed_alerts": 1434,
+      "disagreements": 0
+    },
+    "xai": {
+      "sequence_id": 2341,
+      "ran": true,
+      "attribution_shape": [
+        1,
+        10,
+        52
+      ],
+      "method": "gausslegendre",
+      "n_steps": 128,
+      "explained_probability": 0.778526246547699,
+      "displayed_probability_stored": 0.778526246547699,
+      "explained_vs_displayed_abs_delta": 0.0,
+      "completeness_rel_error": 0.011400135233998299,
+      "top_features": [
+        {
+          "feature": "window_byte_rate",
+          "attribution": -0.44085022807121277,
+          "direction": "contributes toward lower predicted threat"
+        },
+        {
+          "feature": "window_packet_rate",
+          "attribution": 0.4407387971878052,
+          "direction": "contributes toward higher predicted threat"
+        },
+        {
+          "feature": "log_mean_flow_duration",
+          "attribution": 0.20687471330165863,
+          "direction": "contributes toward higher predicted threat"
+        },
+        {
+          "feature": "log_total_packets",
+          "attribution": 0.18317319452762604,
+          "direction": "contributes toward higher predicted threat"
+        },
+        {
+          "feature": "rst_rate",
+          "attribution": 0.16737745702266693,
+          "direction": "contributes toward higher predicted threat"
+        }
+      ]
+    },
+    "mitre": {
+      "sequence_id": 2341,
+      "ran": true,
+      "rule_library_size": 10,
+      "feature_order_matches_contract": true,
+      "tactic_id": "TA0043",
+      "tactic_name": "Reconnaissance",
+      "technique_id": "T1018",
+      "technique_name": "Remote System Discovery",
+      "confidence": "high",
+      "temporal_phase": "late",
+      "has_analyst_explanation": true,
+      "all_fields_returned": true
+    },
+    "offline_operation": {
+      "pages_run_with_network_blocked": 9,
+      "outbound_connections_by_app": 0,
+      "hostname_dns_by_app": 0,
+      "source_scan_findings": 0,
+      "loopback_bound_server_outbound_attempts": 0
+    },
+    "frozen_artifact_integrity": {
+      "artifacts": 16,
+      "changed": []
+    }
+  }
+}

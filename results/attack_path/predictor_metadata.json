@@ -1,0 +1,438 @@
+{
+  "layer_version": "attack-path-1.0",
+  "module": "src/attack_path_predictor.py",
+  "task": "Task 16 / S2 \u2014 ATT&CK-consistent attack-path + time-to-progression",
+  "wording": {
+    "correct": "ATT&CK-consistent progression hypothesis",
+    "forbidden": [
+      "learned attack path prediction",
+      "guaranteed time until attacker progresses",
+      "the model predicts ATT&CK labels",
+      "attacker intent"
+    ]
+  },
+  "composition": [
+    "frozen V4 checkpoint (encoder / gated transition / decoder / attack head) \u2014 read-only",
+    "frozen input_scaler + target_scaler \u2014 forward/inverse only",
+    "frozen relative-change formula from src/feature_contract.py",
+    "src/mitre_mapper.py rule library \u2014 imported UNMODIFIED",
+    "project-specific progression graph defined in this module"
+  ],
+  "guarantees": {
+    "retrains_v4": false,
+    "modifies_v4_checkpoint": false,
+    "refits_scalers": false,
+    "modifies_feature_definitions": false,
+    "modifies_thresholds": false,
+    "modifies_mitre_mapper": false,
+    "modifies_screening_artifacts": false,
+    "learned_attack_stage_classifier": false,
+    "uses_labels_as_model_input": false,
+    "uses_future_observations_as_model_input": false,
+    "deterministic": true
+  },
+  "rule_library": {
+    "source_module": "src/mitre_mapper.py",
+    "source_function": "build_rule_library()",
+    "modified_by_this_layer": false,
+    "n_rules": 10,
+    "feature_space": {
+      "dimension": 52,
+      "base_features": 26,
+      "rel_change_features": 26,
+      "units": "frozen input_scaler z-units; a threshold of 0.5 means 0.5 training standard deviations above the training mean",
+      "snapshot_taken_from": "the LAST timestep of the 52-D window (MITREMapper._extract_feature_snapshot reads x_window[-1] and nothing else)"
+    },
+    "evaluation_semantics": {
+      "supported_operators": [
+        ">",
+        "<",
+        ">=",
+        "<=",
+        "spike"
+      ],
+      "operators_actually_used": [
+        "<",
+        ">"
+      ],
+      "rule_score": "number of individual checks that matched (integer)",
+      "multiple_rules_can_fire": true,
+      "selection": "ALL rules are evaluated; the winner is the rule with the strictly-highest match count. Ties are resolved by LIBRARY ORDER (the first rule to reach that count keeps it), because the mapper's comparison is `score > best_score`. This is best-match-with-first-wins-ties, NOT pure first-match.",
+      "partial_match_fires": "yes \u2014 a rule fires on >=1 matched check, so a 3-check rule can win with 1 match if no rule matches more. This is a LIMITATION, recorded not repaired.",
+      "probability_gate": "if attack_probability < mapper threshold the mapper returns tactic_id=NONE ('No Alert') and evaluates no rule at all",
+      "no_match_result": "tactic_id=UNKNOWN ('Unknown / Insufficient Evidence')"
+    },
+    "confidence_calculation": {
+      "base": "rule.min_confidence (low|medium|high)",
+      "adjustments": [
+        "+1 if attack_probability > 0.5",
+        "+1 if attack_probability > 0.7",
+        "+1 if matched-evidence count >= 3",
+        "+1 if temporal_phase in (mid, late)"
+      ],
+      "mapping": "score>=4 -> high; score>=2 -> medium; else low",
+      "note": "this is an ordinal heuristic inside the existing mapper, not a probability. This layer reuses it verbatim."
+    },
+    "temporal_phase_logic": {
+      "source": "MITREMapper._determine_temporal_phase",
+      "inputs": [
+        "window_idx",
+        "total_windows",
+        "first_alert_idx"
+      ],
+      "values": [
+        "benign (below threshold)",
+        "pre-alert",
+        "onset",
+        "early",
+        "mid",
+        "late"
+      ],
+      "definition": "progress = (window_idx - first_alert_idx) / max(total_windows - first_alert_idx, 1); <0.25 early, <0.75 mid, else late",
+      "note": "first_alert_idx is derived from MODEL OUTPUT only (the first alerting sequence), never from a label"
+    },
+    "features_read_by_rules": [
+      "dst_port_entropy",
+      "fin_rate",
+      "fwd_byte_ratio",
+      "log_flow_count",
+      "log_total_bytes",
+      "log_total_packets",
+      "log_unique_dst_ports",
+      "mean_down_up_ratio",
+      "mean_pkt_len",
+      "protocol_entropy",
+      "psh_rate",
+      "std_pkt_len",
+      "syn_rate",
+      "window_byte_rate",
+      "window_packet_rate"
+    ],
+    "tactics_available": [
+      {
+        "tactic_id": "TA0043",
+        "tactic_name": "Reconnaissance",
+        "rule_ids": [
+          "RECON_PORT_SCAN",
+          "RECON_HOST_DISCOVERY"
+        ],
+        "technique_ids": [
+          "T1046",
+          "T1018"
+        ]
+      },
+      {
+        "tactic_id": "TA0001",
+        "tactic_name": "Initial Access",
+        "rule_ids": [
+          "INITIAL_ACCESS_INFILTRATION"
+        ],
+        "technique_ids": [
+          "T1190"
+        ]
+      },
+      {
+        "tactic_id": "TA0002",
+        "tactic_name": "Execution",
+        "rule_ids": [
+          "EXECUTION_PAYLOAD_DELIVERY"
+        ],
+        "technique_ids": [
+          "T1059"
+        ]
+      },
+      {
+        "tactic_id": "TA0011",
+        "tactic_name": "Command and Control",
+        "rule_ids": [
+          "C2_BEACONING",
+          "C2_ENCRYPTED_CHANNEL"
+        ],
+        "technique_ids": [
+          "T1071",
+          "T1573"
+        ]
+      },
+      {
+        "tactic_id": "TA0008",
+        "tactic_name": "Lateral Movement",
+        "rule_ids": [
+          "LATERAL_MOVEMENT_SPREAD"
+        ],
+        "technique_ids": [
+          "T1021"
+        ]
+      },
+      {
+        "tactic_id": "TA0010",
+        "tactic_name": "Exfiltration",
+        "rule_ids": [
+          "EXFIL_DATA_TRANSFER",
+          "EXFIL_SUSTAINED_OUTBOUND"
+        ],
+        "technique_ids": [
+          "T1048"
+        ]
+      },
+      {
+        "tactic_id": "TA0040",
+        "tactic_name": "Impact",
+        "rule_ids": [
+          "IMPACT_RESOURCE_EXHAUSTION"
+        ],
+        "technique_ids": [
+          "T1499"
+        ]
+      }
+    ],
+    "non_tactic_outcomes": [
+      {
+        "tactic_id": "NONE",
+        "tactic_name": "No Alert",
+        "meaning": "forecast below the mapper threshold"
+      },
+      {
+        "tactic_id": "UNKNOWN",
+        "tactic_name": "Unknown / Insufficient Evidence",
+        "meaning": "above threshold but no rule matched any check"
+      }
+    ],
+    "known_limitations": [
+      "Thresholds are hand-chosen z-score cut-points documented in the mapper docstring from test-set descriptive statistics; they were not fitted and are not re-tuned here.",
+      "A rule fires on a single matched check, so evidence can be thin.",
+      "Only one tactic is reported per window even though several rules may match; the runner-up rules are discarded by the mapper.",
+      "No rule in the shipped library uses the 'spike' operator, so the 26 rel-change features are currently never read by any rule. They are still reconstructed faithfully here so the mapper receives a complete, contract-valid 52-D vector.",
+      "Tactic coverage is limited to the 7 network-observable tactics; Persistence, Privilege Escalation, Defense Evasion, Credential Access, Discovery and Collection have no rules."
+    ]
+  },
+  "progression_graph": {
+    "nature": "project-specific ANALYTICAL ORDERING for forward visualisation. NOT a claim that intrusions follow this order, and NOT a universal kill chain.",
+    "nodes": [
+      "Reconnaissance",
+      "Initial Access",
+      "Execution",
+      "Lateral Movement",
+      "Command and Control",
+      "Exfiltration",
+      "Impact"
+    ],
+    "node_source": "exactly the tactics src/mitre_mapper.py can emit; no tactic was added",
+    "excluded_nodes": {
+      "NONE / No Alert": "no tactic semantics \u2014 cannot be an endpoint",
+      "UNKNOWN / Insufficient Evidence": "no tactic semantics \u2014 cannot be an endpoint"
+    },
+    "edge_admission_test": {
+      "i_ordering": "B is ATT&CK-consistent as a stage following A, read through the SHIPPED RULE's meaning for each tactic",
+      "ii_distinguishability": "the two rules key on materially different telemetry, so B-after-A is an observable signature change, not a relabelling"
+    },
+    "n_edges": 12,
+    "edges": [
+      {
+        "from": "Reconnaissance",
+        "to": "Initial Access",
+        "justification": "RECON_PORT_SCAN / RECON_HOST_DISCOVERY key on port breadth and port entropy; INITIAL_ACCESS_INFILTRATION keys on flow count with SYN+FIN completion. Enumeration preceding connection completion against a discovered service is the canonical ATT&CK ordering, and the two signatures differ (breadth vs. handshake completion)."
+      },
+      {
+        "from": "Reconnaissance",
+        "to": "Lateral Movement",
+        "justification": "LATERAL_MOVEMENT_SPREAD requires log_flow_count>0.5 AND log_unique_dst_ports>0.3 AND log_total_packets>0.3 \u2014 strictly more than the recon rules, which need no packet volume. Internal enumeration hardening into volumetric remote-service use is a real observable escalation, not a relabelling."
+      },
+      {
+        "from": "Initial Access",
+        "to": "Execution",
+        "justification": "EXECUTION_PAYLOAD_DELIVERY keys on packet volume with PSH (data push), which is a different signature from the SYN/FIN handshake activity of the infiltration rule. Foothold then payload is the canonical ordering."
+      },
+      {
+        "from": "Initial Access",
+        "to": "Command and Control",
+        "justification": "A channel established directly after access. C2_BEACONING / C2_ENCRYPTED_CHANNEL key on LOW packet-size variance and low protocol entropy \u2014 the opposite direction from the initial-access rule's volume/flag criteria, so the transition is clearly observable."
+      },
+      {
+        "from": "Execution",
+        "to": "Command and Control",
+        "justification": "Payload delivery followed by channel establishment. Execution keys on high volume + PSH, C2 on low variance + download ratio."
+      },
+      {
+        "from": "Execution",
+        "to": "Lateral Movement",
+        "justification": "Post-execution spread. Execution needs volume + PSH; lateral additionally needs port breadth, so lateral is a strict escalation."
+      },
+      {
+        "from": "Execution",
+        "to": "Impact",
+        "justification": "IMPACT_RESOURCE_EXHAUSTION requires window_packet_rate>1.0 AND syn_rate>0.5 \u2014 by far the most extreme thresholds in the library. Execution escalating to a volumetric denial-of-service effect is ATT&CK-consistent and the signature is unambiguous."
+      },
+      {
+        "from": "Lateral Movement",
+        "to": "Command and Control",
+        "justification": "Spread followed by channel consolidation; opposite telemetry directions (breadth/volume vs. uniform low-variance flows)."
+      },
+      {
+        "from": "Lateral Movement",
+        "to": "Exfiltration",
+        "justification": "Collection across reached hosts leaving the network. Lateral keys on flow/port breadth, exfil on byte volume with LARGE mean packet length \u2014 volume-in-bytes rather than spread-in-flows."
+      },
+      {
+        "from": "Command and Control",
+        "to": "Exfiltration",
+        "justification": "The canonical ATT&CK ordering: an established channel then carries data out. C2 keys on small uniform packets, exfil on large packets and high byte rate, so the shift is directly observable."
+      },
+      {
+        "from": "Command and Control",
+        "to": "Impact",
+        "justification": "Tasking over an established channel producing a destructive or volumetric effect."
+      },
+      {
+        "from": "Exfiltration",
+        "to": "Impact",
+        "justification": "Data theft followed by a destructive or disruptive effect."
+      }
+    ],
+    "rejected_edges": [
+      {
+        "edge": "Reconnaissance -> Execution",
+        "reason": "REJECTED \u2014 skips access entirely. Scanning telemetry cannot support a jump to payload execution."
+      },
+      {
+        "edge": "Reconnaissance -> Command and Control",
+        "reason": "REJECTED \u2014 a C2 channel implies a foothold this graph has not seen."
+      },
+      {
+        "edge": "Reconnaissance -> Exfiltration",
+        "reason": "REJECTED \u2014 implies collection with no observed access or channel."
+      },
+      {
+        "edge": "Reconnaissance -> Impact",
+        "reason": "REJECTED \u2014 the two signatures are both SYN-heavy, so recon->impact would frequently be a threshold artefact rather than an escalation. Fails the DISTINGUISHABILITY test."
+      },
+      {
+        "edge": "Initial Access -> Lateral Movement",
+        "reason": "REJECTED \u2014 this project's semantics require an execution foothold before volumetric internal spread is a defensible reading."
+      },
+      {
+        "edge": "Initial Access -> Exfiltration",
+        "reason": "REJECTED \u2014 implies collection before any execution or channel."
+      },
+      {
+        "edge": "Initial Access -> Impact",
+        "reason": "REJECTED \u2014 both rules read flow count and SYN rate, so the transition risks being a pure threshold crossing on the same signature. Fails DISTINGUISHABILITY."
+      },
+      {
+        "edge": "Execution -> Exfiltration",
+        "reason": "REJECTED \u2014 conservative: exfiltration is only visualised once a channel (C2) or a spread (Lateral Movement) has been observed."
+      },
+      {
+        "edge": "Lateral Movement -> Impact",
+        "reason": "REJECTED \u2014 conservative. Lateral and impact both key on volume; the escalation is only visualised via C2."
+      },
+      {
+        "edge": "Exfiltration -> Command and Control",
+        "reason": "REJECTED \u2014 backward relative to the analytical ordering."
+      },
+      {
+        "edge": "any -> Reconnaissance",
+        "reason": "REJECTED for every source \u2014 Reconnaissance is a graph SOURCE only. Re-scanning happens in real intrusions, but visualising a backward edge would let two noisy horizons oscillate as a fake progression."
+      },
+      {
+        "edge": "any -> Initial Access except Reconnaissance",
+        "reason": "REJECTED \u2014 Initial Access is reachable only from Reconnaissance."
+      },
+      {
+        "edge": "NONE / UNKNOWN as endpoints",
+        "reason": "REJECTED \u2014 neither carries tactic semantics, so no progression is claimed into or out of them. A sequence whose current stage is NONE or UNKNOWN yields NO FORWARD PROGRESSION IDENTIFIED or PROGRESSION AMBIGUOUS, never an invented stage."
+      }
+    ],
+    "terminal_stages": [
+      "Impact"
+    ],
+    "acyclic": true
+  },
+  "time_to_progression": {
+    "name": "estimated model-based time-to-progression",
+    "formula": "time_to_progression = k * 10 seconds",
+    "why_10s": "each V4 rollout step advances the world model by exactly one 10-second feature window, the frozen WINDOW_SECONDS of the V4 ingestion contract",
+    "k_definition": "the FIRST predicted horizon k in 1..5 at which the candidate next stage is produced by the existing rule library and is reachable from the current stage by an admitted graph edge",
+    "range": "10 s to 50 s, or undefined when no progression is identified",
+    "is_not": [
+      "NOT a guaranteed time until an attacker progresses",
+      "NOT a survival-analysis estimate",
+      "NOT calibrated against observed progression times",
+      "NOT valid beyond 50 s \u2014 the V4 rollout is frozen at K=5"
+    ],
+    "suppressed_when": "the Task-15 reliability status is UNRELIABLE; the panel then shows the warning instead of a bare precise-looking number"
+  },
+  "confidence_criteria": {
+    "nature": "deterministic three-level label. NOT a probability of stage correctness, NOT calibrated, NOT fitted.",
+    "inputs": [
+      "persistence: length of the CONSECUTIVE run of future horizons, starting at the horizon where the candidate stage first appears, that carry the SAME tactic AND the SAME technique",
+      "rule_confidence: the existing MITREMapper confidence for the first horizon of that run (low|medium|high)",
+      "threat_stability: whether the frozen V4 threat probability stays at or above the FROZEN alert threshold across the whole run"
+    ],
+    "HIGH": "persistence >= 2 AND rule_confidence == 'high' AND threat_stability is True",
+    "MEDIUM": "persistence >= 2 (any rule_confidence), OR (persistence == 1 AND rule_confidence == 'high' AND threat_stability is True)",
+    "LOW": "everything else \u2014 a single weakly-supported horizon",
+    "no_tuning": "the only numeric input is the frozen alert threshold read from screening_predictions.csv. No threshold was chosen, swept, or tuned on any label."
+  },
+  "statuses": {
+    "FORWARD_PROGRESSION_IDENTIFIED": "FORWARD PROGRESSION HYPOTHESIS",
+    "NO_FORWARD_PROGRESSION_IDENTIFIED": "NO FORWARD PROGRESSION IDENTIFIED",
+    "PROGRESSION_AMBIGUOUS": "PROGRESSION AMBIGUOUS \u2014 ANALYST REVIEW"
+  },
+  "ambiguity_kinds": {
+    "current_and_projected_stages_carry_no_tactic": "The forecast is elevated but neither the observed window nor any predicted horizon maps to one of the 7 tactic nodes \u2014 every horizon returned No Alert or Unknown / Insufficient Evidence. The threat layer and the ATT&CK layer disagree; an analyst must review.",
+    "no_admitted_edge_from_anchor_stage": "An anchor stage exists and later horizons produce OTHER tactics, but none of those transitions is an admitted edge in the progression graph. The relabelling is treated as unexplained rather than presented as a progression.",
+    "single_stage_persists_no_transition": "One tactic is present and persists across the rollout with no second tactic appearing. There is a stage but no transition, so no time-to-progression is defined."
+  },
+  "anchor_rule": {
+    "observed_current": "the observed window k=0 already maps to one of the 7 tactic nodes",
+    "projected_at_kN": "k=0 mapped to No Alert or Unknown, so the chain is anchored at the FIRST predicted horizon that yields a tactic. Admitted by the spec's 'allowed edge from the current/projected stage'.",
+    "never": "No Alert and Unknown are never anchors and never nodes, so no stage is invented for them"
+  },
+  "reliability_integration": {
+    "source": "src/v4_reliability.py (Task 15)",
+    "RELIABLE": "hypothesis presented normally",
+    "CAUTION": "visible caution badge alongside the hypothesis",
+    "UNRELIABLE": "panel states PROGRESSION HYPOTHESIS UNRELIABLE and the precise time-to-progression is withheld",
+    "bypassable": false
+  },
+  "limitations": [
+    "The progression graph is an analytical ordering for visualisation, not a model of attacker behaviour.",
+    "Stages inherit every limitation of the rule library, including single-check firing and hand-chosen z-score thresholds.",
+    "Future stages are read off a DECODED prediction; decoder reconstruction error at k=5 is inherited, not corrected.",
+    "The rel-change half of a future rule-space vector is reconstructed from the decoded base trajectory. It is faithful to the frozen formula but is a prediction of a derivative, so it is noisier than the base half. No shipped rule currently reads it.",
+    "Only 3 documented onset episodes exist in the replay substrate, so no general attack-stage accuracy can be claimed.",
+    "No stage label exists for this dataset, so no precision / recall / F1 over stages is computed or computable."
+  ],
+  "frozen_formula_check": {
+    "source_of_truth": "src/feature_contract.py::reference_relative_change",
+    "epsilon": 1e-08,
+    "clip": 10.0,
+    "formula": "(x_t - x_{t-1}) / (|x_{t-1}| + 1e-8), clipped to [-10, 10]",
+    "max_abs_delta_vs_contract": 0.0,
+    "new_transform_introduced": false
+  },
+  "decoder_space_identity": {
+    "target_scaler_equals_input_scaler_base_columns": true,
+    "consequence": "the V4 decoder's 26-D output is ALREADY in the mapper's base-feature z-units; no transform is applied to the base half",
+    "verified_at_runtime_by": "attack_path_predictor.load_scalers()"
+  },
+  "reconstruction_procedure": {
+    "row_0_current": "NOT reconstructed \u2014 the observed 52-D vector screening_X[seq][-1] verbatim, exactly what src/mitre_mapper.py reads today",
+    "rows_1_to_5_base": "decoded_states[k] verbatim (see decoder_space_identity)",
+    "rows_1_to_5_rel_change": [
+      "inverse-transform the base trajectory to RAW units with the frozen input_scaler base columns (z * scale + mean); the chain's k=0 element is the OBSERVED last window, so t+1's change is measured against reality",
+      "apply the frozen contract formula (x_k - x_{k-1}) / (|x_{k-1}| + 1e-8), clipped to [-10, 10]",
+      "forward-transform with the frozen input_scaler rel-change columns ((rel - mean) / scale)"
+    ],
+    "new_transform_introduced": false,
+    "scalers_refit": false
+  },
+  "substrate": {
+    "source": "results/v4_screening_mvp/ (Task 10, frozen)",
+    "n_sequences": 3115,
+    "alert_threshold": 0.69,
+    "threshold_source": "frozen validation-selected K=5 trajectory-MAX threshold (docs/v4_baseline_manifest.json threshold.per_horizon_trajectory_max['5'])",
+    "mapper_threshold_note": "the mapper is constructed with the FROZEN trajectory-MAX alert threshold (0.69). No per-horizon threshold was invented: the frozen per-horizon point thresholds cover k=1,2,3,5 only (k=4 has none by design), so interpolating one for k=4 would have meant inventing a threshold. A single frozen value is used at every horizon instead.",
+    "current_stage_gate_note": "the CURRENT stage is gated on the NOWCAST probability (nowcast_probability_t0), because the current stage is a statement about now. The existing MITRE ATT&CK Timeline page gates on max-forecast instead; that difference is deliberate and is why most sequences report a current stage of 'No Alert' while the forecast is elevated."
+  }
+}

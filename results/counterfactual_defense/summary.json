@@ -1,0 +1,589 @@
+{
+  "task": "Task 19 / S5 \u2014 multi-intervention counterfactual defense lab",
+  "layer_version": "v4-counterfactual-1.0",
+  "generated_utc": "2026-09-26T13:21:43Z",
+  "headline": "COUNTERFACTUAL MODEL SIMULATION",
+  "disclaimers": {
+    "causal": "These trajectories are model-based what-if projections. They do not estimate causal real-world defense effectiveness because the World Model was not trained on intervention/outcome data.",
+    "direction": "Different scenarios may produce higher or lower projected threat probabilities. This reflects the frozen model's response to the simulated state perturbation and should not be interpreted as proof that a defense would help or harm in reality."
+  },
+  "substrate": {
+    "source": "results/v4_screening_mvp/ (Task 10, frozen)",
+    "n_sequences_total": 3115,
+    "n_sequences_swept": 445,
+    "sweep_rule": "fixed stride 7, no randomness, no label involvement (the same stride S4 used)",
+    "alert_threshold": 0.69
+  },
+  "scenarios": [
+    {
+      "scenario_id": "NO_ACTION",
+      "scenario_name": "No action",
+      "intervention_type": "NONE",
+      "strength": 0.0,
+      "description": "The observed window is rolled forward through the frozen V4 model with no perturbation of any kind. This is the frozen forecast every other page of the console shows, and it is the reference every scenario delta is measured against.",
+      "is_no_action": true
+    },
+    {
+      "scenario_id": "RATE_LIMIT@0.10",
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 10% simulated strength",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.1,
+      "description": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.10. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RATE_LIMIT@0.25",
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 25% simulated strength",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.25,
+      "description": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.25. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RATE_LIMIT@0.50",
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 50% simulated strength",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.5,
+      "description": "Throttle the volume of traffic crossing the monitored boundary by the simulated strength, without selecting particular destinations or ports. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.50. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RESTRICT_EGRESS@0.10",
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 10% simulated strength",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.1,
+      "description": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.10. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RESTRICT_EGRESS@0.25",
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 25% simulated strength",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.25,
+      "description": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.25. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    },
+    {
+      "scenario_id": "RESTRICT_EGRESS@0.50",
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 50% simulated strength",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.5,
+      "description": "Block a fraction of the distinct outbound destination ports observed in the current window, as an egress allow-list would. Applied to the FINAL observed timestep only, at a simulated intervention strength of 0.50. The transformation is the one S4 validated, imported unchanged.",
+      "is_no_action": false
+    }
+  ],
+  "declared_strengths": [
+    0.1,
+    0.25,
+    0.5
+  ],
+  "per_scenario": {
+    "NO_ACTION": {
+      "scenario_id": "NO_ACTION",
+      "intervention_type": "NONE",
+      "strength": 0.0,
+      "n_sequences": 445,
+      "median_max_probability": 0.5836426019668579,
+      "mean_max_probability": 0.4087568155516367,
+      "p95_max_probability": 0.7738543033599853,
+      "global_max_probability": 0.794410765171051,
+      "mean_probability_delta_k5": 0.0,
+      "median_probability_delta_k5": 0.0,
+      "p95_absolute_delta": 0.0,
+      "mean_delta_max_forecast": 0.0,
+      "median_delta_max_forecast": 0.0,
+      "n_projected_lower": 0,
+      "n_projected_higher": 0,
+      "n_unchanged_or_negligible": 445,
+      "alert_threshold": 0.69,
+      "n_alerting": 208,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 0,
+      "n_leaving_frozen_threshold": 0,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 0,
+        "progression_shifts_earlier": 0,
+        "same_progression": 36,
+        "progression_target_stage_changed": 0,
+        "ambiguous": 172,
+        "no_progression_identified": 237
+      },
+      "reliability_counts": {
+        "RELIABLE": 406,
+        "CAUTION": 37,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 0,
+      "n_became_unreliable": 0,
+      "scenario_name": "No action"
+    },
+    "RATE_LIMIT@0.10": {
+      "scenario_id": "RATE_LIMIT@0.10",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.1,
+      "n_sequences": 445,
+      "median_max_probability": 0.5713041424751282,
+      "mean_max_probability": 0.40701174213625196,
+      "p95_max_probability": 0.7742031574249267,
+      "global_max_probability": 0.7951624989509583,
+      "mean_probability_delta_k5": -0.0010660213973448893,
+      "median_probability_delta_k5": -1.945267831590582e-06,
+      "p95_absolute_delta": 0.010343584418296784,
+      "mean_delta_max_forecast": -0.0017450734153847327,
+      "median_delta_max_forecast": -3.513541741995141e-06,
+      "n_projected_lower": 241,
+      "n_projected_higher": 153,
+      "n_unchanged_or_negligible": 51,
+      "alert_threshold": 0.69,
+      "n_alerting": 208,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 0,
+      "n_leaving_frozen_threshold": 0,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 0,
+        "progression_shifts_earlier": 0,
+        "same_progression": 32,
+        "progression_target_stage_changed": 0,
+        "ambiguous": 176,
+        "no_progression_identified": 237
+      },
+      "reliability_counts": {
+        "RELIABLE": 404,
+        "CAUTION": 39,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 2,
+      "n_became_unreliable": 0,
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 10% simulated strength"
+    },
+    "RATE_LIMIT@0.25": {
+      "scenario_id": "RATE_LIMIT@0.25",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.25,
+      "n_sequences": 445,
+      "median_max_probability": 0.5593728423118591,
+      "mean_max_probability": 0.4044331723214575,
+      "p95_max_probability": 0.7749312162399292,
+      "global_max_probability": 0.7964341044425964,
+      "mean_probability_delta_k5": -0.002547015067668083,
+      "median_probability_delta_k5": -3.200166884198552e-06,
+      "p95_absolute_delta": 0.025818026065826345,
+      "mean_delta_max_forecast": -0.004323643230179179,
+      "median_delta_max_forecast": -6.391770511982031e-06,
+      "n_projected_lower": 247,
+      "n_projected_higher": 159,
+      "n_unchanged_or_negligible": 39,
+      "alert_threshold": 0.69,
+      "n_alerting": 204,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 1,
+      "n_leaving_frozen_threshold": 5,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 0,
+        "progression_shifts_earlier": 2,
+        "same_progression": 20,
+        "progression_target_stage_changed": 2,
+        "ambiguous": 185,
+        "no_progression_identified": 236
+      },
+      "reliability_counts": {
+        "RELIABLE": 404,
+        "CAUTION": 39,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 4,
+      "n_became_unreliable": 0,
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 25% simulated strength"
+    },
+    "RATE_LIMIT@0.50": {
+      "scenario_id": "RATE_LIMIT@0.50",
+      "intervention_type": "RATE_LIMIT",
+      "strength": 0.5,
+      "n_sequences": 445,
+      "median_max_probability": 0.5239436626434326,
+      "mean_max_probability": 0.40025822393054045,
+      "p95_max_probability": 0.776345407962799,
+      "global_max_probability": 0.7990214824676514,
+      "mean_probability_delta_k5": -0.004564570968594605,
+      "median_probability_delta_k5": -3.413799095142167e-06,
+      "p95_absolute_delta": 0.055288159847259245,
+      "mean_delta_max_forecast": -0.008498591621096249,
+      "median_delta_max_forecast": -6.308569027169142e-06,
+      "n_projected_lower": 250,
+      "n_projected_higher": 169,
+      "n_unchanged_or_negligible": 26,
+      "alert_threshold": 0.69,
+      "n_alerting": 205,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 4,
+      "n_leaving_frozen_threshold": 7,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 1,
+        "progression_shifts_earlier": 3,
+        "same_progression": 16,
+        "progression_target_stage_changed": 2,
+        "ambiguous": 190,
+        "no_progression_identified": 233
+      },
+      "reliability_counts": {
+        "RELIABLE": 403,
+        "CAUTION": 40,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 9,
+      "n_became_unreliable": 0,
+      "scenario_name": "Defend now \u2014 uniform traffic rate limit \u2014 50% simulated strength"
+    },
+    "RESTRICT_EGRESS@0.10": {
+      "scenario_id": "RESTRICT_EGRESS@0.10",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.1,
+      "n_sequences": 445,
+      "median_max_probability": 0.5585523843765259,
+      "mean_max_probability": 0.40677107885214703,
+      "p95_max_probability": 0.7744810223579407,
+      "global_max_probability": 0.7952379584312439,
+      "mean_probability_delta_k5": -0.0008672107514551929,
+      "median_probability_delta_k5": -4.627387170330621e-07,
+      "p95_absolute_delta": 0.013645792007446202,
+      "mean_delta_max_forecast": -0.0019857366994896737,
+      "median_delta_max_forecast": -2.060140104731545e-06,
+      "n_projected_lower": 232,
+      "n_projected_higher": 167,
+      "n_unchanged_or_negligible": 46,
+      "alert_threshold": 0.69,
+      "n_alerting": 208,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 2,
+      "n_leaving_frozen_threshold": 2,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 0,
+        "progression_shifts_earlier": 1,
+        "same_progression": 26,
+        "progression_target_stage_changed": 2,
+        "ambiguous": 181,
+        "no_progression_identified": 235
+      },
+      "reliability_counts": {
+        "RELIABLE": 403,
+        "CAUTION": 40,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 3,
+      "n_became_unreliable": 0,
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 10% simulated strength"
+    },
+    "RESTRICT_EGRESS@0.25": {
+      "scenario_id": "RESTRICT_EGRESS@0.25",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.25,
+      "n_sequences": 445,
+      "median_max_probability": 0.5267026424407959,
+      "mean_max_probability": 0.40389327214634496,
+      "p95_max_probability": 0.7750554561614991,
+      "global_max_probability": 0.7965693473815918,
+      "mean_probability_delta_k5": -0.0018871784228427283,
+      "median_probability_delta_k5": -7.213047553022982e-07,
+      "p95_absolute_delta": 0.03505283594131468,
+      "mean_delta_max_forecast": -0.004863543405291693,
+      "median_delta_max_forecast": -3.7542772588494683e-06,
+      "n_projected_lower": 239,
+      "n_projected_higher": 171,
+      "n_unchanged_or_negligible": 35,
+      "alert_threshold": 0.69,
+      "n_alerting": 207,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 4,
+      "n_leaving_frozen_threshold": 5,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 2,
+        "progression_shifts_earlier": 3,
+        "same_progression": 18,
+        "progression_target_stage_changed": 2,
+        "ambiguous": 187,
+        "no_progression_identified": 233
+      },
+      "reliability_counts": {
+        "RELIABLE": 403,
+        "CAUTION": 40,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 5,
+      "n_became_unreliable": 0,
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 25% simulated strength"
+    },
+    "RESTRICT_EGRESS@0.50": {
+      "scenario_id": "RESTRICT_EGRESS@0.50",
+      "intervention_type": "RESTRICT_EGRESS",
+      "strength": 0.5,
+      "n_sequences": 445,
+      "median_max_probability": 0.47398680448532104,
+      "mean_max_probability": 0.3993794565626703,
+      "p95_max_probability": 0.7767710566520691,
+      "global_max_probability": 0.7991354465484619,
+      "mean_probability_delta_k5": -0.0027811959715388673,
+      "median_probability_delta_k5": -7.175552696025989e-07,
+      "p95_absolute_delta": 0.0717109024524686,
+      "mean_delta_max_forecast": -0.009377358988966335,
+      "median_delta_max_forecast": -5.795380275230855e-06,
+      "n_projected_lower": 245,
+      "n_projected_higher": 176,
+      "n_unchanged_or_negligible": 24,
+      "alert_threshold": 0.69,
+      "n_alerting": 203,
+      "negligible_band": 1e-06,
+      "n_crossing_frozen_threshold": 4,
+      "n_leaving_frozen_threshold": 9,
+      "progression_change_counts": {
+        "progression_disappears": 0,
+        "progression_appears": 0,
+        "progression_shifts_later": 1,
+        "progression_shifts_earlier": 4,
+        "same_progression": 11,
+        "progression_target_stage_changed": 4,
+        "ambiguous": 192,
+        "no_progression_identified": 233
+      },
+      "reliability_counts": {
+        "RELIABLE": 402,
+        "CAUTION": 41,
+        "UNRELIABLE": 2
+      },
+      "n_reliability_changed_vs_no_action": 10,
+      "n_became_unreliable": 0,
+      "scenario_name": "Block C2 / restrict egress \u2014 destination allow-listing \u2014 50% simulated strength"
+    }
+  },
+  "scenario_matrix": [
+    {
+      "scenario": "NO_ACTION",
+      "strength": 0.0,
+      "median_max_p": 0.583643,
+      "mean_max_p": 0.408757,
+      "p95_max_p": 0.773854,
+      "global_max_p": 0.794411,
+      "mean_delta": 0.0,
+      "median_delta": 0.0,
+      "p95_abs_delta": 0.0,
+      "lower": 0,
+      "higher": 0,
+      "unchanged": 445,
+      "crossing_threshold": 0,
+      "leaving_threshold": 0,
+      "progression_change": 0
+    },
+    {
+      "scenario": "RATE_LIMIT@0.10",
+      "strength": 0.1,
+      "median_max_p": 0.571304,
+      "mean_max_p": 0.407012,
+      "p95_max_p": 0.774203,
+      "global_max_p": 0.795162,
+      "mean_delta": -0.001066,
+      "median_delta": -2e-06,
+      "p95_abs_delta": 0.010344,
+      "lower": 241,
+      "higher": 153,
+      "unchanged": 51,
+      "crossing_threshold": 0,
+      "leaving_threshold": 0,
+      "progression_change": 0
+    },
+    {
+      "scenario": "RATE_LIMIT@0.25",
+      "strength": 0.25,
+      "median_max_p": 0.559373,
+      "mean_max_p": 0.404433,
+      "p95_max_p": 0.774931,
+      "global_max_p": 0.796434,
+      "mean_delta": -0.002547,
+      "median_delta": -3e-06,
+      "p95_abs_delta": 0.025818,
+      "lower": 247,
+      "higher": 159,
+      "unchanged": 39,
+      "crossing_threshold": 1,
+      "leaving_threshold": 5,
+      "progression_change": 4
+    },
+    {
+      "scenario": "RATE_LIMIT@0.50",
+      "strength": 0.5,
+      "median_max_p": 0.523944,
+      "mean_max_p": 0.400258,
+      "p95_max_p": 0.776345,
+      "global_max_p": 0.799021,
+      "mean_delta": -0.004565,
+      "median_delta": -3e-06,
+      "p95_abs_delta": 0.055288,
+      "lower": 250,
+      "higher": 169,
+      "unchanged": 26,
+      "crossing_threshold": 4,
+      "leaving_threshold": 7,
+      "progression_change": 6
+    },
+    {
+      "scenario": "RESTRICT_EGRESS@0.10",
+      "strength": 0.1,
+      "median_max_p": 0.558552,
+      "mean_max_p": 0.406771,
+      "p95_max_p": 0.774481,
+      "global_max_p": 0.795238,
+      "mean_delta": -0.000867,
+      "median_delta": -0.0,
+      "p95_abs_delta": 0.013646,
+      "lower": 232,
+      "higher": 167,
+      "unchanged": 46,
+      "crossing_threshold": 2,
+      "leaving_threshold": 2,
+      "progression_change": 3
+    },
+    {
+      "scenario": "RESTRICT_EGRESS@0.25",
+      "strength": 0.25,
+      "median_max_p": 0.526703,
+      "mean_max_p": 0.403893,
+      "p95_max_p": 0.775055,
+      "global_max_p": 0.796569,
+      "mean_delta": -0.001887,
+      "median_delta": -1e-06,
+      "p95_abs_delta": 0.035053,
+      "lower": 239,
+      "higher": 171,
+      "unchanged": 35,
+      "crossing_threshold": 4,
+      "leaving_threshold": 5,
+      "progression_change": 7
+    },
+    {
+      "scenario": "RESTRICT_EGRESS@0.50",
+      "strength": 0.5,
+      "median_max_p": 0.473987,
+      "mean_max_p": 0.399379,
+      "p95_max_p": 0.776771,
+      "global_max_p": 0.799135,
+      "mean_delta": -0.002781,
+      "median_delta": -1e-06,
+      "p95_abs_delta": 0.071711,
+      "lower": 245,
+      "higher": 176,
+      "unchanged": 24,
+      "crossing_threshold": 4,
+      "leaving_threshold": 9,
+      "progression_change": 9
+    }
+  ],
+  "scenario_matrix_note": "descriptive only. No overall score and no ranking is emitted, and no direction is called successful: 'lower' and 'higher' describe the frozen model's projected probability, not real-world risk.",
+  "progression_change_totals": {
+    "progression_disappears": 0,
+    "progression_appears": 0,
+    "progression_shifts_later": 4,
+    "progression_shifts_earlier": 13,
+    "same_progression": 123,
+    "progression_target_stage_changed": 12,
+    "ambiguous": 1111,
+    "no_progression_identified": 1407
+  },
+  "progression_change_display": {
+    "progression_disappears": "Projected progression disappears under this scenario",
+    "progression_appears": "Projected progression appears under this scenario",
+    "progression_shifts_later": "Projected progression shifts later under this scenario",
+    "progression_shifts_earlier": "Projected progression shifts earlier under this scenario",
+    "same_progression": "Same projected progression",
+    "progression_target_stage_changed": "Same projected timing, different projected next stage",
+    "ambiguous": "Ambiguous \u2014 analyst review",
+    "no_progression_identified": "No progression identified in either scenario"
+  },
+  "reliability_indicator_tier_changes": {
+    "prob_max_abs_step": 52,
+    "displacement": 23,
+    "prob_range": 23,
+    "state_delta_max": 20,
+    "latent_norm_change": 1
+  },
+  "n_counterfactuals_that_became_unreliable": 0,
+  "demonstration_cases": {
+    "A_elevated_threat": {
+      "sequence_id": 2184,
+      "selection_basis": "highest NO_ACTION max-forecast probability among the swept sequences; ties broken by lowest sequence_id"
+    },
+    "B_forward_progression": {
+      "sequence_id": 14,
+      "selection_basis": "lowest sequence_id among swept sequences whose NO_ACTION Task-16 status is FORWARD_PROGRESSION_IDENTIFIED"
+    },
+    "C_scenarios_diverge": {
+      "sequence_id": 2919,
+      "selection_basis": "largest spread across scenarios of the projected max-forecast probability, max(scenario) - min(scenario). Direction-agnostic: it measures how much the scenarios DISAGREE, not which way any of them moves"
+    },
+    "D_unreliable_or_caution": {
+      "sequence_id": 1624,
+      "selection_basis": "lowest sequence_id among swept sequences whose NO_ACTION Task-15 status is UNRELIABLE; if none, the lowest whose status is CAUTION"
+    },
+    "E_progression_change": {
+      "sequence_id": 154,
+      "selection_basis": "lowest sequence_id among swept sequences where at least one scenario's categorical progression-change outcome is not 'same_progression' and not 'no_progression_identified'"
+    },
+    "F_progression_timing_shift": {
+      "sequence_id": 231,
+      "selection_basis": "lowest sequence_id among swept sequences where at least one scenario shifts the estimated time-to-progression. Direction-agnostic: 'shifts later' and 'shifts earlier' are both admitted, so the rule cannot prefer the flattering direction"
+    }
+  },
+  "consistency": {
+    "A_identical_inputs_identical_outputs": true,
+    "B_zero_strength_max_abs_difference": {
+      "RATE_LIMIT": 1.646578311920166e-06,
+      "RESTRICT_EGRESS": 1.646578311920166e-06
+    },
+    "C_identical_initial_history": true,
+    "D_deterministic_rerun_fingerprint": "f71fef3e99c3745f8494e0dea5b75373eced144783add4c95d03565cd72bc3f1",
+    "E_no_action_vs_screening_predictions": {
+      "max_abs_difference": 1.4901161193847656e-06,
+      "alert_disagreements": 0,
+      "tolerance": 1e-05,
+      "note": "documented CPU-vs-MPS device gap, same as Tasks 12 / 15 / 18"
+    },
+    "E_no_action_vs_s4_stored": {
+      "max_abs_difference": 2.6469779601696886e-23
+    }
+  },
+  "what_this_is_not": [
+    "not a causal effect estimator",
+    "not a real defense engine",
+    "not an automated response system",
+    "not proof that an intervention would work in reality"
+  ],
+  "limitations": [
+    "No output of this layer is a causal effect. The model was never trained on interventions, so its response to a state perturbation is a property of the model, not of a defense.",
+    "Only the FINAL observed timestep is perturbed, because earlier timesteps are observed history. The V4 encoder is an LSTM over ten windows, so projected changes are small by construction.",
+    "Projected changes are heterogeneous in sign across sequences. A lower projection is not mitigation and a higher projection is not evidence that defending would be harmful.",
+    "Interventions modify only features whose transformation follows from the frozen contract; plausible real consequences the contract cannot determine are deliberately not modelled, so every perturbation is incomplete by design.",
+    "RESTRICT_EGRESS assumes blocked destinations carry a proportional share of window volume \u2014 a first-order assumption, not a measured property.",
+    "Only two interventions are defensible on the frozen 26-feature contract; see third_intervention_audit.",
+    "The scenario matrix is descriptive. It carries no overall score and no ranking, because the model cannot support one."
+  ],
+  "outputs": {
+    "scenario_definitions.json": "every scenario, the inherited S4 transformations, and the third-intervention audit",
+    "scenario_results.csv": "3115 scenario \u00d7 sequence rows",
+    "trajectory_comparison.csv": "18690 per-horizon rows",
+    "progression_comparison.csv": "2670 categorical progression comparisons",
+    "reliability_comparison.csv": "2670 reliability comparisons",
+    "scenario_examples.csv": "42 demonstration rows",
+    "summary.json": "this file",
+    "manifest.json": "provenance + frozen artifact hashes",
+    "validation.json": "validation gates"
+  }
+}

@@ -1,0 +1,423 @@
+{
+  "task": "Task 17 / S3 validation",
+  "layer_version": "v4-abstain-1.0",
+  "generated_utc": "2026-09-26T11:25:03Z",
+  "overall": "PASS",
+  "n_checks": 44,
+  "n_pass": 44,
+  "n_fail": 0,
+  "checks": [
+    {
+      "key": "frozen_16_present",
+      "name": "All 16 frozen artifacts present",
+      "status": "PASS",
+      "detail": "16/16"
+    },
+    {
+      "key": "upstream_present",
+      "name": "Task-15 + Task-16 outputs present",
+      "status": "PASS",
+      "detail": "9/9 (reliability + attack_path)"
+    },
+    {
+      "key": "threshold_is_frozen",
+      "name": "Alert threshold read from the frozen manifest, not chosen here",
+      "status": "PASS",
+      "detail": "0.69 (validation-selected)"
+    },
+    {
+      "key": "threshold_reproduced",
+      "name": "Frozen 0.69 reproduced from validation with this label definition",
+      "status": "PASS",
+      "detail": "grid search -> 0.69 (F1 0.5639); confirms the evaluation contract"
+    },
+    {
+      "key": "attack_path_not_independent",
+      "name": "Task-16 status measured to be downstream of the same threshold",
+      "status": "PASS",
+      "detail": "NO_FORWARD_PROGRESSION <=> alert=0 for 1473/1473 validation windows, so it carries no independent information and is REJECTED as a gate input"
+    },
+    {
+      "key": "caution_evidence_directional",
+      "name": "CAUTION shows a higher validation error rate than RELIABLE",
+      "status": "PASS",
+      "detail": "0.360 vs 0.199 \u2014 but only n=25 CAUTION windows, so this is WEAK evidence"
+    },
+    {
+      "key": "margin_selected",
+      "name": "Margin delta selected on VALIDATION by the declared rule",
+      "status": "PASS",
+      "detail": "delta=0.05 (largest of 6 passing deltas 0.00..0.05)"
+    },
+    {
+      "key": "no_test_labels_before_freeze",
+      "name": "No held-out test label opened before the policy was frozen",
+      "status": "PASS",
+      "detail": "2 guarded .npy reads, all phase1_validation"
+    },
+    {
+      "key": "policy_roundtrip",
+      "name": "Policy reloaded from disk matches the frozen deciding parameters",
+      "status": "PASS",
+      "detail": "sha256 e5bf7409652afbf3\u2026"
+    },
+    {
+      "key": "substrate_is_x_test",
+      "name": "screening_X.npy is byte-identical to X_test.npy",
+      "status": "PASS",
+      "detail": "labels align positionally"
+    },
+    {
+      "key": "label_crosscheck",
+      "name": "A_binary_multistep_test agrees with screening_metadata labels",
+      "status": "PASS",
+      "detail": "3115/3115 agree"
+    },
+    {
+      "key": "test_scores_frozen",
+      "name": "Test scores are the frozen stored max_forecast values",
+      "status": "PASS",
+      "detail": "recomputed CPU rollout agrees to 1.535e-06"
+    },
+    {
+      "key": "attack_path_rows_align",
+      "name": "Task-16 per_sequence_paths.csv aligns with the substrate",
+      "status": "PASS",
+      "detail": "3115 rows"
+    },
+    {
+      "key": "never_flips",
+      "name": "Non-abstained decisions never differ from frozen thresholding",
+      "status": "PASS",
+      "detail": "0 flips across 3115 test windows"
+    },
+    {
+      "key": "policy_hash_stable_after_test",
+      "name": "Policy hash unchanged after the test split was evaluated",
+      "status": "PASS",
+      "detail": "sha256 e5bf7409652afbf3\u2026 \u2014 the gate was not revised"
+    },
+    {
+      "key": "examples_all_three",
+      "name": "Real ALERT / BENIGN / ABSTAIN examples exist",
+      "status": "PASS",
+      "detail": "incl. 11 real UNRELIABLE sequences"
+    },
+    {
+      "key": "abstain_example_is_real_unreliable",
+      "name": "At least one ABSTAIN example is a real Task-15 UNRELIABLE window",
+      "status": "PASS",
+      "detail": "sequences [1622, 1623, 1624, 1625, 1626]\u2026 (11 total)"
+    },
+    {
+      "key": "deterministic",
+      "name": "Second independent pass is bit-identical",
+      "status": "PASS",
+      "detail": "sha256 ce694b1b495f47e6\u2026"
+    },
+    {
+      "key": "hard_safety_rule",
+      "name": "Every UNRELIABLE window abstains (no bypass)",
+      "status": "PASS",
+      "detail": "11 UNRELIABLE windows, all ABSTAIN"
+    },
+    {
+      "key": "hard_safety_rule_validation",
+      "name": "Hard rule holds on validation as well",
+      "status": "PASS",
+      "detail": "0 UNRELIABLE windows on validation (none exist, so the rule is untested by validation data)"
+    },
+    {
+      "key": "every_abstention_has_a_reason",
+      "name": "Every ABSTAIN carries at least one reason code",
+      "status": "PASS",
+      "detail": "563 abstentions, all with reasons"
+    },
+    {
+      "key": "threshold_untouched",
+      "name": "The 0.69 boundary is unchanged by this layer",
+      "status": "PASS",
+      "detail": "policy and substrate both report 0.69"
+    },
+    {
+      "key": "no_learned_component",
+      "name": "Abstain module contains no fit / backward / optimiser call",
+      "status": "PASS",
+      "detail": "none found"
+    },
+    {
+      "key": "no_calibration_claim",
+      "name": "The word 'calibrated' is never applied to an output",
+      "status": "PASS",
+      "detail": "no calibration was fitted and none is claimed"
+    },
+    {
+      "key": "no_nan_inf",
+      "name": "0 NaN / Inf in every written numeric column",
+      "status": "PASS",
+      "detail": "4 artifacts swept; undefined rates (empty denominator) and not-applicable cells are written as empty, never as NaN"
+    },
+    {
+      "key": "offline_preserved",
+      "name": "No network call in the files this task touches",
+      "status": "PASS",
+      "detail": "3 files scanned"
+    },
+    {
+      "key": "page::\ud83c\udfaf Live Forecast",
+      "name": "Page renders: \ud83c\udfaf Live Forecast",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\u23f1\ufe0f Early Warning",
+      "name": "Page renders: \u23f1\ufe0f Early Warning",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83e\udded Event Timeline",
+      "name": "Page renders: \ud83e\udded Event Timeline",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\udd2e Trajectory Rollout",
+      "name": "Page renders: \ud83d\udd2e Trajectory Rollout",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\udcca Window Inspector",
+      "name": "Page renders: \ud83d\udcca Window Inspector",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\udd0d Feature Attribution",
+      "name": "Page renders: \ud83d\udd0d Feature Attribution",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\udee1\ufe0f Reliability / Model Health",
+      "name": "Page renders: \ud83d\udee1\ufe0f Reliability / Model Health",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\uddfa\ufe0f MITRE ATT&CK Timeline",
+      "name": "Page renders: \ud83d\uddfa\ufe0f MITRE ATT&CK Timeline",
+      "status": "PASS",
+      "detail": "page body executed, then halted at its own st.stop() guard"
+    },
+    {
+      "key": "page::\ud83e\udded Attack Path / Progression",
+      "name": "Page renders: \ud83e\udded Attack Path / Progression",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83e\uddd1\u200d\ud83d\udcbb Analyst Decision",
+      "name": "Page renders: \ud83e\uddd1\u200d\ud83d\udcbb Analyst Decision",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\udce1 Live PCAP Ingestion",
+      "name": "Page renders: \ud83d\udce1 Live PCAP Ingestion",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "page::\ud83d\udcd0 Methodology & Limits",
+      "name": "Page renders: \ud83d\udcd0 Methodology & Limits",
+      "status": "PASS",
+      "detail": "page body executed"
+    },
+    {
+      "key": "frozen_16_unchanged",
+      "name": "All 16 frozen artifacts byte-identical",
+      "status": "PASS",
+      "detail": "0 of 16 changed"
+    },
+    {
+      "key": "upstream_unchanged",
+      "name": "Task-15 reliability + Task-16 attack-path outputs unchanged",
+      "status": "PASS",
+      "detail": "9 files re-hashed, 0 changed"
+    },
+    {
+      "key": "checkpoint_unchanged",
+      "name": "V4 checkpoint byte-identical",
+      "status": "PASS",
+      "detail": "76af8d8a9e022159\u2026"
+    },
+    {
+      "key": "scalers_unchanged",
+      "name": "Both scalers byte-identical",
+      "status": "PASS",
+      "detail": "input_scaler + target_scaler"
+    },
+    {
+      "key": "screening_predictions_unchanged",
+      "name": "screening_predictions.csv byte-identical",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "key": "no_new_weights",
+      "name": "No model weights written by this layer",
+      "status": "PASS",
+      "detail": "results/abstain/ holds CSV + JSON only"
+    }
+  ],
+  "required_assertions": {
+    "v4_checkpoint_unchanged": true,
+    "scalers_unchanged": true,
+    "screening_predictions_unchanged": true,
+    "task15_reliability_unchanged": true,
+    "task16_attack_path_unchanged": true,
+    "no_test_labels_used_to_tune_the_policy": true,
+    "validation_gate_frozen_before_test_evaluation": true,
+    "deterministic_reruns": true,
+    "zero_nan_inf": true,
+    "offline_operation": true,
+    "new_dashboard_page_loads": true,
+    "existing_pages_still_pass": true,
+    "sixteen_frozen_hashes_unchanged": true
+  },
+  "phase_ordering_proof": {
+    "design": "PHASE 1 validation -> PHASE 2 freeze + hash -> PHASE 3 test. Every .npy read is recorded with the phase it was read in.",
+    "policy_hash_at_freeze": "e5bf7409652afbf365b30a9b5e057283cbf4bb36560895f66339009c21a36a9a",
+    "policy_hash_after_test": "e5bf7409652afbf365b30a9b5e057283cbf4bb36560895f66339009c21a36a9a",
+    "hash_stable": true,
+    "deciding_parameters_hashed": [
+      "version",
+      "alert_threshold",
+      "margin_delta",
+      "caution_abstains"
+    ],
+    "guarded_read_log": [
+      "phase1_validation:data/processed/multiday_benchmark_K5/X_val.npy",
+      "phase1_validation:data/processed/multiday_benchmark_K5/A_binary_multistep_val.npy",
+      "phase3_test:data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy",
+      "phase3_test:data/processed/multiday_benchmark_K5/X_test.npy"
+    ],
+    "test_label_files_read_in_phase1": []
+  },
+  "page_results": {
+    "\ud83c\udfaf Live Forecast": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\u23f1\ufe0f Early Warning": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83e\udded Event Timeline": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\udd2e Trajectory Rollout": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\udcca Window Inspector": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\udd0d Feature Attribution": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\udee1\ufe0f Reliability / Model Health": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\uddfa\ufe0f MITRE ATT&CK Timeline": {
+      "pass": true,
+      "detail": "page body executed, then halted at its own st.stop() guard"
+    },
+    "\ud83e\udded Attack Path / Progression": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83e\uddd1\u200d\ud83d\udcbb Analyst Decision": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\udce1 Live PCAP Ingestion": {
+      "pass": true,
+      "detail": "page body executed"
+    },
+    "\ud83d\udcd0 Methodology & Limits": {
+      "pass": true,
+      "detail": "page body executed"
+    }
+  },
+  "frozen_artifact_integrity": {
+    "before": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    },
+    "after": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    },
+    "changed": []
+  },
+  "upstream_output_integrity": {
+    "before": {
+      "results/v4_reliability/reliability_config.json": "b938a8d5a2ae4a7bed56ed83aa045feda7d1b862a72f4ad09cede0a7e6f8f1a0",
+      "results/v4_reliability/reliability_summary.json": "60a8bee3db8f9d9296b1fa9c2a636209e1d68465bf46c80f1fe7a08a3ba73b60",
+      "results/v4_reliability/reliability_manifest.json": "400012aee6eef195309cfa9c0bd06ae5d79218ac0a190f8f9f78d488346c14b7",
+      "results/v4_reliability/validation.json": "5e40d5fac5625e2c284dafb5d5d15a8016a787a945f4dfc834091e8de72e67af",
+      "results/attack_path/predictor_metadata.json": "aee7acecb2850ca2422458d052ab754b67ed74612f4930fa59b497978a655c01",
+      "results/attack_path/per_sequence_paths.csv": "9cc2c99c9239608c27a0eabcd16ab9fe139bec49245d1987102139ee36692fbe",
+      "results/attack_path/progression_events.csv": "0e03271895b5f1ad3c75227fc40cd90aa53115fa5782fae1fe1895608df5f289",
+      "results/attack_path/attack_path_manifest.json": "2928ad783d4b8fe48303580f6c50ffa90fe4dbfe9e07180f84442e8486944791",
+      "results/attack_path/validation.json": "214175f21de3e8074a609e22798c11e9b81c1610eb123fff8c6587d935956777"
+    },
+    "after": {
+      "results/v4_reliability/reliability_config.json": "b938a8d5a2ae4a7bed56ed83aa045feda7d1b862a72f4ad09cede0a7e6f8f1a0",
+      "results/v4_reliability/reliability_summary.json": "60a8bee3db8f9d9296b1fa9c2a636209e1d68465bf46c80f1fe7a08a3ba73b60",
+      "results/v4_reliability/reliability_manifest.json": "400012aee6eef195309cfa9c0bd06ae5d79218ac0a190f8f9f78d488346c14b7",
+      "results/v4_reliability/validation.json": "5e40d5fac5625e2c284dafb5d5d15a8016a787a945f4dfc834091e8de72e67af",
+      "results/attack_path/predictor_metadata.json": "aee7acecb2850ca2422458d052ab754b67ed74612f4930fa59b497978a655c01",
+      "results/attack_path/per_sequence_paths.csv": "9cc2c99c9239608c27a0eabcd16ab9fe139bec49245d1987102139ee36692fbe",
+      "results/attack_path/progression_events.csv": "0e03271895b5f1ad3c75227fc40cd90aa53115fa5782fae1fe1895608df5f289",
+      "results/attack_path/attack_path_manifest.json": "2928ad783d4b8fe48303580f6c50ffa90fe4dbfe9e07180f84442e8486944791",
+      "results/attack_path/validation.json": "214175f21de3e8074a609e22798c11e9b81c1610eb123fff8c6587d935956777"
+    },
+    "changed": []
+  }
+}

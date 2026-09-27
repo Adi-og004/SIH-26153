@@ -1,0 +1,6 @@
+# Development / test environment for the V4 submission.
+# Runtime pins come from the validated lockfile; pytest is added to run tests/.
+#   python -m pip install -r requirements-dev.txt
+#   python -m pytest -q
+-r requirements-screening-lock.txt
+pytest==9.1.1

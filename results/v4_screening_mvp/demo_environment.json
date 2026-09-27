@@ -1,0 +1,326 @@
+{
+  "generated_utc": "2026-09-26T07:00:20Z",
+  "purpose": "Authoritative environment for the V4 screening demo.",
+  "authoritative_environment": {
+    "name": "src/venv",
+    "path": "src/venv (repo-relative)",
+    "python": "3.14.7",
+    "rationale": "Already running the validated dashboard. Chosen over venv/ (which lacks Streamlit and plotly) to keep the change minimal: no package was upgraded or downgraded.",
+    "launch_command": "streamlit run src/app.py",
+    "launch_command_offline_strict": "src/venv/bin/python -m streamlit run src/app.py --server.headless=true --server.address=127.0.0.1 --browser.gatherUsageStats=false",
+    "pinned_requirements_file": "requirements-screening.txt"
+  },
+  "dependency_versions": {
+    "streamlit": "1.62.0",
+    "plotly": "7.0.0",
+    "torch": "2.13.0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "captum": "0.9.0",
+    "matplotlib": "3.11.1",
+    "scapy": "2.7.0"
+  },
+  "environment_audit": {
+    "venv": {
+      "python": "3.14.7",
+      "torch": "2.14.0",
+      "streamlit": null,
+      "plotly": null,
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "scikit-learn": "1.9.0",
+      "captum": "0.9.0",
+      "scapy": "2.7.0",
+      "matplotlib": "3.11.1",
+      "shap": null
+    },
+    "src/venv": {
+      "python": "3.14.7",
+      "torch": "2.13.0",
+      "streamlit": "1.62.0",
+      "plotly": "7.0.0",
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "scikit-learn": "1.9.0",
+      "captum": "0.9.0",
+      "scapy": "2.7.0",
+      "matplotlib": "3.11.1",
+      "shap": "0.52.0"
+    },
+    "cleanroom/demoenv": {
+      "python": "3.14.7",
+      "torch": "2.13.0",
+      "streamlit": "1.62.0",
+      "plotly": "7.0.0",
+      "numpy": "2.5.2",
+      "pandas": "3.0.5",
+      "scikit-learn": "1.9.0",
+      "captum": "0.9.0",
+      "scapy": "2.7.0",
+      "matplotlib": "3.11.1",
+      "shap": null
+    }
+  },
+  "required_by_dashboard": {
+    "import_graph_roots": [
+      "src/app.py"
+    ],
+    "local_modules_traversed": [
+      "app.py",
+      "screening_data.py",
+      "v4_explainer.py",
+      "mitre_mapper.py",
+      "pcap_ingest_v4.py"
+    ],
+    "direct_third_party": [
+      "captum",
+      "matplotlib",
+      "numpy",
+      "pandas",
+      "plotly",
+      "scapy",
+      "scikit-learn",
+      "streamlit",
+      "torch"
+    ],
+    "notes": {
+      "scikit-learn": "Not imported by any source file, but REQUIRED at runtime: the frozen scalers are pickled sklearn StandardScaler objects, so unpickling imports sklearn.",
+      "scapy": "Imported at module level by src/pcap_ingest_v4.py, which src/app.py imports at module level -- required for startup.",
+      "matplotlib": "Imported at module level (Agg backend) by mitre_mapper.py and pcap_ingest_v4.py.",
+      "shap": "EXCLUDED. src/shap_explainer.py is the unlocked legacy explainer and is never imported by the dashboard."
+    }
+  },
+  "clean_install": {
+    "location": "/private/tmp/claude-501/-Users-adityashah-Projects-cyber-world-model/0c45ca78-50d7-4b48-949b-a7d75c7ad099/scratchpad/cleanroom/demoenv  (outside the project repository)",
+    "python": "3.14.7",
+    "installed_only": "requirements-screening.txt",
+    "packages_installed_total": 58,
+    "direct_pins_resolved_exactly": true,
+    "shap_absent": true
+  },
+  "validation_results": {
+    "pages_exercised": 9,
+    "pages": [
+      {
+        "index": 0,
+        "page": "\ud83c\udfaf Live Forecast",
+        "charts_rendered": 2,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 1,
+        "page": "\u23f1\ufe0f Early Warning",
+        "charts_rendered": 0,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 2,
+        "page": "\ud83e\udded Event Timeline",
+        "charts_rendered": 1,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 3,
+        "page": "\ud83d\udd2e Trajectory Rollout",
+        "charts_rendered": 3,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 4,
+        "page": "\ud83d\udcca Window Inspector",
+        "charts_rendered": 4,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 5,
+        "page": "\ud83d\udd0d Feature Attribution",
+        "charts_rendered": 4,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 6,
+        "page": "\ud83d\uddfa\ufe0f MITRE ATT&CK Timeline",
+        "charts_rendered": 0,
+        "stopped_at_documented_guard": true,
+        "ui_error_count": 1
+      },
+      {
+        "index": 7,
+        "page": "\ud83d\udce1 Live PCAP Ingestion",
+        "charts_rendered": 0,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 0
+      },
+      {
+        "index": 8,
+        "page": "\ud83d\udcd0 Methodology & Limits",
+        "charts_rendered": 0,
+        "stopped_at_documented_guard": false,
+        "ui_error_count": 1
+      }
+    ],
+    "expected_ui_errors": {
+      "MITRE ATT&CK Timeline": "stored mitre_summary.csv has 502 rows vs 3115 sequences, so the day-wide table is refused by a documented alignment guard. The live per-sequence mapping above it renders normally.",
+      "Methodology & Limits": "st.error is used deliberately as a styled disclosure box for the out-of-distribution normalisation caveat."
+    },
+    "streamlit_serves": true
+  },
+  "prediction_equivalence": {
+    "device": "cpu",
+    "per_column_max_abs_delta": {
+      "nowcast_probability_t0": 6.258487701971127e-07,
+      "prob_t1": 8.344650268554688e-07,
+      "prob_t2": 1.043081283569336e-06,
+      "prob_t3": 1.2814998626708984e-06,
+      "prob_t4": 1.430511474609375e-06,
+      "prob_t5": 1.996755599975586e-06
+    },
+    "overall_max_abs_delta": 1.996755599975586e-06,
+    "max_forecast_max_abs_delta": 1.5348196030218197e-06,
+    "alert_disagreements": 0,
+    "stored_alerts": 1434,
+    "recomputed_alerts": 1434,
+    "sequence_count_stored": 3115,
+    "sequence_count_X": 3115,
+    "sequence_count_equal": true,
+    "threshold_substrate": 0.69,
+    "threshold_manifest": 0.69,
+    "threshold_equal": true,
+    "substrate_device_recorded": "mps",
+    "documented_cross_device_delta": 1.996755599975586e-06
+  },
+  "xai_result": {
+    "sequence_id": 2341,
+    "ran": true,
+    "attribution_shape": [
+      1,
+      10,
+      52
+    ],
+    "method": "gausslegendre",
+    "n_steps": 128,
+    "explained_probability": 0.778526246547699,
+    "displayed_probability_stored": 0.778526246547699,
+    "explained_vs_displayed_abs_delta": 0.0,
+    "completeness_rel_error": 0.011400135233998299,
+    "top_features": [
+      {
+        "feature": "window_byte_rate",
+        "attribution": -0.44085022807121277,
+        "direction": "contributes toward lower predicted threat"
+      },
+      {
+        "feature": "window_packet_rate",
+        "attribution": 0.4407387971878052,
+        "direction": "contributes toward higher predicted threat"
+      },
+      {
+        "feature": "log_mean_flow_duration",
+        "attribution": 0.20687471330165863,
+        "direction": "contributes toward higher predicted threat"
+      },
+      {
+        "feature": "log_total_packets",
+        "attribution": 0.18317319452762604,
+        "direction": "contributes toward higher predicted threat"
+      },
+      {
+        "feature": "rst_rate",
+        "attribution": 0.16737745702266693,
+        "direction": "contributes toward higher predicted threat"
+      }
+    ]
+  },
+  "mitre_result": {
+    "sequence_id": 2341,
+    "ran": true,
+    "rule_library_size": 10,
+    "feature_order_matches_contract": true,
+    "tactic_id": "TA0043",
+    "tactic_name": "Reconnaissance",
+    "technique_id": "T1018",
+    "technique_name": "Remote System Discovery",
+    "confidence": "high",
+    "temporal_phase": "late",
+    "has_analyst_explanation": true,
+    "all_fields_returned": true
+  },
+  "offline_result": {
+    "source_scan": {
+      "files": [
+        "src/app.py",
+        "src/screening_data.py",
+        "src/v4_explainer.py",
+        "src/mitre_mapper.py",
+        "src/pcap_ingest_v4.py"
+      ],
+      "remote_urls": 0,
+      "requests_calls": 0,
+      "urllib": 0,
+      "httpx": 0,
+      "aiohttp": 0,
+      "sockets": 0,
+      "runtime_downloads": 0,
+      "telemetry_keyword_hits": 19,
+      "telemetry_keyword_note": "All 19 are the network-telemetry domain sense ('telemetry rule', 'telemetry snapshot', 'March-2 telemetry'), not analytics or tracking."
+    },
+    "network_blocked_test": {
+      "method": "socket.connect/connect_ex to any non-loopback address raises; hostname DNS raises; numeric-IP resolution allowed (local, sends no traffic)",
+      "pages_run_offline": 9,
+      "pages_all_passed": true,
+      "outbound_connections_attempted_by_app": 0,
+      "hostname_dns_attempted_by_app": 0
+    },
+    "streamlit_server_offline": {
+      "default_bind": {
+        "serves": true,
+        "http": 200,
+        "health": "ok",
+        "outbound_attempts": [
+          "UDP connect 8.8.8.8:1 (Streamlit get_internal_ip, interface discovery, sends no payload)",
+          "DNS checkip.amazonaws.com (Streamlit get_external_ip, for the 'External URL' line)"
+        ],
+        "note": "Both are Streamlit's URL-display convenience, not dashboard logic. Both failed harmlessly under the block and the app served normally."
+      },
+      "loopback_bind": {
+        "command": "--server.address=127.0.0.1",
+        "serves": true,
+        "http": 200,
+        "health": "ok",
+        "outbound_attempts": [],
+        "note": "Binding to loopback suppresses both probes: ZERO outbound attempts. This is the recommended demo invocation."
+      },
+      "static_assets_served_locally": true
+    }
+  },
+  "frozen_artifact_integrity": {
+    "artifacts_hashed": 16,
+    "changed": [],
+    "all_unchanged": true,
+    "hashes": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    }
+  }
+}

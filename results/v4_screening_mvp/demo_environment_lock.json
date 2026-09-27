@@ -1,0 +1,352 @@
+{
+  "generated_utc": "2026-09-26T07:11:57+00:00",
+  "task": "Task 13 - fully pinned screening demo lockfile",
+  "purpose": "Freeze the exact clean-room environment that validated the V4 Streamlit screening dashboard, so the demo build cannot drift.",
+  "python_version": "3.14.7",
+  "python_version_full": "3.14.7 (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+  "python_implementation": "CPython",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "platform_tag": "macosx-26.0-arm64",
+  "architecture": "arm64",
+  "os": "darwin",
+  "authoritative_environment": {
+    "name": "src/venv",
+    "path": "src/venv",
+    "role": "authoritative demo runtime (unchanged by this task)",
+    "note": "The lockfile was frozen from the Task 12 clean-room environment, which was itself installed from requirements-screening.txt and validated end-to-end. No package in src/venv was added, removed, upgraded or downgraded by Task 12 or Task 13.",
+    "launch_command": "streamlit run src/app.py",
+    "launch_command_offline_strict": "streamlit run src/app.py --server.address=127.0.0.1 --browser.gatherUsageStats=false"
+  },
+  "dependency_files": {
+    "direct_spec": {
+      "path": "requirements-screening.txt",
+      "sha256": "7f0c106824d11a317e9774b923ab20cea7f2cfce42e47772fd479201facbca96",
+      "role": "human-readable direct dependency specification (UNCHANGED by Task 13)",
+      "n_direct_pins": 9
+    },
+    "lockfile": {
+      "path": "requirements-screening-lock.txt",
+      "sha256": "bf7a68ed9fc0be0f8266a526baef9c85f9b9dbc5acd5f1c0436f4ca5735d2b73",
+      "role": "fully pinned direct + transitive lockfile (reproducible build input)",
+      "n_pinned_packages": 58,
+      "source": "python -m pip freeze, verbatim, from the validated clean-room environment",
+      "hash_pinned": false,
+      "hash_pinning_note": "--require-hashes was deliberately not used: torch, scipy and pyarrow wheels are platform-specific, so a hash lock would bind this file to macOS/arm64 only.",
+      "pip_version_used": "26.2.1",
+      "pip_not_pinned_note": "pip excludes itself from freeze; setuptools==84.0.0 IS pinned."
+    }
+  },
+  "package_count": 58,
+  "package_inventory": {
+    "altair": "6.3.0",
+    "anyio": "4.15.1",
+    "attrs": "26.1.0",
+    "blinker": "1.9.0",
+    "captum": "0.9.0",
+    "certifi": "2026.7.22",
+    "charset-normalizer": "3.5.1",
+    "click": "8.5.0",
+    "cloudpickle": "3.1.2",
+    "contourpy": "1.4.0",
+    "cycler": "0.12.1",
+    "filelock": "4.0.3",
+    "fonttools": "4.66.0",
+    "fsspec": "2026.9.0",
+    "h11": "0.16.0",
+    "httptools": "0.8.0",
+    "idna": "3.20",
+    "itsdangerous": "2.2.0",
+    "Jinja2": "3.1.6",
+    "joblib": "1.6.0",
+    "jsonschema": "4.26.0",
+    "jsonschema-specifications": "2025.9.1",
+    "kiwisolver": "1.5.1",
+    "MarkupSafe": "3.0.3",
+    "matplotlib": "3.11.1",
+    "mpmath": "1.3.0",
+    "narwhals": "2.26.0",
+    "networkx": "3.7",
+    "numpy": "2.5.2",
+    "packaging": "26.3",
+    "pandas": "3.0.5",
+    "pillow": "12.3.0",
+    "plotly": "7.0.0",
+    "protobuf": "7.36.2",
+    "pyarrow": "25.0.1",
+    "pydeck": "0.9.3",
+    "pyparsing": "3.3.3",
+    "python-dateutil": "2.9.0.post0",
+    "python-multipart": "0.0.32",
+    "referencing": "0.37.0",
+    "requests": "2.34.2",
+    "rpds-py": "2026.6.3",
+    "scapy": "2.7.0",
+    "scikit-learn": "1.9.0",
+    "scipy": "1.18.1",
+    "setuptools": "84.0.0",
+    "six": "1.17.0",
+    "starlette": "1.7.0",
+    "streamlit": "1.62.0",
+    "sympy": "1.14.0",
+    "threadpoolctl": "3.7.0",
+    "toml": "0.10.2",
+    "torch": "2.13.0",
+    "tqdm": "4.70.1",
+    "typing_extensions": "4.16.0",
+    "urllib3": "2.8.0",
+    "uvicorn": "0.54.0",
+    "websockets": "16.1.1"
+  },
+  "direct_dependency_versions": {
+    "streamlit": "1.62.0",
+    "plotly": "7.0.0",
+    "torch": "2.13.0",
+    "numpy": "2.5.2",
+    "pandas": "3.0.5",
+    "scikit-learn": "1.9.0",
+    "captum": "0.9.0",
+    "matplotlib": "3.11.1",
+    "scapy": "2.7.0"
+  },
+  "torch_version": "2.13.0",
+  "streamlit_version": "1.62.0",
+  "numpy_version": "2.5.2",
+  "pandas_version": "3.0.5",
+  "scikit_learn_version": "1.9.0",
+  "captum_version": "0.9.0",
+  "plotly_version": "7.0.0",
+  "matplotlib_version": "3.11.1",
+  "scapy_version": "2.7.0",
+  "clean_room_reproduction": {
+    "location": "/private/tmp/claude-501/-Users-adityashah-Projects-cyber-world-model/76ed5a43-d84b-400b-980f-8447e978539a/scratchpad/task13/lockenv",
+    "outside_repository": true,
+    "baseline_packages_before_install": 0,
+    "installed_only": "requirements-screening-lock.txt",
+    "nothing_installed_manually_afterward": true,
+    "packages_installed": 58,
+    "resolved_set_identical_to_lockfile": true,
+    "resolved_set_diff": "empty (byte-identical after sort)",
+    "python": "3.14.7",
+    "prefix": "/private/tmp/claude-501/-Users-adityashah-Projects-cyber-world-model/76ed5a43-d84b-400b-980f-8447e978539a/scratchpad/task13/lockenv",
+    "shap_absent": true,
+    "all_direct_imports_ok": true,
+    "dashboard_module_graph_imports_ok": true
+  },
+  "dashboard_result": {
+    "pages_exercised": 9,
+    "pages_passed": 9,
+    "pages": [
+      {
+        "page_index": 0,
+        "page": "\ud83c\udfaf Live Forecast",
+        "charts_rendered": 2,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 1,
+        "page": "\u23f1\ufe0f Early Warning",
+        "charts_rendered": 0,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 2,
+        "page": "\ud83e\udded Event Timeline",
+        "charts_rendered": 1,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 3,
+        "page": "\ud83d\udd2e Trajectory Rollout",
+        "charts_rendered": 3,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 4,
+        "page": "\ud83d\udcca Window Inspector",
+        "charts_rendered": 4,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 5,
+        "page": "\ud83d\udd0d Feature Attribution",
+        "charts_rendered": 4,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 6,
+        "page": "\ud83d\uddfa\ufe0f MITRE ATT&CK Timeline",
+        "charts_rendered": 0,
+        "stopped_at_guard": true,
+        "ui_errors": [
+          "Rule-based ATT&CK mappings are unavailable for the active benchmark. The stored table (`models/latent_world_model_v4/mitre_mapping/mitre_summary.csv`) was generated against a different window set, and its rows are addressed positionally, so it cannot be aligned to this dataset. Regenerate it with `python src/mitre_mapper.py`."
+        ]
+      },
+      {
+        "page_index": 7,
+        "page": "\ud83d\udce1 Live PCAP Ingestion",
+        "charts_rendered": 0,
+        "stopped_at_guard": false,
+        "ui_errors": []
+      },
+      {
+        "page_index": 8,
+        "page": "\ud83d\udcd0 Methodology & Limits",
+        "charts_rendered": 0,
+        "stopped_at_guard": false,
+        "ui_errors": [
+          "**Train/evaluation normalisation mismatch (out-of-distribution).** The V4 checkpoint was *trained* on the single-day `temporal_benchmark_v2` arrays, whose scaler was fit on 2,384 Feb-28 windows. The reference evaluation \u2014 and this console \u2014 feed it `multiday_benchmark_K5` arrays standardised by a *different* scaler fit on 8,575 Feb-14/15/28 windows. The reported results are therefore produced under a normalisation the model never saw during training. This is recorded in the frozen manifest and deliberately left unchanged."
+        ]
+      }
+    ],
+    "expected_ui_errors": {
+      "MITRE ATT&CK Timeline": "intentional stored-table alignment guard (502 rows vs 3115); live per-sequence mapping renders",
+      "Methodology & Limits": "intentional styled out-of-distribution disclosure box"
+    },
+    "streamlit_serves": {
+      "command": "streamlit run src/app.py --server.address=127.0.0.1 --server.port=8501 --browser.gatherUsageStats=false",
+      "root_http_status": 200,
+      "stcore_health": "ok",
+      "stcore_host_config_status": 200,
+      "static_assets_local": true,
+      "cdn_references": 0,
+      "external_url_line_emitted": false
+    }
+  },
+  "prediction_equivalence": {
+    "device": "cpu",
+    "per_column_max_abs_delta": {
+      "nowcast_probability_t0": 6.258487701971127e-07,
+      "prob_t1": 8.344650268554688e-07,
+      "prob_t2": 1.043081283569336e-06,
+      "prob_t3": 1.2814998626708984e-06,
+      "prob_t4": 1.430511474609375e-06,
+      "prob_t5": 1.996755599975586e-06
+    },
+    "overall_max_abs_delta": 1.996755599975586e-06,
+    "max_forecast_max_abs_delta": 1.5348196030218197e-06,
+    "alert_disagreements": 0,
+    "stored_alerts": 1434,
+    "recomputed_alerts": 1434,
+    "sequence_count_stored": 3115,
+    "sequence_count_X": 3115,
+    "sequence_count_equal": true,
+    "threshold_substrate": 0.69,
+    "threshold_manifest": 0.69,
+    "threshold_equal": true,
+    "substrate_device_recorded": "mps",
+    "documented_cross_device_delta": 1.996755599975586e-06
+  },
+  "xai_result": {
+    "sequence_id": 2341,
+    "ran": true,
+    "attribution_shape": [
+      1,
+      10,
+      52
+    ],
+    "method": "gausslegendre",
+    "n_steps": 128,
+    "explained_probability": 0.778526246547699,
+    "displayed_probability_stored": 0.778526246547699,
+    "explained_vs_displayed_abs_delta": 0.0,
+    "completeness_rel_error": 0.011400135233998299,
+    "top_features": [
+      {
+        "feature": "window_byte_rate",
+        "attribution": -0.44085022807121277,
+        "direction": "contributes toward lower predicted threat"
+      },
+      {
+        "feature": "window_packet_rate",
+        "attribution": 0.4407387971878052,
+        "direction": "contributes toward higher predicted threat"
+      },
+      {
+        "feature": "log_mean_flow_duration",
+        "attribution": 0.20687471330165863,
+        "direction": "contributes toward higher predicted threat"
+      },
+      {
+        "feature": "log_total_packets",
+        "attribution": 0.18317319452762604,
+        "direction": "contributes toward higher predicted threat"
+      },
+      {
+        "feature": "rst_rate",
+        "attribution": 0.16737745702266693,
+        "direction": "contributes toward higher predicted threat"
+      }
+    ]
+  },
+  "mitre_result": {
+    "sequence_id": 2341,
+    "ran": true,
+    "rule_library_size": 10,
+    "feature_order_matches_contract": true,
+    "tactic_id": "TA0043",
+    "tactic_name": "Reconnaissance",
+    "technique_id": "T1018",
+    "technique_name": "Remote System Discovery",
+    "confidence": "high",
+    "temporal_phase": "late",
+    "has_analyst_explanation": true,
+    "all_fields_returned": true
+  },
+  "offline_result": {
+    "method": "sitecustomize-injected block: outbound connect/connect_ex to any non-loopback address raises; hostname DNS raises",
+    "pages_passed_network_blocked": 9,
+    "pages_total": 9,
+    "outbound_connections_attributable_to_dashboard": 0,
+    "hostname_dns_lookups_attributable_to_dashboard": 0,
+    "recorded_getaddrinfo_entries": [
+      "192.168.1.128"
+    ],
+    "recorded_entries_explained": {
+      "192.168.1.128": "scapy.layers.dhcp default argument Net('192.168.1.128/25'), resolved at import time. Numeric RFC1918 IPv4 literal: getaddrinfo resolves it locally and emits no DNS query and no traffic."
+    },
+    "server_offline": {
+      "bind": "127.0.0.1",
+      "root_http_status": 200,
+      "stcore_health": "ok",
+      "outbound_attempts": 0,
+      "note": "Loopback binding suppresses the two Streamlit URL-display probes (UDP connect to 8.8.8.8:1 and DNS for checkip.amazonaws.com) that the default bind performs; the server log emits no External URL line."
+    }
+  },
+  "frozen_artifact_integrity": {
+    "artifacts_hashed": 16,
+    "hashed_before_and_after_reproduction": true,
+    "changed": [],
+    "all_unchanged": true,
+    "matches_task12_recorded_hashes": true,
+    "hashes": {
+      "models/latent_world_model_v4/latent_world_model_v4.pt": "76af8d8a9e02215923b1c0ab6b627bfc0809e856748666a55ee4b16cec5e5898",
+      "data/processed/multiday_benchmark_K5/input_scaler.pkl": "e0ab9bebd26869950dda51a67bdde3192b0edbd00e20b623115ed2b653f04f19",
+      "data/processed/multiday_benchmark_K5/target_scaler.pkl": "7155dec48f89d246359741032b002ca0bb44e4739e99daa3e28e77e312c55944",
+      "data/processed/multiday_benchmark_K5/input_feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "data/processed/multiday_benchmark_K5/state_feature_names.txt": "64a8297798779b3616beeda307fef4679e67cfbd33e395a1059fb502a48b5499",
+      "data/processed/multiday_benchmark_K5/X_test.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "data/processed/multiday_benchmark_K5/Y_multistep_test.npy": "498f062848e41d470b0116aacb946d69892e2ca5761ebd702f090b64f1f4b0c2",
+      "data/processed/multiday_benchmark_K5/A_binary_multistep_test.npy": "4b18a65902c18fbd1b23fa4ca431f82cd2dac43f06c8636e6267bd8ee63134c3",
+      "data/processed/multiday_benchmark_K5/A_soft_multistep_test.npy": "f252a378ff358a2a39a330e0fb40f1c51e19c107a3e19a705102972d8cf1cd9b",
+      "results/v4_screening_mvp/screening_X.npy": "2a03a11ca58c38bf4803546e7e5e7db50c44bf69d1c2ad5764f3b905a4005bc8",
+      "results/v4_screening_mvp/screening_predictions.csv": "6d7c97982115a5edb9ba59228e5a463abdfcbc2324ab69d7ce389ba490600f4d",
+      "results/v4_screening_mvp/screening_metadata.csv": "b8d1bb7a558b4bff5607a89502dacbbbe7c4144ae70caeac145967eb82f675c4",
+      "results/v4_screening_mvp/event_timeline.csv": "7521a2b74f2880390f40acb77e2b0aaff259c8f6d23b63941ccdc4b6a715406c",
+      "results/v4_screening_mvp/feature_names.txt": "137b58333f1c751522f30478219ff86b8c115aa749defb57ae80ee83559ecbb5",
+      "results/v4_screening_mvp/screening_manifest.json": "9b807245026e81f98542dc63ed5168a7d7d0eaa64e7c6c648bfa784f3a150a6b",
+      "results/v4_screening_mvp/readiness_report.json": "0ab22ead4296a180fa9560cce6cba9c7b79428506449773f19770645b979e6ab"
+    }
+  },
+  "tracked_files_modified_by_task13": [],
+  "files_added_by_task13": [
+    "requirements-screening-lock.txt",
+    "results/v4_screening_mvp/demo_environment_lock.json",
+    "results/v4_screening_mvp/lockfile_validation.json"
+  ]
+}

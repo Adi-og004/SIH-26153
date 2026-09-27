@@ -1,0 +1,47 @@
+# =============================================================
+# V4 SCREENING DEMO — AUTHORITATIVE PINNED RUNTIME
+# SIH 2026 — Predictive Cyber Defence Using World Models
+# =============================================================
+#
+# The exact environment that runs the screening dashboard:
+#     streamlit run src/app.py
+#
+# Python 3.14.7 (darwin/arm64 verified).
+#
+# These nine pins are the DIRECT runtime requirements of the dashboard's
+# full import graph (src/app.py -> screening_data, v4_explainer,
+# mitre_mapper, pcap_ingest_v4). Transitive dependencies are left to the
+# resolver on purpose, so this file stays reviewable.
+#
+# Deliberately EXCLUDED:
+#   shap    - src/shap_explainer.py is the unlocked legacy explainer and is
+#             never imported by the dashboard (see docs/V4_EXPLAINABILITY.md).
+#   pytest, jupyter, ipython, fonttools, debugpy, ... - development only.
+#
+# Why each pin is here:
+#   streamlit     the dashboard framework itself
+#   plotly        every chart in the console
+#   torch         frozen V4 checkpoint inference (2.13.0 is the version the
+#                 validated dashboard runtime uses; NOT upgraded)
+#   numpy         array handling throughout
+#   pandas        screening CSV / metadata handling
+#   scikit-learn  REQUIRED AT RUNTIME: the frozen input/target scalers are
+#                 pickled sklearn StandardScaler objects, so unpickling them
+#                 imports sklearn even though no source file imports it
+#   captum        Integrated Gradients in src/v4_explainer.py
+#   matplotlib    imported at module level by src/mitre_mapper.py and
+#                 src/pcap_ingest_v4.py (Agg backend, no display needed)
+#   scapy         imported at module level by src/pcap_ingest_v4.py, which
+#                 src/app.py imports at module level -- so it is needed for
+#                 the app to START, not just for the PCAP page
+# =============================================================
+
+streamlit==1.62.0
+plotly==7.0.0
+torch==2.13.0
+numpy==2.5.2
+pandas==3.0.5
+scikit-learn==1.9.0
+captum==0.9.0
+matplotlib==3.11.1
+scapy==2.7.0
